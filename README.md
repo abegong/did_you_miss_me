@@ -15,7 +15,18 @@ The top-level API look like this:
 generate_missing_data(
 	n_rows : int = 200, #the number of rows to generate,
 	n_cols : int = 10,  #the number of columns to generate,
-  missingness_type_list Optional[Dict[string, missingness_pattern]] = None #a dictionary of column names and patterns of missingness to use to populate. If this is ommitted, columns and missingness categories will be created at random
+	missingness_type_list Optional[Dict[string, missingness_pattern]] = None #a dictionary of column names and patterns of missingness to use to populate. If this is ommitted, columns and missingness categories will be created at random
 )
 ```
 
+To do:
+* Create repo on github
+* Add gitignore
+* Delete nuisance files
+* Add setup.py and other scaffolding to create this as a package
+* Publish to pypi
+* Flesh out tests
+* Add multibatch planners
+* Add ability to create SQLlite DBs
+* Add ability to add missingness to an existing dataset
+* Add conditional missingness

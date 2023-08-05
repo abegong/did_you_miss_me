@@ -9,7 +9,7 @@ Key features:
 * You can also add missingness to existing datasets.
 * Basic use cases work in seconds, with a single line of code; no configuration needed.
 * For advanced users, the concept of `Plans` gives you very granular control over how data is created and missingness is added.
-* Includes logic for generating missingness with MCAR, MAR, and MNAR statistical properties.
+* Includes logic for generating missingness with MCAR, (MAR), and MNAR statistical properties.
 * (Includes utility functions to save data in several formats, including SQLite.)
 
 Stuff in (parentheses) is aspirational---not yet built.
@@ -120,10 +120,10 @@ Pull requests welcome!
 
 ## Todo
 
-* Change name to `did_you_miss_me`
-* Publish to pypi
 * Add multibatch planners
-* Add ability to create SQLlite DBs
 * Add conditional missingness
+* Add ability to create SQLlite DBs
+* Add langchain stuffs
+* Publish to pypi
 
 

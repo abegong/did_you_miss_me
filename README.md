@@ -19,8 +19,8 @@ Use `generate_dataframe` to create synthetic datasets from scratch.
 import did_you_miss_me as dymm
 
 dymm.generate_dataframe(
-	n_rows=10,
-	n_columns=7,
+    n_rows=10,
+    n_columns=7,
 )
 ```
 
@@ -47,10 +47,10 @@ The `use_ai` and `prompt` parameters let you use LLMs to generate more coherent 
 
 ```
 dymm.generate_dataframe(
-	n_rows=10,
-	n_columns=7,
-	use_ai="OpenAI",
-	prompt="blood drives",
+    n_rows=10,
+    n_columns=7,
+    use_ai="OpenAI",
+    prompt="blood drives",
 )
 ```
 

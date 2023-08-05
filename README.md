@@ -1,158 +1,128 @@
-A python package to create synthetic datasets with realistic patterns of missingness.
+# DidYouMissMe
 
-## Basic usage
+`did_you_miss_me` is a python package to create datasets with realistic patterns of missingness.
 
-`missing_data_generator` can generate data with various patterns of missingness.
+Key features:
 
-It can generate a column's worth of data at a time:
+* Generate synthetic datasets with a huge range of variable types and realistic patterns of missingness
+* (Use AI/LLMs to create datasets with sensible variable names, types, and values.)
+* You can also add missingness to existing datasets.
+* Basic use cases work in seconds, with a single line of code; no configuration needed.
+* For advanced users, the concept of `Plans` gives you very granular control over how data is created and missingness is added.
+* Includes logic for generating missingness with MCAR, MAR, and MNAR statistical properties.
+* (Includes utility functions to save data in several formats, including SQLite.)
+
+## Quickstart
+Use `generate_dataframe` to create synthetic datasets from scratch.
+
 ```
-import missing_data_generator as mdg
+import did_you_miss_me as dymm
 
-mdg.generate_series(
-	n = 50,
-	faker_type = "email_address",
-	mmissingness_type = 
-	proportion_missing = 20
+dymm.generate_dataframe(
+	n_rows=10,
+	n_columns=7,
 )
 ```
+
+Returns something like:
+
+|    |   column_1 | column_2        |   column_3 | column_4   | column_5                                         | column_6   | column_7     |
+|---:|-----------:|:----------------|-----------:|:-----------|:-------------------------------------------------|:-----------|:-------------|
+|  0 |      21610 |                 |    6306090 |            | Age head adult democratic put though kid.        | 06:06:42   |              |
+|  1 |      31906 |                 |    2322383 |            | Standard contain force.                          | 19:47:29   |              |
+|  2 |      87239 | ['b', 'c', 'a'] |     319679 |            | East reduce PM community situation forward dark. |            |              |
+|  3 |      70427 | ['a']           |    8480857 |            | Economic tax budget whom despite number occur.   | 00:19:37   |              |
+|  4 |      06080 | ['b', 'a']      |    6779036 |            | May eight fly point character less.              | 06:03:24   |              |
+|  5 |      81049 | ['a', 'b', 'c'] |     620417 |            | Dream size subject list team.                    | 13:30:23   | Thompson Inc |
+|  6 |      55782 | ['a', 'b', 'c'] |    6387661 |            | Too also argue sit area group political street.  |            |              |
+|  7 |      29531 | ['b', 'a', 'c'] |    3383294 |            | Forward education together fall.                 | 07:13:48   |              |
+|  8 |      99760 |                 |    3594189 |            | Away animal level question never each.           | 10:38:25   |              |
+|  9 |      99606 |                 |    1236934 |            | Themselves similar become front city physical.   |            |              |
+
+By default, datasets are generated using random types from the `Faker` library, and tend to feel pretty random.
+
+
+## Use AI to generate realistic-looking data sets
+The `use_ai` and `prompt` parameters let you use LLMs to generate more coherent dataframes.
+
 ```
-> Example Series
-```
-
-
-`missing_data_generator` can generate whole dataframes. By default, it will generate dataframes with several columns of various types.
-```
-mdg.generate_dataframe()
-```
-```
-> Example dataframe
-```
-
-
-
-If you install the optional openAI dependency and have your credentials set up, you can call:
-```
-mdg.generate_dataframe(use_openai=True)
-```
-
-This will use AI to generate a more realistic-ish dataframe.
-```
-> Example dataframe
-```
-
-
-
-#####
-
-
-You can override many of the defaults from the `generate_dataframe` method. (If you need finer-grained control, please see the Advanced Usage section.)
-```
-> Example dataframe
-```
-
-
-
-
-You can override many of the defaults from the `generate_dataframe` method. (If you need finer-grained control, please see the Advanced Usage section.)
-```
-mdg.add_missing_data_to_dataframe()
-```
-```
-> Example dataframe
-```
-
-
-
-It can also generate dataframes where patterns in missingness change over time. Using the same naming convention as Great Expectations, we call these multibach dataframes.
-```
-mdg.generate_multibatch_dataframe(
-	batches
-	epochs
-	rows_per_batch
+dymm.generate_dataframe(
+	n_rows=10,
+	n_columns=7,
+	use_ai="OpenAI",
+	prompt="blood drives",
 )
 ```
-```
-> Example multibatchdataframe
-```
 
-All of these methods are available from a CLI:
+|DonationDriveID|BloodBankID|DriveName               | State | Zipcode | StartDate         |EndDate            |
+|---------------|-----------|------------------------|-------|---------|-------------------|-------------------|
+|1              |1          |Summer Donations        | CA    |         |2020-06-01 00:00:00|2020-06-30 23:59:59|
+|2              |2          |Fall Blood Drive        | UT    |         |2020-09-01 00:00:00|2020-09-30 23:59:59|
+|3              |           |Winter Blood Drive      | AK    |         |                   |                   |
+|4              |4          |Spring Donations        | VA    |         |2021-03-01 00:00:00|2021-03-31 23:59:59|
+|5              |           |Back to School Donations| NY    |         |2020-08-01 00:00:00|2020-08-31 23:59:59|
+|6              |2          |Thanksgiving Blood Drive| VA    |         |                   |                   |
+|7              |3          |Holiday Blood Drive     | TX    |         |                   |                   |
+|8              |           |Spring Blood Drive      | CA    |         |2021-03-15 00:00:00|2021-04-15 23:59:59|
+|9              |           |Summer Blood Drive      | AL    |         |                   |                   |
+|10             |2          |Fall Donations          | MI    |         |2020-09-15 00:00:00|2020-10-15 23:59:59|
 
-```
-python -m missing_data_generator
-```
+Connections and prompt chaining are managed through `langchain`. To use `did_you_miss_me` in this mode, you'll need to install it with: `pip install did_you_miss_me[ai]`
 
+## Missification
 
-```
-mdg.save_to_sql
-```
-
-Each of these method
-
-## Advanced usage
-```
-import missing_data_generator as mdg
-
-my_dataframe_plan = mdg.plans.DataframePlan(
-	columns = [
-		mdg.plans.ColumnPlan(
-			name="never_missing_column"
-			faker_type
-		),
-		mdg.plans.ColumnPlan(
-
-		),
-		mdg.plans.ProportionallyMissingColumnPlan(
-
-		),
-		mdg.plans.ConditionallyMissingColumnPlan(
-			conditional_column_name : str
-			proportions : Dict
-		),
-	]
-)
-
-mdg.generate_dataframe()
-```
-
-
-It covers the following cases:
-
-	* Columns that are never missing
-	* Columns that are always missing
-	* Columns that are missing some fraction of the time
-	* Columns where the probability of missingness is contingent on the value of another other column
-
-
-MAR, MCAR, MNAR
-
-It includes tests for each of these methods.
-
-The top-level API look like this:
+The `missify` operation allows you to add missingness to an existing dataframe. For example, here's polling data from fivethirtyeight.
 
 ```
-generate_missing_data(
-	n_rows : int = 200, #the number of rows to generate,
-	n_cols : int = 10,  #the number of columns to generate,
-	missingness_type_list Optional[Dict[string, missingness_pattern]] = None #a dictionary of column names and patterns of missingness to use to populate. If this is ommitted, columns and missingness categories will be created at random
-)
+import pandas as pd
+df = pd.read_csv('https://projects.fivethirtyeight.com/polls/data/favorability_polls.csv')
 
-
-mdg.generate_dataframe
-mdg.generate_series
-
-mdg.generate_multibatch_dataframe
-mdg.generate_sqlite_database
+dymm.missify_dataframe(df)
 ```
+Before:
 
-To do:
+|    |   poll_id |   pollster_id | pollster         |   sponsor_ids | sponsors   | display_name     |   pollster_rating_id | pollster_rating_name   |...|
+|---:|----------:|--------------:|:-----------------|--------------:|:-----------|:-----------------|---------------------:|:-----------------------|---|
+|  0 |     83346 |           241 | Ipsos            |           379 | ABC News   | Ipsos            |                  154 | Ipsos                  |...|
+|  1 |     83346 |           241 | Ipsos            |           379 | ABC News   | Ipsos            |                  154 | Ipsos                  |...|
+|  2 |     83331 |           568 | YouGov           |           352 | Economist  | YouGov           |                  391 | YouGov                 |...|
+|  3 |     83331 |           568 | YouGov           |           352 | Economist  | YouGov           |                  391 | YouGov                 |...|
+|  4 |     83331 |           568 | YouGov           |           352 | Economist  | YouGov           |                  391 | YouGov                 |...|
+|  5 |     83331 |           568 | YouGov           |           352 | Economist  | YouGov           |                  391 | YouGov                 |...|
+|  6 |     83331 |           568 | YouGov           |           352 | Economist  | YouGov           |                  391 | YouGov                 |...|
+|  7 |     83331 |           568 | YouGov           |           352 | Economist  | YouGov           |                  391 | YouGov                 |...|
+|  8 |     83316 |          1302 | Echelon Insights |           nan | nan        | Echelon Insights |                  407 | Echelon Insights       |...|
+|  9 |     83316 |          1302 | Echelon Insights |           nan | nan        | Echelon Insights |                  407 | Echelon Insights       |...|
+
+After:
+
+|    |   poll_id |   pollster_id | pollster         | sponsor_ids   | sponsors   | display_name   |   pollster_rating_id | pollster_rating_name   |...|
+|---:|----------:|--------------:|:-----------------|:--------------|:-----------|:---------------|---------------------:|:-----------------------|---|
+|  0 |     83346 |           nan | Ipsos            |               | ABC News   | Ipsos          |                  nan |                        |...|
+|  1 |     83346 |           241 | Ipsos            |               |            |                |                  nan | Ipsos                  |...|
+|  2 |     83331 |           568 | YouGov           |               |            |                |                  391 |                        |...|
+|  3 |     83331 |           nan | YouGov           |               |            |                |                  nan | YouGov                 |...|
+|  4 |     83331 |           568 | YouGov           |               |            |                |                  nan | YouGov                 |...|
+|  5 |     83331 |           568 |                  |               | Economist  |                |                  nan | YouGov                 |...|
+|  6 |     83331 |           568 | YouGov           |               | Economist  |                |                  nan | YouGov                 |...|
+|  7 |     83331 |           568 | YouGov           |               | Economist  |                |                  nan | YouGov                 |...|
+|  8 |     83316 |          1302 | Echelon Insights |               | nan        |                |                  nan | Echelon Insights       |...|
+|  9 |     83316 |          1302 | Echelon Insights |               | nan        |                |                  nan | Echelon Insights       |...|
+
+
+## For more info...
+
+Please see the code itself. Most modules and methods have decent docstrings. If something is unclear, please create a github issue.
+
+Pull requests welcome!
+
+## Todo
+
+* Change name to `did_you_miss_me`
 * Create repo on github
-* Add gitignore
-* Add setup.py and other scaffolding to create this as a package
 * Publish to pypi
-* Figure out and document top-level API
-* Add documentation to Plans
-* Flesh out tests
 * Add multibatch planners
 * Add ability to create SQLlite DBs
-* Add ability to add missingness to an existing dataset
 * Add conditional missingness
+
+

@@ -149,7 +149,6 @@ numerify
 opera
 paragraph
 paragraphs
-parse
 password
 past_date
 past_datetime

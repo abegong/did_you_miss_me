@@ -12,12 +12,13 @@ from missingness_data_generator.series_generators import (
     missify_series_from_plan,
 )
 
+
 @pytest.fixture(autouse=True)
 def set_random_seed():
     random.seed(1)
 
-def test__missify_series_from_plan():
 
+def test__missify_series_from_plan():
     series = pd.Series(range(100))
 
     # Test with missingness_type=ALWAYS
@@ -31,7 +32,6 @@ def test__missify_series_from_plan():
     assert new_series.isna().all()
     assert new_series.shape == series.shape
 
-
     # Test with missingness_type=NEVER
     plan = ColumnMissingnessPlan(
         missingness_type=ColumnMissingnessType.NEVER,
@@ -42,7 +42,6 @@ def test__missify_series_from_plan():
     )
     assert not new_series.isna().any()
     assert new_series.shape == series.shape
-    
 
     # Test with missingness_type=PROPORTIONAL
     plan = ProportionalColumnMissingnessPlan(
@@ -53,7 +52,7 @@ def test__missify_series_from_plan():
         series=series,
         plan=plan,
     )
-    assert new_series.isna().sum() == 47 # About 50, but not exactly 50
+    assert new_series.isna().sum() == 47  # About 50, but not exactly 50
     assert new_series.shape == series.shape
 
     # Any values that are not null are the same as the original series

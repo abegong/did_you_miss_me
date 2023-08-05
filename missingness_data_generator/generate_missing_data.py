@@ -15,10 +15,9 @@ import pandas as pd
 from missingness_data_generator.plan_generators import generate_column_plan
 from missingness_data_generator.series_generators import generate_series_from_plan
 
+
 def generate_dataframe_with_missingness(
-    n_rows: int = 200,
-    n_columns: int = 10,
-    missingness_type_list: Optional[List] = None
+    n_rows: int = 200, n_columns: int = 10, missingness_type_list: Optional[List] = None
 ) -> pd.DataFrame:
     """
     Generate synthetic datasets with realistic patterns of missingness.
@@ -33,9 +32,7 @@ def generate_dataframe_with_missingness(
 
     series = {}
     for i in range(n_columns):
-        column_plan = generate_column_plan(
-            column_index=i+1
-        )
+        column_plan = generate_column_plan(column_index=i + 1)
         new_series = generate_series_from_plan(
             n=n_rows,
             plan=column_plan,

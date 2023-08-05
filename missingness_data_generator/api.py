@@ -12,15 +12,15 @@ from missingness_data_generator.series_generators import (
     generate_series_from_plan,
     missify_series_from_plan,
 )
-from missingness_data_generator.generate_missing_data import generate_dataframe_with_missingness
+from missingness_data_generator.generate_missing_data import (
+    generate_dataframe_with_missingness,
+)
+
 
 def generate_series(
     n: int = 200,
 ) -> pd.Series:
-    
-    plan = generate_column_plan(
-        column_index=1
-    )
+    plan = generate_column_plan(column_index=1)
     series = generate_series_from_plan(
         n=n,
         plan=plan,
@@ -46,20 +46,18 @@ def generate_dataframe(
     - include_timestamps (bool): Whether to include a timestamp column (or columns) in the dataset.
     - use_ai (bool): Whether to use artificial intelligence to generate the missingness patterns.
     """
-    
-    
+
     df = generate_dataframe_with_missingness(
         n_rows=n_rows,
         n_columns=n_columns,
     )
-    
+
     return df
 
 
 def missify_dataframe(
     df: pd.DataFrame,
 ) -> pd.DataFrame:
-    
     columns = df.columns
     n_rows = df.shape[0]
     n_columns = df.shape[1]
@@ -67,7 +65,7 @@ def missify_dataframe(
     series = {}
     for i, column in enumerate(df.columns):
         column_plan = generate_column_missingness_plan(
-            column_index=i+1,
+            column_index=i + 1,
         )
         new_series = missify_series_from_plan(
             df[column],

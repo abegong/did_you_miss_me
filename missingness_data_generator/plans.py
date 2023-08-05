@@ -5,6 +5,7 @@ from abc import ABC
 
 ### ABCs ###
 
+
 @dataclass
 class Plan(ABC):
     """
@@ -16,28 +17,36 @@ class Plan(ABC):
 
     Plans can be applied to dataframes, series.
     """
+
     pass
+
 
 @dataclass
 class GeneratorPlan(Plan, ABC):
     """
     Abstract class for generator plans.
     """
+
     pass
+
 
 @dataclass
 class MissingnessPlan(Plan, ABC):
     """
     Abstract class for missingness plans.
     """
+
     pass
+
 
 ### Column-level Plan classes ###
 
+
 @dataclass
 class ColumnGenerationPlan(Plan):
-    name : str                                  # The name of the column
-    faker_type : str                            # The type of data to generate
+    name: str  # The name of the column
+    faker_type: str  # The type of data to generate
+
 
 class ColumnMissingnessType(Enum):
     ALWAYS = "ALWAYS"
@@ -45,34 +54,36 @@ class ColumnMissingnessType(Enum):
     PROPORTIONAL = "PROPORTIONAL"
     # CONDITIONAL = "CONDITIONAL"
 
+
 @dataclass
 class ColumnMissingnessPlan(MissingnessPlan):
-    missingness_type : ColumnMissingnessType    # The type of missingness to include
+    missingness_type: ColumnMissingnessType  # The type of missingness to include
+
 
 @dataclass
 class ProportionalColumnMissingnessPlan(ColumnMissingnessPlan):
-    proportion : float
+    proportion: float
+
 
 # @dataclass
 # class ConditionalColumnMissingnessPlan(ColumnMissingnessPlan):
 #     conditional_column_name : str
 #     proportions : Dict
 
+
 @dataclass
 class ColumnPlan(ColumnGenerationPlan, ColumnMissingnessPlan):
     pass
+
 
 @dataclass
 class ProportionalColumnPlan(ColumnGenerationPlan, ProportionalColumnMissingnessPlan):
     pass
 
+
 # @dataclass
 # class ConditionalColumnPlan(ColumnGenerationPlan, ConditionalColumnMissingnessPlan):
 #     pass
-
-
-
-
 
 
 # @dataclass

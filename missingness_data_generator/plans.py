@@ -1,4 +1,3 @@
-from typing import Dict, List
 from enum import Enum
 from pydantic.dataclasses import dataclass
 from abc import ABC

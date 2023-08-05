@@ -9,7 +9,7 @@ setup(
         "pydantic",
     ],
     extras_require={
-        "dev": ["pytest", "black", "flake8"],
+        "dev": ["pytest", "black", "ruff"],
     },
     packages=find_packages(
         include=["missing_data_generator", "missing_data_generator.*"]

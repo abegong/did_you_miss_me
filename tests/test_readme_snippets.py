@@ -1,6 +1,3 @@
-import pytest
-import random
-
 import pandas as pd
 
 import missingness_data_generator as mdg

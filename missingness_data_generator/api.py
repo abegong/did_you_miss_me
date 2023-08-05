@@ -32,17 +32,18 @@ def generate_series(
 def generate_dataframe(
     n_rows: int = 200,
     n_columns: int = 12,
+    # add_missingness = True,
     # include_ids = False,
     # include_timestamps = False,
     # use_ai = False,
 ) -> pd.DataFrame:
-    """
-    Generate synthetic datasets with realistic patterns of missingness.
+    """Generate synthetic datasets with realistic patterns of missingness.
 
     Parameters:
     - n_rows (int): The number of rows to generate in the dataset.
     - n_columns (int): The number of columns to generate in the dataset.
-    - include_ids (bool): Whether to include a columns simluating primary and foreign keys in the dataset.
+    - add_missingness (bool): Whether to add missingness to the dataset.
+    - include_ids (bool): Whether to include a columns simulating primary and foreign keys in the dataset.
     - include_timestamps (bool): Whether to include a timestamp column (or columns) in the dataset.
     - use_ai (bool): Whether to use artificial intelligence to generate the missingness patterns.
     """
@@ -58,10 +59,7 @@ def generate_dataframe(
 def missify_dataframe(
     df: pd.DataFrame,
 ) -> pd.DataFrame:
-    columns = df.columns
-    n_rows = df.shape[0]
-    n_columns = df.shape[1]
-
+    """Add missingness to an existing dataframe."""
     series = {}
     for i, column in enumerate(df.columns):
         column_plan = generate_column_missingness_plan(

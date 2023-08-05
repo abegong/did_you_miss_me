@@ -14,7 +14,6 @@ boolean
 bothify
 bs
 building_number
-cache_pattern
 catch_phrase
 century
 chrome
@@ -171,8 +170,6 @@ prefix_male
 prefix_nonbinary
 pricetag
 profile
-provider
-providers
 psv
 pybool
 pydecimal
@@ -187,7 +184,6 @@ pystr_format
 pystruct
 pytimezone
 pytuple
-random
 random_choices
 random_digit
 random_digit_not_null
@@ -241,7 +237,6 @@ time_series
 timezone
 tld
 tsv
-unique
 unix_device
 unix_partition
 unix_time

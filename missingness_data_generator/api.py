@@ -12,9 +12,6 @@ from missingness_data_generator.series_generators import (
     generate_series_from_plan,
     missify_series_from_plan,
 )
-from missingness_data_generator.generate_missing_data import (
-    generate_dataframe_with_missingness,
-)
 
 
 def generate_series(
@@ -48,10 +45,20 @@ def generate_dataframe(
     - use_ai (bool): Whether to use artificial intelligence to generate the missingness patterns.
     """
 
-    df = generate_dataframe_with_missingness(
-        n_rows=n_rows,
-        n_columns=n_columns,
-    )
+    series_dict = {}
+    for i in range(n_columns):
+        column_plan = generate_column_plan(column_index=i + 1)
+        new_series = generate_series_from_plan(
+            n=n_rows,
+            plan=column_plan,
+        )
+        missified_series = missify_series_from_plan(
+            new_series,
+            plan=column_plan,
+        )
+        series_dict[column_plan.name] = missified_series
+
+    df = pd.DataFrame(series_dict)
 
     return df
 
@@ -60,16 +67,16 @@ def missify_dataframe(
     df: pd.DataFrame,
 ) -> pd.DataFrame:
     """Add missingness to an existing dataframe."""
-    series = {}
+    series_dict = {}
     for i, column in enumerate(df.columns):
         column_plan = generate_column_missingness_plan(
             column_index=i + 1,
         )
-        new_series = missify_series_from_plan(
+        missified_series = missify_series_from_plan(
             df[column],
             plan=column_plan,
         )
-        series[column] = new_series
+        series_dict[column] = missified_series
 
-    df = pd.DataFrame(series)
+    df = pd.DataFrame(series_dict)
     return df

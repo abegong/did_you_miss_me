@@ -4,7 +4,8 @@ from faker import Faker
 
 from missingness_data_generator.plans import (
     ColumnMissingnessType,
-    ColumnPlan,
+    # ColumnPlan,
+    ColumnGenerationPlan,
     ColumnMissingnessPlan,
 )
 
@@ -12,52 +13,27 @@ _fake = Faker()
 
 
 def generate_faker_value(faker_type: str):
+    """Generate a value from the faker library.
+
+    Args:
+        faker_type: The name of the faker method to call.
+    """
     method = getattr(_fake, faker_type)
     value = method()
     return value
 
 
-def generate_always_missing_series(n: int) -> pd.Series:
-    return pd.Series([None for i in range(n)])
+def generate_series_from_plan(n: int, plan: ColumnGenerationPlan) -> pd.Series:
+    """Generate a series of random data according to a plan.
 
+    Note: This function does not add missingness to the series. To do that, use `missify_series_from_plan`.
 
-def generate_never_missing_series(
-    n: int,
-    faker_type: str,
-) -> pd.Series:
-    return pd.Series([generate_faker_value(faker_type) for i in range(n)])
+    Args:
+        n: The number of rows to generate.
+        plan: The plan to use to generate the series.
+    """
 
-
-def generate_proportionally_missing_series(
-    n: int,
-    faker_type: str,
-    proportion: float,
-) -> pd.Series:
-    series = pd.Series([generate_faker_value(faker_type) for i in range(n)])
-    missingness = pd.Series([random.random() for i in range(n)])
-    series[missingness < proportion] = None
-
-    return series
-
-
-def generate_series_from_plan(n: int, plan: ColumnPlan) -> pd.Series:
-    if plan.missingness_type == ColumnMissingnessType.ALWAYS:
-        series = generate_always_missing_series(
-            n=n,
-        )
-
-    elif plan.missingness_type == ColumnMissingnessType.NEVER:
-        series = generate_never_missing_series(n=n, faker_type=plan.faker_type)
-
-    elif plan.missingness_type == ColumnMissingnessType.PROPORTIONAL:
-        series = generate_proportionally_missing_series(
-            n=n,
-            faker_type=plan.faker_type,
-            proportion=plan.proportion,
-        )
-
-    else:
-        raise ValueError(f"Unrecognized missingness type: {plan.missingness_type}")
+    series = pd.Series([generate_faker_value(plan.faker_type) for i in range(n)])
 
     return series
 

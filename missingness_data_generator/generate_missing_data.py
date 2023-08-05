@@ -2,15 +2,6 @@ from typing import Optional, List
 
 import pandas as pd
 
-# from plans import (
-#     ColumnPlan,
-#     ProportinallyMissingColumnPlan,
-#     ConditionallyMissingColumnPlan,
-#     DataframePlan,
-#     EpochPlan,
-#     MultibatchPlan
-# )
-
 from missingness_data_generator.plan_generators import generate_column_plan
 from missingness_data_generator.series_generators import generate_series_from_plan
 

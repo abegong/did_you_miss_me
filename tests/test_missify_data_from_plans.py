@@ -3,12 +3,12 @@ import random
 
 import pandas as pd
 
-from missingness_data_generator.plans import (
+from did_you_miss_me.plans import (
     ColumnMissingnessType,
     ColumnMissingnessPlan,
     ProportionalColumnMissingnessPlan,
 )
-from missingness_data_generator.series_generators import (
+from did_you_miss_me.series_generators import (
     missify_series_from_plan,
 )
 

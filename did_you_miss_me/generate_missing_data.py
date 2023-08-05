@@ -2,8 +2,8 @@ from typing import Optional, List
 
 import pandas as pd
 
-from missingness_data_generator.plan_generators import generate_column_plan
-from missingness_data_generator.series_generators import generate_series_from_plan
+from did_you_miss_me.plan_generators import generate_column_plan
+from did_you_miss_me.series_generators import generate_series_from_plan
 
 
 def generate_dataframe_with_missingness(

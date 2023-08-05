@@ -121,7 +121,6 @@ Pull requests welcome!
 ## Todo
 
 * Change name to `did_you_miss_me`
-* Create repo on github
 * Publish to pypi
 * Add multibatch planners
 * Add ability to create SQLlite DBs

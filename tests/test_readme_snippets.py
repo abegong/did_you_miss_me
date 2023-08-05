@@ -4,13 +4,13 @@ import random
 
 import pandas as pd
 
-import missingness_data_generator as mdg
+import did_you_miss_me as dymm
 
 def test__generate_dataframe():
     random.seed(14)
 
     # Test that we can control the shape of the dataframe
-    df = mdg.generate_dataframe(
+    df = dymm.generate_dataframe(
         n_rows=10,
         n_columns=8,
     )
@@ -28,7 +28,7 @@ def test__missify_dataframe():
     columns = df.columns
     print(df[columns[:8]].head(10).to_markdown())
 
-    missing_df = mdg.missify_dataframe(df)
+    missing_df = dymm.missify_dataframe(df)
     print(missing_df)
     print(missing_df.head())
     print(missing_df[columns[:8]].head(10).to_markdown())

@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="missingness_data_generator",
+    name="did_you_miss_me",
     version="0.1.0",
     install_requires=[
         "faker",
@@ -13,6 +13,6 @@ setup(
         "ai": ["langchain"],
     },
     packages=find_packages(
-        include=["missingness_data_generator", "missingness_data_generator.*"]
+        include=["did_you_miss_me", "did_you_miss_me.*"]
     ),
 )

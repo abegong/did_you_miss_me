@@ -2,7 +2,7 @@ import random
 from typing import Dict, Optional, Tuple
 import os
 
-from missingness_data_generator.plans import (
+from did_you_miss_me.plans import (
     ColumnPlan,
     ColumnMissingnessPlan,
     ProportionalColumnMissingnessPlan,

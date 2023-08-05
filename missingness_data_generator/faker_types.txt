@@ -1,5 +1,4 @@
 aba
-add_provider
 address
 administrative_unit
 am_pm
@@ -213,13 +212,8 @@ safe_domain_name
 safe_email
 safe_hex_color
 secondary_address
-seed
-seed_instance
-seed_locale
 sentence
 sentences
-set_arguments
-set_formatter
 sha1
 sha256
 simple_profile

@@ -17,7 +17,7 @@ from missingness_data_generator.series_generators import generate_series_from_pl
 
 def generate_dataframe_with_missingness(
     n_rows: int = 200,
-    n_cols: int = 10,
+    n_columns: int = 10,
     missingness_type_list: Optional[List] = None
 ) -> pd.DataFrame:
     """
@@ -32,11 +32,10 @@ def generate_dataframe_with_missingness(
     """
 
     series = {}
-    for i in range(n_cols):
+    for i in range(n_columns):
         column_plan = generate_column_plan(
             column_index=i+1
         )
-        print(column_plan)
         new_series = generate_series_from_plan(
             n=n_rows,
             plan=column_plan,
@@ -64,9 +63,3 @@ def generate_dataframe_with_missingness(
 
     # df = pd.DataFrame(columns)
     return df
-
-
-if __name__ == "__main__":
-    df = generate_dataframe_with_missingness()
-    print(df)
-    print(df.isnull().mean())

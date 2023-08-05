@@ -56,8 +56,6 @@ def generate_series_from_plan(
     n: int,
     plan: ColumnPlan
 ) -> pd.Series:
-    print(plan)
-    print(plan.missingness_type)
 
     if plan.missingness_type == "always":
         series = generate_always_missing_series(
@@ -78,6 +76,6 @@ def generate_series_from_plan(
         )
 
     else:
-        print(plan.missingness_type)
+        raise ValueError(f"Unrecognized missingness type: {plan.missingness_type}")
 
     return series

@@ -1,3 +1,5 @@
+"""Test the code snippets in the README.md file."""
+
 import pandas as pd
 
 import missingness_data_generator as mdg

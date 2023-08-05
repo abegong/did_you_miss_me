@@ -29,7 +29,7 @@ def generate_series(
 def generate_dataframe(
     n_rows: int = 200,
     n_columns: int = 12,
-    # add_missingness = True,
+    add_missingness = True,
     # include_ids = False,
     # include_timestamps = False,
     # use_ai = False,
@@ -52,10 +52,15 @@ def generate_dataframe(
             n=n_rows,
             plan=column_plan,
         )
-        missified_series = missify_series_from_plan(
-            new_series,
-            plan=column_plan,
-        )
+        
+        if add_missingness:
+            missified_series = missify_series_from_plan(
+                new_series,
+                plan=column_plan,
+            )
+        else:
+            missified_series = new_series
+
         series_dict[column_plan.name] = missified_series
 
     df = pd.DataFrame(series_dict)

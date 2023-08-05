@@ -12,6 +12,8 @@ Key features:
 * Includes logic for generating missingness with MCAR, MAR, and MNAR statistical properties.
 * (Includes utility functions to save data in several formats, including SQLite.)
 
+Stuff in (parentheses) is aspirational---not yet built.
+
 ## Quickstart
 Use `generate_dataframe` to create synthetic datasets from scratch.
 
@@ -42,7 +44,7 @@ Returns something like:
 By default, datasets are generated using random types from the `Faker` library, and tend to feel pretty random.
 
 
-## Use AI to generate realistic-looking data sets
+<!-- ## Use AI to generate realistic-looking data sets
 The `use_ai` and `prompt` parameters let you use LLMs to generate more coherent dataframes.
 
 ```
@@ -67,7 +69,7 @@ dymm.generate_dataframe(
 |9              |           |Summer Blood Drive      | AL    |         |                   |                   |
 |10             |2          |Fall Donations          | MI    |         |2020-09-15 00:00:00|2020-10-15 23:59:59|
 
-Connections and prompt chaining are managed through `langchain`. To use `did_you_miss_me` in this mode, you'll need to install it with: `pip install did_you_miss_me[ai]`
+Connections and prompt chaining are managed through `langchain`. To use `did_you_miss_me` in this mode, you'll need to install it with: `pip install did_you_miss_me[ai]` -->
 
 ## Missification
 

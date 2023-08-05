@@ -72,7 +72,6 @@ ean13
 ean8
 ein
 email
-factories
 file_extension
 file_name
 file_path
@@ -82,7 +81,6 @@ first_name_female
 first_name_male
 first_name_nonbinary
 fixed_width
-format
 free_email
 free_email_domain
 future_date
@@ -93,7 +91,6 @@ hostname
 http_method
 iana_id
 iban
-image
 image_url
 internet_explorer
 invalid_ssn
@@ -124,7 +121,6 @@ linux_platform_token
 linux_processor
 local_latlng
 locale
-locales
 localized_ean
 localized_ean13
 localized_ean8
@@ -250,7 +246,6 @@ url
 user_agent
 user_name
 uuid4
-weights
 windows_platform_token
 word
 words
@@ -258,4 +253,3 @@ year
 zip
 zipcode
 zipcode_in_state
-zipcode_plus

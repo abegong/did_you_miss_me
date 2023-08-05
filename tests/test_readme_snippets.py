@@ -5,9 +5,9 @@ import pandas as pd
 
 import missingness_data_generator as mdg
 
-@pytest.fixture(autouse=True)
-def set_random_seed():
-    random.seed(42)
+# @pytest.fixture(autouse=True)
+# def set_random_seed():
+#     random.seed(42)
 
 
 def test__generate_series():
@@ -36,10 +36,15 @@ def test__generate_dataframe():
     print(df)
     
 
-# def test__missify_dataframe():
+def test__missify_dataframe():
 
-# 	df = pd.DataFrame({
-#         "x": range(200)
-# 	})
+	df = pd.DataFrame({
+        "x": range(200),
+        "y": range(200),
+        "z": [str(i) for i in range(200)],
+	})
 
-# 	missing_df = mdg.missify_dataframe(df)
+	missing_df = mdg.missify_dataframe(df)
+	print(missing_df)
+
+	assert missing_df.shape == (200, 3)

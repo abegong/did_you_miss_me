@@ -1,10 +1,13 @@
 """
-Public-facing methods for generating missingness data.
+Public-facing methods for generating synthetic missingness data.
 """
 
 import pandas as pd
 
-from missingness_data_generator.plan_generators import generate_column_plan
+from missingness_data_generator.plan_generators import (
+    generate_column_plan,
+    generate_column_missingness_plan,
+)
 from missingness_data_generator.series_generators import (
     generate_series_from_plan,
     missify_series_from_plan,
@@ -63,14 +66,14 @@ def missify_dataframe(
 
     series = {}
     for i, column in enumerate(df.columns):
-        column_plan = generate_column_plan(
+        column_plan = generate_column_missingness_plan(
             column_index=i+1,
         )
         new_series = missify_series_from_plan(
             df[column],
             plan=column_plan,
         )
-        series[column_plan.name] = new_series
+        series[column] = new_series
 
     df = pd.DataFrame(series)
     return df

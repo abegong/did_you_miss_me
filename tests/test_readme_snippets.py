@@ -48,3 +48,4 @@ def test__missify_dataframe():
 	print(missing_df)
 
 	assert missing_df.shape == (200, 3)
+	assert (df.x[missing_df.x.notnull()] == missing_df.x[missing_df.x.notnull()]).all()

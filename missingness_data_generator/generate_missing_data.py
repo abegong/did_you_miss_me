@@ -12,8 +12,8 @@ import pandas as pd
 #     MultibatchPlan
 # )
 
-from plan_generators import generate_column_plan
-from series_generators import generate_series_from_plan
+from missingness_data_generator.plan_generators import generate_column_plan
+from missingness_data_generator.series_generators import generate_series_from_plan
 
 def generate_dataframe_with_missingness(
     n_rows: int = 200,

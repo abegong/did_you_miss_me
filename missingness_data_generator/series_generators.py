@@ -2,7 +2,7 @@ import random
 import pandas as pd
 from faker import Faker
 
-from plans import ColumnPlan
+from missingness_data_generator.plans import ColumnPlan
 
 _fake = Faker()
 

@@ -120,5 +120,7 @@ def generate_multibatch_dataframe(
         batches_per_epoch=batches_per_epoch,
     )
 
-    df = multibatch_generator.generate()
+    df = multibatch_generator.generate(
+        add_missingness=add_missingness,
+    )
     return df

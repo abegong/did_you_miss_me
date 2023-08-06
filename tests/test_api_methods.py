@@ -63,3 +63,16 @@ def test__generate_multibatch_dataframe():
     )
 
     assert df.shape == (80, 3)
+    assert df.isnull().sum().sum() > 0
+
+
+    df = dymm.generate_multibatch_dataframe(
+        num_columns=2,
+        exact_rows=20,
+        num_epochs=2,
+        batches_per_epoch=2,
+        add_missingness=False,
+    )
+
+    assert df.shape == (80, 3)
+    assert df.isnull().sum().sum() == 0

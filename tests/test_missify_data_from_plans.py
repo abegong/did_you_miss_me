@@ -56,7 +56,3 @@ def test__missify_series_from_plan():
 
     # Any values that are not null are the same as the original series
     assert (new_series[new_series.notnull()] == series[new_series.notnull()]).all()
-
-
-def test__missify_dataframe_from_plan():
-    pass

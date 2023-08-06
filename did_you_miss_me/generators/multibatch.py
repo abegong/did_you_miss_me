@@ -25,7 +25,7 @@ class EpochGenerator(DataGenerator, ABC):
 class MissingFakerEpochGenerator(EpochGenerator):
     missing_faker_dataframe_generator: MissingFakerDataframeGenerator = Field(
         default_factory=MissingFakerDataframeGenerator.create,
-        description="The plan for generating the dataframes in this epoch.",
+        description="Generator the dataframes in this epoch.",
     )
     num_batches: int = Field(
         default_factory=lambda: int(random.uniform(0, 10) ** 2),

@@ -127,18 +127,10 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
 ### Cleanup
 * Create `DataframeMissingnessModifier.modify` and think through syntax + APIs for `DataModifier` classes.
     * api.missify_dataframe -> DataframeMissingnessModifier.modify
-
-* Reorg code to separate Generators and Modifiers
     * Pull ColumnMissingnessParams and related code into its own file
-    * Remove paths/
-* Refactor tests to cover 1. integration tests at the API level, and 2. tests for specific Plans
 
-* Split up create methods with too many parameters and code paths
-    * MissingFakerEpochGenerator
-    * RowCountWidget > Not a problem, actually
-    * MissingFakerDataframeGenerator
-    * MissingFakerEpochGenerator
-
+* Refactor tests to match new code organization
+* Split up MissingFakerDataframeGenerator.create: it has too many parameters and code paths
 * Figure out how to add random seeds that'll work for Faker and numpy
 
 ### New features

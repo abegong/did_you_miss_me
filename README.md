@@ -121,9 +121,17 @@ Pull requests welcome!
 ## Todo
 
 * Add multibatch planners
+* Activate include_ids param
+* Activate include_timestamps param
+* Refine API for generate_multibatch_dataframe
+
 * Add conditional missingness
 * Add ability to create SQLlite DBs
+* Add ability to save to mutilple files
 * Add langchain stuffs
 * Publish to pypi
 
+* Tighten up typing
+* Refactor and test generate_multibatch_dataframe
+* Move methods from `plan_generators` into __init__ methods for the Plans themselves and add tests.
 

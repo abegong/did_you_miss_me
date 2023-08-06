@@ -17,10 +17,10 @@ def test__generate_dataframe__with_add_missingness_equals_false():
     )
     assert df.isnull().sum().sum() == 0
 
-    # - include_ids (bool): Whether to include a columns simulating primary and foreign keys in the dataset.
-    # - include_timestamps (bool): Whether to include a timestamp column (or columns) in the dataset.
-    # - use_ai (bool): Whether to use artificial intelligence to generate the missingness patterns.
-
+# Other parameters to test:
+# - include_ids (bool): Whether to include a columns simulating primary and foreign keys in the dataset.
+# - include_timestamps (bool): Whether to include a timestamp column (or columns) in the dataset.
+# - use_ai (bool): Whether to use artificial intelligence to generate the missingness patterns.
 
 def test__missify_dataframe():
     df = pd.DataFrame(
@@ -48,3 +48,6 @@ def test__generate_series():
     print(series)
     assert series.shape == (1492,)
 
+
+def test__generate_multibatch_dataframe():
+    dymm.generate_multibatch_dataframe()

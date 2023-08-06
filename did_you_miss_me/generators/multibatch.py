@@ -1,3 +1,4 @@
+from abc import ABC
 import random
 from pydantic import Field
 from typing import List, Optional
@@ -5,13 +6,20 @@ from typing import List, Optional
 import pandas as pd
 
 from did_you_miss_me.abc import (
-    EpochGenerator,
-    MultiBatchGenerator,
+    DataGenerator,
 )
 from did_you_miss_me.generators.dataframe import (
     DataframeGenerator,
     MissingFakerDataframeGenerator,
 )
+
+
+class EpochGenerator(DataGenerator, ABC):
+    """
+    Abstract base class for EpochGenerators
+    """
+
+    pass
 
 
 class MissingFakerEpochGenerator(EpochGenerator):
@@ -53,6 +61,14 @@ class MissingFakerEpochGenerator(EpochGenerator):
             missing_faker_dataframe_generator=missing_faker_dataframe_generator,
             num_batches=num_batches,
         )
+
+
+class MultiBatchGenerator(DataGenerator, ABC):
+    """
+    Abstract base class for MultiBatchGenerators
+    """
+
+    pass
 
 
 class MissingFakerMultiBatchGenerator(MultiBatchGenerator):

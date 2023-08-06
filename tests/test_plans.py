@@ -5,7 +5,7 @@ import pytest
 import random
 
 
-from did_you_miss_me.plans import (
+from did_you_miss_me.generators.multibatch import (
     # ColumnMissingnessPlan,
     # DataframeGenerator,
     # DataframeMissingnessPlan,

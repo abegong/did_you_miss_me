@@ -11,7 +11,7 @@ from did_you_miss_me.generators.column import (
 from did_you_miss_me.generators.dataframe import (
     MissingFakerDataframeGenerator,
 )
-from did_you_miss_me.plans.multibatch_level import (
+from did_you_miss_me.generators.multibatch import (
     MissingFakerMultiBatchGenerator,
 )
 from did_you_miss_me.modifiers.missingness import (

@@ -15,7 +15,6 @@ class DataTool(BaseModel, ABC):
     ) -> Any:
         raise NotImplementedError
 
-### DataGenerators ###
 
 class DataGenerator(DataTool, ABC):
     """
@@ -29,24 +28,6 @@ class DataGenerator(DataTool, ABC):
     ) -> Any:
         raise NotImplementedError
 
-
-class EpochGenerator(DataGenerator, ABC):
-    """
-    Abstract base class for EpochGenerators
-    """
-
-    pass
-
-
-class MultiBatchGenerator(DataGenerator, ABC):
-    """
-    Abstract base class for MultiBatchGenerators
-    """
-
-    pass
-
-
-### DataModifiers ###
 
 class DataModifier(DataTool, ABC):
     """

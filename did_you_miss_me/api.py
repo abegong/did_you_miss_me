@@ -3,6 +3,7 @@ Public-facing methods for generating synthetic missingness data.
 """
 
 import pandas as pd
+from typing import Optional
 
 from did_you_miss_me.plan_generators import (
     generate_column_plan,
@@ -91,9 +92,10 @@ def missify_dataframe(
 
 
 def generate_multibatch_dataframe(
-    # num_rows: int = 200,
-    # num_columns: int = 12,
+    num_rows: int = 200,
+    num_columns: int = 12,
     num_epochs: int = 5,
+    batches_per_epoch: Optional[int] = None,
     add_missingness = True,
     # include_ids = False,
     # include_timestamps = False,
@@ -107,7 +109,10 @@ def generate_multibatch_dataframe(
     """
 
     multibatch_plan = MultiBatchPlan(
+        num_rows=num_rows,
+        num_columns=num_columns,        
         num_epochs=num_epochs,
+        batches_per_epoch=batches_per_epoch,
     )
 
     multibatch_df = pd.DataFrame()

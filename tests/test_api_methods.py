@@ -49,6 +49,12 @@ def test__generate_series():
     assert series.shape == (20,)
 
 
-# Commented out b/c slow!
-# def test__generate_multibatch_dataframe():
-#     dymm.generate_multibatch_dataframe()
+def test__generate_multibatch_dataframe():
+    df = dymm.generate_multibatch_dataframe(
+        num_columns=2,
+        num_rows=20,
+        num_epochs=2,
+        batches_per_epoch=2,
+    )
+
+    assert df.shape == (80, 3)

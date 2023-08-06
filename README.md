@@ -118,21 +118,21 @@ Please see the code itself. Most modules and methods have decent docstrings. If 
 
 Pull requests welcome!
 
+TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've been testing classes and methods as I've discovered bugs, refactored them, or described them in documentation.
+
 ## Todo
 
 * Move methods from `plan_generators` into __init__ methods for the Plans themselves and add tests.
 * Deprecate methods in plan_generators, and use Plan constructors
 
 * Refactor and test generate_multibatch_dataframe
+* Refine API for generate_multibatch_dataframe
+* Add ability to create SQLlite DBs
+* Add ability to save to mutilple files
 
 * Activate include_ids param
 * Activate include_timestamps param
-* Refine API for generate_multibatch_dataframe
 
 * Add conditional missingness
-* Add ability to create SQLlite DBs
-* Add ability to save to mutilple files
 * Add langchain stuffs
 * Publish to pypi
-
-* Tighten up typing

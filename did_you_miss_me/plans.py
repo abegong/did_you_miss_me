@@ -33,6 +33,12 @@ class Plan(ABC):
     * pass in keyword arguments which are used to create the Plan.
         
     If you use the keyword argument approach, the Plan will be created with random values using sensible defaults for ranges.
+
+    This behavior is recursive. For example, if you create a MultibatchPlan with no arguments, it will create a list of EpochPlans with no arguments, which will create a list of DataFramePlans with no arguments, which will create a list of SeriesPlans with no arguments, which will create a list of ColumnPlans with no arguments.
+
+    Plans are designed to be immutable. Once you create a Plan, you cannot change it.
+
+    Plans are designed to be serializable. You can convert a Plan to a dictionary using the .to_dict() method, and you can convert a dictionary to a Plan using the .from_dict() method.
     """
 
     pass
@@ -109,6 +115,13 @@ class DataframeRowGenerationPlan(BaseModel):
     min_rows: Optional[int]
     max_rows: Optional[int]
 
+    @property
+    def num_rows(self):
+        if self._num_rows is not None:
+            return self._num_rows
+        else:
+            return random.randint(self._min_rows, self._max_rows)
+
     def __init__(
         self,
         num_rows: Optional[int] = None,
@@ -146,6 +159,10 @@ class DataframeGenerationPlan(BaseModel):
     @property
     def num_columns(self):
         return len(self.column_plans)
+    
+    @property
+    def num_rows(self):
+        return self.row_plan.num_rows
 
     def __init__(
         self,
@@ -249,6 +266,10 @@ class DataframeMissingnessPlan(BaseModel):
 class DataframePlan(BaseModel):
     column_plans: List[ColumnPlan]
     row_plan : DataframeRowGenerationPlan
+
+    @property
+    def num_rows(self):
+        return self.row_plan.num_rows
 
     def __init__(
         self,
@@ -394,20 +415,28 @@ class MultiBatchPlan(BaseModel):
     def __init__(
         self,
         epochs: Optional[List[EpochPlan]] = None,
-        **kwargs,
+        num_rows: Optional[int] = None,
+        num_columns: Optional[int] = None,
+        num_epochs: Optional[int] = None,
+        batches_per_epoch: Optional[int] = None,
     ):
         if epochs is None:
 
+            if num_epochs is None:
+                num_epochs = random.randint(3, 6)
+
             # By default, all epochs have the same generation plan; only the missingness plans vary.
             # As a result, we need a generation plan, which will be shared across all epochs.
-            generation_plan = DataframeGenerationPlan()
+            generation_plan = DataframeGenerationPlan(
+                num_rows=num_rows,
+                num_columns=num_columns,
+            )
 
-            num_epochs = random.randint(3, 6)
             epochs = [EpochPlan(
                 generation_plan=generation_plan,
+                num_batches=batches_per_epoch,
             ) for _ in range(num_epochs)]
 
         super().__init__(
             epochs=epochs,
-            **kwargs
         )

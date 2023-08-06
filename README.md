@@ -121,7 +121,6 @@ Pull requests welcome!
 ## Todo
 
 * Move methods from `plan_generators` into __init__ methods for the Plans themselves and add tests.
-* Replace `num_rows = random.randint(100, 500)` with a shared utility method.
 * Deprecate methods in plan_generators, and use Plan constructors
 
 * Refactor and test generate_multibatch_dataframe

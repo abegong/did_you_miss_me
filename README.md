@@ -121,11 +121,6 @@ Pull requests welcome!
 TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've been testing classes and methods as I've discovered bugs, refactored them, or described them in documentation.
 
 ## Todo
-* Rename DataframeRowGenerationPlan to ...
-        DataframeGeneratorRowWidget?
-        DataframeRowCountGenerator?
-        DataframeGeneratorRowCountObject?
-        RowCount[...]?
 * Standardize on `DataGenerator.generate` and `DataModifier.modify` syntax, pulling business logic from `series_generators` and API methods into the `Plans` themselves.
     * generate_series_from_plan -> MissingFakerColumnGenerator.generate
     * missify_series_from_plan -> ColumnMissingnessModifier.modify

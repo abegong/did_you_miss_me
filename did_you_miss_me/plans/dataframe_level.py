@@ -19,9 +19,14 @@ from did_you_miss_me.plans.column_level import (
 )
 
 
-class DataframeRowGenerationPlan(BaseModel):
-    """A plan for how many rows to generate."""
+class RowCountWidget(BaseModel):
+    """Specifies how many rows should be generated
     
+    * If exact_rows is specified, then that number of rows will be generated.
+    * Otherwise, if min_rows and max_rows are specified, then a random number of rows
+    between min_rows and max_rows will be generated.
+    """
+
     exact_rows: Optional[int]
     min_rows: Optional[int]
     max_rows: Optional[int]
@@ -66,7 +71,7 @@ class DataframeRowGenerationPlan(BaseModel):
 
 class DataframeGenerator(DataGenerator):
     column_generators: List[ColumnGenerator]
-    row_plan: DataframeRowGenerationPlan
+    row_plan: RowCountWidget
 
     @property
     def num_columns(self):
@@ -79,7 +84,7 @@ class DataframeGenerator(DataGenerator):
     def __init__(
         self,
         column_generators: Optional[List[ColumnGenerator]] = None,
-        row_plan: Optional[DataframeRowGenerationPlan] = None,
+        row_plan: Optional[RowCountWidget] = None,
         exact_rows: Optional[int] = None,
         min_rows: Optional[int] = None,
         max_rows: Optional[int] = None,
@@ -99,7 +104,7 @@ class DataframeGenerator(DataGenerator):
                 column_generators.append(column_generator)
 
         if row_plan is None:
-            row_plan = DataframeRowGenerationPlan(
+            row_plan = RowCountWidget(
                 exact_rows=exact_rows,
                 min_rows=min_rows,
                 max_rows=max_rows,
@@ -180,7 +185,7 @@ class DataframeMissingnessModifier(MissingnessModifier):
 
 class MissingFakerDataframeGenerator(DataGenerator):
     column_generators: List[MissingFakerColumnGenerator]
-    row_plan: DataframeRowGenerationPlan
+    row_plan: RowCountWidget
 
     @property
     def num_rows(self):
@@ -189,7 +194,7 @@ class MissingFakerDataframeGenerator(DataGenerator):
     def __init__(
         self,
         column_generators: Optional[List[ColumnGenerator]] = None,
-        row_plan: Optional[DataframeRowGenerationPlan] = None,
+        row_plan: Optional[RowCountWidget] = None,
         generation_plan: Optional[DataframeGenerator] = None,
         missingness_plan: Optional[DataframeMissingnessModifier] = None,
         num_columns: Optional[int] = None,
@@ -203,7 +208,7 @@ class MissingFakerDataframeGenerator(DataGenerator):
                     num_columns = 12
 
                 if row_plan is None:
-                    row_plan = DataframeRowGenerationPlan(
+                    row_plan = RowCountWidget(
                         exact_rows=exact_rows,
                         min_rows=min_rows,
                         max_rows=max_rows,
@@ -219,7 +224,7 @@ class MissingFakerDataframeGenerator(DataGenerator):
 
             elif generation_plan is None:
                 if row_plan is None:
-                    row_plan = DataframeRowGenerationPlan(
+                    row_plan = RowCountWidget(
                         exact_rows=exact_rows,
                         min_rows=min_rows,
                         max_rows=max_rows,
@@ -250,7 +255,7 @@ class MissingFakerDataframeGenerator(DataGenerator):
 
         else:
             if row_plan is None:
-                row_plan = DataframeRowGenerationPlan(
+                row_plan = RowCountWidget(
                     exact_rows=exact_rows,
                     min_rows=min_rows,
                     max_rows=max_rows,

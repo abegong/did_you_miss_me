@@ -9,7 +9,7 @@ from did_you_miss_me.plans.column_level import (
 from did_you_miss_me.plans.dataframe_level import (
     DataframeGenerator, #noqa: F401
     DataframeMissingnessModifier, #noqa: F401
-    DataframeRowGenerationPlan, #noqa: F401
+    RowCountWidget, #noqa: F401
     MissingFakerDataframeGenerator, #noqa: F401
 )
 from did_you_miss_me.plans.multibatch_level import (

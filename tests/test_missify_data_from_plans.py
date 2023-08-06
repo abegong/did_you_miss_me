@@ -10,9 +10,6 @@ from did_you_miss_me.plans import (
     ColumnMissingnessModifier,
     ProportionalColumnMissingnessParams,
 )
-from did_you_miss_me.series_generators import (
-    missify_series_from_plan,
-)
 
 
 @pytest.fixture(autouse=True)
@@ -20,41 +17,39 @@ def set_random_seed():
     random.seed(1)
 
 
+#!!! Rename
 def test__missify_series_from_plan():
     series = pd.Series(range(100))
 
     # Test with missingness_type=ALWAYS
-    plan = ColumnMissingnessModifier.create(
+    column_modifier = ColumnMissingnessModifier.create(
         missingness_type=ColumnMissingnessType.ALWAYS,
     )
-    new_series = missify_series_from_plan(
+    new_series = column_modifier.modify(
         series=series,
-        plan=plan,
     )
     assert new_series.isna().all()
     assert new_series.shape == series.shape
 
     # Test with missingness_type=NEVER
-    plan = ColumnMissingnessModifier.create(
+    column_modifier = ColumnMissingnessModifier.create(
         missingness_type=ColumnMissingnessType.NEVER,
     )
-    new_series = missify_series_from_plan(
+    new_series = column_modifier.modify(
         series=series,
-        plan=plan,
     )
     assert not new_series.isna().any()
     assert new_series.shape == series.shape
 
     # Test with missingness_type=PROPORTIONAL
-    plan = ColumnMissingnessModifier.create(
+    column_modifier = ColumnMissingnessModifier.create(
         missingness_type=ColumnMissingnessType.PROPORTIONAL,
         missingness_params=ProportionalColumnMissingnessParams(
             proportion=0.5,
         ),
     )
-    new_series = missify_series_from_plan(
+    new_series = column_modifier.modify(
         series=series,
-        plan=plan,
     )
     assert new_series.isna().sum() == 47  # About 50, but not exactly 50
     assert new_series.shape == series.shape

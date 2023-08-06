@@ -1,7 +1,7 @@
 from enum import Enum
 from faker import Faker
 import random
-from typing import Optional
+from typing import Any, Optional
 from pydantic import BaseModel, Field
 
 import pandas as pd
@@ -27,7 +27,7 @@ class FakerColumnGenerator(ColumnGenerator):
 
     _fake = Faker()
 
-    def generate_faker_value(self, faker_type: str):
+    def _generate_faker_value(self, faker_type: str):
         """Generate a value from the faker library.
 
         Args:
@@ -45,7 +45,7 @@ class FakerColumnGenerator(ColumnGenerator):
             n: The number of rows to generate.
         """
 
-        series = pd.Series([self.generate_faker_value(self.faker_type) for i in range(n)])
+        series = pd.Series([self._generate_faker_value(self.faker_type) for i in range(n)])
 
         return series
 
@@ -107,6 +107,28 @@ class ColumnMissingnessModifier(MissingnessModifier):
             missingness_type=missingness_type,
             missingness_params=missingness_params,
         )
+    
+    def modify(
+        self,
+        series: pd.Series,
+    ) -> pd.Series:
+
+        if self.missingness_type == ColumnMissingnessType.ALWAYS:
+            new_series = pd.Series([None for i in range(len(series))])
+
+        elif self.missingness_type == ColumnMissingnessType.NEVER:
+            new_series = series.copy()
+
+        elif self.missingness_type == ColumnMissingnessType.PROPORTIONAL:
+            z = pd.Series([random.random() < self.missingness_params.proportion for i in range(len(series))])
+            new_series = series.copy()
+            new_series[z] = None
+            return new_series
+
+        else:
+            raise ValueError(f"Unrecognized missingness type: {self.missingness_type}")
+
+        return new_series
 
 
 class MissingFakerColumnGenerator(FakerColumnGenerator, ColumnMissingnessModifier):

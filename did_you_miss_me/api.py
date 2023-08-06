@@ -5,9 +5,6 @@ Public-facing methods for generating synthetic missingness data.
 import pandas as pd
 from typing import Optional
 
-from did_you_miss_me.series_generators import (
-    missify_series_from_plan,
-)
 from did_you_miss_me.plans import (
     ColumnMissingnessModifier,
     FakerColumnGenerator,
@@ -58,9 +55,10 @@ def generate_dataframe(
         )
 
         if add_missingness:
-            missified_series = missify_series_from_plan(
+            column_modifier = column_generator
+
+            missified_series = column_modifier.modify(
                 new_series,
-                plan=column_generator,
             )
         else:
             missified_series = new_series
@@ -79,9 +77,8 @@ def missify_dataframe(
     series_dict = {}
     for i, column in enumerate(df.columns):
         column_modifier = ColumnMissingnessModifier.create()
-        missified_series = missify_series_from_plan(
+        missified_series = column_modifier.modify(
             df[column],
-            plan=column_modifier,
         )
         series_dict[column] = missified_series
 
@@ -136,9 +133,8 @@ def generate_multibatch_dataframe(
                 if add_missingness:
                     column_modifier = column_generator
 
-                    missified_series = missify_series_from_plan(
+                    missified_series = column_modifier.modify(
                         new_series,
-                        plan=column_modifier,
                     )
 
                 else:

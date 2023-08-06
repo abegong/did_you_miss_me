@@ -11,8 +11,7 @@ from did_you_miss_me.faker_types import (
 
 ### ABCs ###
 
-@dataclass
-class Plan(ABC):
+class Plan(BaseModel, ABC):
     """
     Abstract class for plans.
 
@@ -44,8 +43,7 @@ class Plan(ABC):
     pass
 
 
-@dataclass
-class GeneratorPlan(Plan, ABC):
+class GenerationPlan(Plan, ABC):
     """
     Abstract class for generator plans.
     """
@@ -53,7 +51,6 @@ class GeneratorPlan(Plan, ABC):
     pass
 
 
-@dataclass
 class MissingnessPlan(Plan, ABC):
     """
     Abstract class for missingness plans.
@@ -61,11 +58,17 @@ class MissingnessPlan(Plan, ABC):
 
     pass
 
+class GenerationAndMissingnessPlan(GenerationPlan, MissingnessPlan, ABC):
+    """
+    Abstract class for plans that include both generation and missingness.
+    """
+
+    pass
+
 
 ### Column-level Plan classes ###
 
-@dataclass
-class ColumnGenerationPlan(Plan):
+class ColumnGenerationPlan(GenerationPlan):
     name: str  # The name of the column
     faker_type: str  # The type of data to generate
 
@@ -77,12 +80,10 @@ class ColumnMissingnessType(str, Enum):
     # CONDITIONAL = "CONDITIONAL"
 
 
-@dataclass
 class ColumnMissingnessPlan(MissingnessPlan):
     missingness_type: ColumnMissingnessType  # The type of missingness to include
 
 
-@dataclass
 class ProportionalColumnMissingnessPlan(ColumnMissingnessPlan):
     proportion: float
 
@@ -93,13 +94,11 @@ class ProportionalColumnMissingnessPlan(ColumnMissingnessPlan):
 #     proportions : Dict
 
 
-@dataclass
-class ColumnPlan(ColumnGenerationPlan, ColumnMissingnessPlan):
+class ColumnPlan(ColumnGenerationPlan, ColumnMissingnessPlan, GenerationAndMissingnessPlan):
     pass
 
 
-@dataclass
-class ProportionalColumnPlan(ColumnPlan, ColumnGenerationPlan, ProportionalColumnMissingnessPlan):
+class ProportionalColumnPlan(ColumnPlan, ColumnGenerationPlan, ProportionalColumnMissingnessPlan, GenerationAndMissingnessPlan):
     pass
 
 
@@ -110,7 +109,7 @@ class ProportionalColumnPlan(ColumnPlan, ColumnGenerationPlan, ProportionalColum
 
 ### Dataframe-level Plan classes ###
 
-class DataframeRowGenerationPlan(BaseModel):
+class DataframeRowGenerationPlan(GenerationPlan):
     num_rows: Optional[int]
     min_rows: Optional[int]
     max_rows: Optional[int]
@@ -152,7 +151,7 @@ class DataframeRowGenerationPlan(BaseModel):
             max_rows=max_rows,
         )
 
-class DataframeGenerationPlan(BaseModel):
+class DataframeGenerationPlan(GenerationPlan):
     column_plans : List[ColumnGenerationPlan]
     row_plan : DataframeRowGenerationPlan
 
@@ -201,7 +200,7 @@ class DataframeGenerationPlan(BaseModel):
         )
 
 
-class DataframeMissingnessPlan(BaseModel):
+class DataframeMissingnessPlan(MissingnessPlan):
     column_plans : List[ColumnMissingnessPlan]
 
     @property
@@ -263,7 +262,7 @@ class DataframeMissingnessPlan(BaseModel):
                 missingness_type=missingness_type, proportion=proportion
             )
 
-class DataframePlan(BaseModel):
+class DataframePlan(GenerationAndMissingnessPlan):
     column_plans: List[ColumnPlan]
     row_plan : DataframeRowGenerationPlan
 
@@ -378,7 +377,7 @@ class DataframePlan(BaseModel):
 
 ### Epoch and Multibatch Plan classes ###
 
-class EpochPlan(BaseModel):
+class EpochPlan(GenerationAndMissingnessPlan):
     dataframe_plan : DataframePlan
     num_batches : int
 
@@ -405,7 +404,7 @@ class EpochPlan(BaseModel):
             num_batches=num_batches,
         )
 
-class MultiBatchPlan(BaseModel):
+class MultiBatchPlan(GenerationAndMissingnessPlan):
     epochs : List[EpochPlan]
 
     @property

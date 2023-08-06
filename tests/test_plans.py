@@ -11,7 +11,7 @@ from did_you_miss_me.plans import (
     # DataframeMissingnessPlan,
     MissingFakerDataframeGenerator,
     EpochGenerator,
-    MultiBatchPlan,
+    MultiBatchGenerator,
 )
 
 
@@ -42,7 +42,7 @@ def test__epoch_plan():
 
 def test__multi_batch_plan():
     # This is just a smoke test to make sure that the plan can be constructed.
-    plan = MultiBatchPlan()
+    plan = MultiBatchGenerator()
     # print(plan.model_dump_json())
     print(json.dumps(plan.model_dump(), indent=2))
 

@@ -14,5 +14,5 @@ from did_you_miss_me.plans.dataframe_level import (
 )
 from did_you_miss_me.plans.multibatch_level import (
     EpochGenerator,#noqa: F401
-    MultiBatchPlan, #noqa: F401
+    MultiBatchGenerator, #noqa: F401
 )

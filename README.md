@@ -121,8 +121,6 @@ Pull requests welcome!
 TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've been testing classes and methods as I've discovered bugs, refactored them, or described them in documentation.
 
 ## Todo
-
-* Rename MultiBatchPlan to MultiBatchGenerator
 * Rename DataframeRowGenerationPlan to ...
         DataframeGeneratorRowWidget?
         DataframeRowCountGenerator?

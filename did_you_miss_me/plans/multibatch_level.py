@@ -37,7 +37,7 @@ class EpochGenerator(DataGenerator):
         )
 
 
-class MultiBatchPlan(DataGenerator):
+class MultiBatchGenerator(DataGenerator):
     epochs: List[EpochGenerator]
 
     @property

@@ -13,7 +13,7 @@ from did_you_miss_me.plans import (
     ColumnMissingnessModifier,
     FakerColumnGenerator,
     MissingFakerColumnGenerator,
-    MultiBatchPlan,
+    MultiBatchGenerator,
 )
 
 
@@ -109,7 +109,7 @@ def generate_multibatch_dataframe(
     - add_missingness (bool): Whether to add missingness to the dataset.
     """
 
-    multibatch_plan = MultiBatchPlan(
+    multibatch_plan = MultiBatchGenerator(
         exact_rows=exact_rows,
         num_columns=num_columns,
         num_epochs=num_epochs,

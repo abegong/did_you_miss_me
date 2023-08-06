@@ -28,7 +28,7 @@ def test__dataframe_plan():
 
 def test__epoch_plan():
     # This is just a smoke test to make sure that the plan can be constructed.
-    plan = EpochGenerator(
+    plan = EpochGenerator.create(
         num_batches=3,
         # min_rows=10,
         # max_rows=20,
@@ -42,7 +42,7 @@ def test__epoch_plan():
 
 def test__multi_batch_plan():
     # This is just a smoke test to make sure that the plan can be constructed.
-    plan = MultiBatchGenerator()
+    plan = MultiBatchGenerator.create()
     # print(plan.model_dump_json())
     print(json.dumps(plan.model_dump(), indent=2))
 

@@ -106,7 +106,7 @@ def generate_multibatch_dataframe(
     - add_missingness (bool): Whether to add missingness to the dataset.
     """
 
-    multibatch_plan = MultiBatchGenerator(
+    multibatch_plan = MultiBatchGenerator.create(
         exact_rows=exact_rows,
         num_columns=num_columns,
         num_epochs=num_epochs,

@@ -1,4 +1,5 @@
 import random
+from pydantic import Field
 from typing import List, Optional
 
 from did_you_miss_me.plans.abc import (
@@ -9,13 +10,19 @@ from did_you_miss_me.plans.dataframe_level import (
     MissingFakerDataframeGenerator,
 )
 
-
 class EpochGenerator(DataGenerator):
-    dataframe_plan: MissingFakerDataframeGenerator
-    num_batches: int
+    dataframe_plan: MissingFakerDataframeGenerator = Field(
+        default_factory=MissingFakerDataframeGenerator.create,
+        description="The plan for generating the dataframes in this epoch.",
+    )
+    num_batches: int = Field(
+        default_factory=lambda: int(random.uniform(0, 10) ** 2),
+        description="The number of batches to generate in this epoch.",
+    )
 
-    def __init__(
-        self,
+    @classmethod
+    def create(
+        cls,
         dataframe_plan: Optional[MissingFakerDataframeGenerator] = None,
         generation_plan: Optional[DataframeGenerator] = None,
         num_batches: Optional[int] = None,
@@ -31,7 +38,7 @@ class EpochGenerator(DataGenerator):
                 generation_plan=generation_plan,
             )
 
-        super().__init__(
+        return cls(
             dataframe_plan=dataframe_plan,
             num_batches=num_batches,
         )
@@ -44,8 +51,9 @@ class MultiBatchGenerator(DataGenerator):
     def num_epochs(self):
         return len(self.epochs)
 
-    def __init__(
-        self,
+    @classmethod
+    def create(
+        cls,
         epochs: Optional[List[EpochGenerator]] = None,
         exact_rows: Optional[int] = None,
         min_rows: Optional[int] = None,
@@ -68,13 +76,13 @@ class MultiBatchGenerator(DataGenerator):
             )
 
             epochs = [
-                EpochGenerator(
+                EpochGenerator.create(
                     generation_plan=generation_plan,
                     num_batches=batches_per_epoch,
                 )
                 for _ in range(num_epochs)
             ]
 
-        super().__init__(
+        return cls(
             epochs=epochs,
         )

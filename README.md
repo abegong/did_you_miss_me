@@ -121,11 +121,7 @@ Pull requests welcome!
 TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've been testing classes and methods as I've discovered bugs, refactored them, or described them in documentation.
 
 ## Todo
-* Remove BaseModel.__init__ methods in favor of Fields and .create methods.
-
 * Standardize on `DataGenerator.generate` and `DataModifier.modify` syntax, pulling business logic from `series_generators` and API methods into the `Plans` themselves.
-    * generate_series_from_plan -> MissingFakerColumnGenerator.generate
-    * missify_series_from_plan -> ColumnMissingnessModifier.modify
     * api.generate_dataframe -> MissingFakerDataframeGenerator.generate
     * api.missify_dataframe -> DataframeMissingnessModifier.modify
     * api.generate_multibatch_dataframe -> MultiBatchPlan

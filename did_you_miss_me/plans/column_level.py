@@ -38,14 +38,14 @@ class FakerColumnGenerator(ColumnGenerator):
         return value
 
 
-    def generate(self, n: int) -> pd.Series:
+    def generate(self, num_rows: int) -> pd.Series:
         """Generate a series of random data
 
         Args:
-            n: The number of rows to generate.
+            num_rows: The number of rows to generate.
         """
 
-        series = pd.Series([self._generate_faker_value(self.faker_type) for i in range(n)])
+        series = pd.Series([self._generate_faker_value(self.faker_type) for i in range(num_rows)])
 
         return series
 
@@ -171,3 +171,17 @@ class MissingFakerColumnGenerator(FakerColumnGenerator, ColumnMissingnessModifie
             missingness_type=missingness_type,
             missingness_params=missingness_params,
         )
+    
+    def generate(
+        self,
+        num_rows: int,
+        add_missingness: bool = True,
+    ) -> pd.Series:
+        series = super().generate(num_rows=num_rows)
+
+        if add_missingness:
+            modified_series = self.modify(series)
+        else:
+            modified_series = series
+
+        return modified_series

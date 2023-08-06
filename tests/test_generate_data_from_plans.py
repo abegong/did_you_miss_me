@@ -20,12 +20,12 @@ def set_random_seed():
 
 #!!! Rename this
 def test__generate_series_from_plan__column_missingness_type__always():
-    plan = FakerColumnGenerator(
+    generator = FakerColumnGenerator(
         name="test_column",
         faker_type="am_pm",
     )
-    series = plan.generate(
-        n=20,
+    series = generator.generate(
+        num_rows=20,
     )
 
     assert series.notnull().all()

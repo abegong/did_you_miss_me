@@ -88,12 +88,15 @@ class DataframeGenerator(DataGenerator):
     def create(
         cls,
         column_generators: Optional[List[ColumnGenerator]] = None,
+        num_columns: Optional[int] = None,
         row_count_widget: Optional[RowCountWidget] = None,
         exact_rows: Optional[int] = None,
         min_rows: Optional[int] = None,
         max_rows: Optional[int] = None,
-        num_columns: Optional[int] = None,
     ):
+        assert (column_generators is None) or (num_columns is None), "You cannot specify both column_generators and num_columns."
+        assert (row_count_widget is None) or (exact_rows is None ) or (min_rows is None and max_rows is None), "You cannot specify row_count_widget, exact_rows, and min_rows/max_rows."
+
         if column_generators is None:
             if num_columns is None:
                 num_columns = 12
@@ -286,19 +289,11 @@ class MissingFakerDataframeGenerator(DataGenerator):
         series_dict = {}
         for i, column_generator in enumerate(self.column_generators):
             new_series = column_generator.generate(
-                n=self.num_rows,
+                num_rows=self.num_rows,
+                add_missingness=add_missingness,
             )
 
-            if add_missingness:
-                column_modifier = column_generator
-
-                missified_series = column_modifier.modify(
-                    new_series,
-                )
-            else:
-                missified_series = new_series
-
-            series_dict[column_generator.name] = missified_series
+            series_dict[column_generator.name] = new_series
 
         df = pd.DataFrame(series_dict)
 

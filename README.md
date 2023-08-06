@@ -131,6 +131,12 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
     * Pull ColumnMissingnessParams and related code into its own file
 * Refactor tests to cover 1. integration tests at the API level, and 2. tests for specific Plans
 
+* Split up create methods with too many parameters and code paths
+    * MissingFakerEpochGenerator
+    * RowCountWidget > Not a problem, actually
+    * MissingFakerDataframeGenerator
+    * MissingFakerEpochGenerator
+
 * Add ability to create SQLlite DBs
 * Add ability to save to mutilple files
 
@@ -140,6 +146,7 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
     * Activate include_ids param
     * Activate include_timestamps param
 
+* Figure out how to add random seeds that'll work for Faker and numpy
 * Add conditional missingness
 * Add langchain stuffs
 * Publish to pypi

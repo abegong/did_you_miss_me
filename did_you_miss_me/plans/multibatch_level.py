@@ -26,32 +26,27 @@ class MissingFakerEpochGenerator(EpochGenerator):
     @classmethod
     def create(
         cls,
-        missing_faker_dataframe_generator: Optional[MissingFakerDataframeGenerator] = None,
         dataframe_generator: Optional[DataframeGenerator] = None,
         num_batches: Optional[int] = None,
     ) -> "MissingFakerEpochGenerator":
         """Create a plan for generating an Epoch, with missingness and Faker data.
         
         Args:
-            missing_faker_dataframe_generator (MissingFakerDataframeGenerator): The full plan for generating the dataframes in this epoch.
-            dataframe_generator (DataframeGenerator): A plan for generating the dataframes in this epoch.
+            dataframe_generator (DataframeGenerator): A basic (no missingness) generator for this epoch.
             num_batches (int): The number of batches to generate in this epoch.
 
         Note:
-            If `missing_faker_dataframe_generator` is provided, it must specify a complete MissingFakerDataframeGenerator.
-            If it is not provided, then `dataframe_generator` must be provided.
-                `dataframe_generator` will be used to create a MissingFakerDataframeGenerator.
+            `dataframe_generator` will be used to create a MissingFakerDataframeGenerator.
         """
         if num_batches is None:
             num_batches = int(random.uniform(0, 10) ** 2)
 
-        if missing_faker_dataframe_generator is None:
-            if dataframe_generator is None:
-                dataframe_generator = DataframeGenerator.create()
+        if dataframe_generator is None:
+            dataframe_generator = DataframeGenerator.create()
 
-            missing_faker_dataframe_generator = MissingFakerDataframeGenerator.create(
-                dataframe_generator=dataframe_generator,
-            )
+        missing_faker_dataframe_generator = MissingFakerDataframeGenerator.create(
+            dataframe_generator=dataframe_generator,
+        )
 
         return cls(
             missing_faker_dataframe_generator=missing_faker_dataframe_generator,
@@ -81,8 +76,8 @@ class MissingFakerMultiBatchGenerator(MultiBatchGenerator):
             if num_epochs is None:
                 num_epochs = random.randint(3, 6)
 
-            # By default, all epochs have the same generation plan; only the missingness plans vary.
-            # As a result, we need a generation plan, which will be shared across all epochs.
+            # By default, all epochs share the same generator; only the missingness modifiers vary.
+            # As a result, we need a generator, which will be shared across all epochs.
             dataframe_generator = DataframeGenerator.create(
                 exact_rows=exact_rows,
                 min_rows=min_rows,
@@ -123,7 +118,7 @@ class MissingFakerMultiBatchGenerator(MultiBatchGenerator):
                     epoch_generator.missing_faker_dataframe_generator.column_generators
                 ):
                     new_series = column_generator.generate(
-                        n=epoch_generator.missing_faker_dataframe_generator.num_rows,
+                        num_rows=epoch_generator.missing_faker_dataframe_generator.num_rows,
                     )
 
                     if add_missingness:

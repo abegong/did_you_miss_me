@@ -15,14 +15,16 @@ from did_you_miss_me.plans import (
 
 
 def generate_series(
-    n: int = 200,
+    num_rows: int = 200,
 ) -> pd.Series:
-    plan = FakerColumnGenerator(
+    generator = MissingFakerColumnGenerator.create(
         name="my_column",
+        missingness_type="PROPORTIONAL",
     )
-    series = plan.generate(
-        n=n,
+    series = generator.generate(
+        num_rows=num_rows,
     )
+    print(series)
 
     return series
 

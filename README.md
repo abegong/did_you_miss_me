@@ -129,7 +129,6 @@ Pull requests welcome!
 * Activate include_timestamps param
 * Refine API for generate_multibatch_dataframe
 
-* #!!! Change this to column_plans
 * Standardize on `num_*` instead of `n_*`
 * Add conditional missingness
 * Add ability to create SQLlite DBs

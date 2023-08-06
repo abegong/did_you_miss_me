@@ -131,21 +131,20 @@ class DataframeGenerationPlan(BaseModel):
         )
 
 class DataframeMissingnessPlan(BaseModel):
-    #!!! Change this to column_plans
-    columns : List[ColumnMissingnessPlan]
+    column_plans : List[ColumnMissingnessPlan]
 
     def __init__(
         self,
         columns: Optional[List[ColumnMissingnessPlan]] = None,
     ):
         if columns is None:
-            columns = []
+            column_plans = []
             for i in range(12):
                 column_plan = self._generate_column_plan()
-                columns.append(column_plan)
+                column_plans.append(column_plan)
         
         super().__init__(
-            columns=columns,
+            column_plans=column_plans,
         )
 
     @staticmethod

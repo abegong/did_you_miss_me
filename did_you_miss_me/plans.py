@@ -104,12 +104,44 @@ class ProportionalColumnPlan(ColumnPlan, ColumnGenerationPlan, ProportionalColum
 
 ### Dataframe-level Plan classes ###
 
+class DataframeRowGenerationPlan(BaseModel):
+    num_rows: Optional[int]
+    min_rows: Optional[int]
+    max_rows: Optional[int]
+
+    def __init__(
+        self,
+        num_rows: Optional[int] = None,
+        min_rows: Optional[int] = None,
+        max_rows: Optional[int] = None,
+    ):
+        has_min_max = (min_rows is not None) and (max_rows is not None)
+        
+        if min_rows is None and max_rows is not None:
+            raise ValueError("If you specify max_rows, you must also specify min_rows.")
+        
+        elif min_rows is not None and max_rows is None:
+            raise ValueError("If you specify min_rows, you must also specify max_rows.")
+
+        if num_rows is None and not has_min_max:
+            if random.random() < 0.5:
+                num_rows = random.randint(100, 500)
+            else:
+                min_rows = random.randint(50, 400)
+                max_rows = random.randint(min_rows, min_rows + 100)
+        
+        elif num_rows is not None and has_min_max:
+            raise ValueError("You cannot specify both num_rows and min_rows/max_rows.")
+
+        super().__init__(
+            num_rows=num_rows,
+            min_rows=min_rows,
+            max_rows=max_rows,
+        )
+
 class DataframeGenerationPlan(BaseModel):
     column_plans : List[ColumnGenerationPlan]
-    num_rows : int #!!! Extend this to allow for different numbers of rows per dataframe
-    
-    # min_rows : Optional[int] = None
-    # max_rows : Optional[int] = None
+    row_plan : DataframeRowGenerationPlan
 
     @property
     def num_columns(self):
@@ -118,7 +150,10 @@ class DataframeGenerationPlan(BaseModel):
     def __init__(
         self,
         column_plans: Optional[List[ColumnGenerationPlan]] = None,
+        row_plan: Optional[DataframeRowGenerationPlan] = None,
         num_rows: Optional[int] = None,
+        min_rows: Optional[int] = None,
+        max_rows: Optional[int] = None,
         num_columns: Optional[int] = None,
     ):
         if column_plans is None:
@@ -136,12 +171,16 @@ class DataframeGenerationPlan(BaseModel):
                 # generate_column_plan(column_index=i + 1)
                 column_plans.append(column_plan)
         
-        if num_rows is None:
-            num_rows = random.randint(100, 500)
+        if row_plan is None:
+            row_plan = DataframeRowGenerationPlan(
+                num_rows=num_rows,
+                min_rows=min_rows,
+                max_rows=max_rows,
+            )
         
         super().__init__(
             column_plans=column_plans,
-            num_rows=num_rows,
+            row_plan=row_plan,
         )
 
 
@@ -209,23 +248,30 @@ class DataframeMissingnessPlan(BaseModel):
 
 class DataframePlan(BaseModel):
     column_plans: List[ColumnPlan]
-    num_rows: int
+    row_plan : DataframeRowGenerationPlan
 
     def __init__(
         self,
         column_plans: Optional[List[ColumnPlan]] = None,
+        row_plan: Optional[DataframeRowGenerationPlan] = None,
         generation_plan: Optional[DataframeGenerationPlan] = None,
         missingness_plan: Optional[DataframeMissingnessPlan] = None,
         num_columns: Optional[int] = None,
         num_rows: Optional[int] = None,
+        min_rows: Optional[int] = None,
+        max_rows: Optional[int] = None,
     ):
         if column_plans is None:
             if generation_plan is None and missingness_plan is None:
                 if num_columns is None:
                     num_columns = 12
 
-                if num_rows is None:
-                    num_rows = random.randint(100, 500)
+                if row_plan is None:
+                    row_plan = DataframeRowGenerationPlan(
+                        num_rows=num_rows,
+                        min_rows=min_rows,
+                        max_rows=max_rows,
+                    )
                 
                 generation_plan = DataframeGenerationPlan(
                     num_columns=num_columns,
@@ -236,8 +282,12 @@ class DataframePlan(BaseModel):
                 )
 
             elif generation_plan is None:
-                if num_rows is None:
-                    num_rows = random.randint(100, 500)
+                if row_plan is None:
+                    row_plan = DataframeRowGenerationPlan(
+                        num_rows=num_rows,
+                        min_rows=min_rows,
+                        max_rows=max_rows,
+                    )
 
                 generation_plan = DataframeGenerationPlan(
                     num_columns=missingness_plan.num_columns,
@@ -249,7 +299,7 @@ class DataframePlan(BaseModel):
                     num_columns=generation_plan.num_columns,
                 )
 
-                num_rows = generation_plan.num_rows
+                row_plan = generation_plan.row_plan
         
             else:
                 assert generation_plan.num_columns == missingness_plan.num_columns
@@ -263,12 +313,16 @@ class DataframePlan(BaseModel):
                 column_plans.append(column_plan)
         
         else:
-            if num_rows is None:
-                num_rows = random.randint(100, 500)
+            if row_plan is None:
+                row_plan = DataframeRowGenerationPlan(
+                    num_rows=num_rows,
+                    min_rows=min_rows,
+                    max_rows=max_rows,
+                )
             
         super().__init__(
             column_plans=column_plans,
-            num_rows=num_rows,
+            row_plan=row_plan,
         )
 
     @staticmethod
@@ -315,7 +369,6 @@ class EpochPlan(BaseModel):
     ):                        
         if num_batches is None:
             num_batches = int(random.uniform(0,10) ** 2)
-            # num_batches = random.randint(3, 6)
 
         if dataframe_plan is None:
 

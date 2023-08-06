@@ -109,7 +109,7 @@ class MultiBatchGenerator(DataGenerator):
 
         batch_id = 0
         for j, epoch_generator in enumerate(self.epochs):
-            # print(f"Epoch: {j} of {multibatch_plan.num_epochs}")
+            # print(f"Epoch: {j} of {self.num_epochs}")
 
             for k in range(epoch_generator.num_batches):
                 # print(f"Batch: {k} of {epoch_generator.num_batches}")

@@ -9,18 +9,29 @@ from did_you_miss_me.faker_types import (
 )
 from did_you_miss_me.plans.abc import (
     DataGenerator,
-    MissingnessModifier,
+    # MissingnessModifier,
 )
-from did_you_miss_me.plans.column_level import (
+# from did_you_miss_me.plans.column_level import (
+#     ColumnGenerator,
+#     FakerColumnGenerator,
+#     MissingFakerColumnGenerator,
+#     ColumnMissingnessType,
+#     ColumnMissingnessModifier,
+#     ProportionalColumnMissingnessParams,
+# )
+from did_you_miss_me.plans.row_count_widget import (
+    RowCountWidget,
+)
+from did_you_miss_me.generators.column import (
     ColumnGenerator,
     FakerColumnGenerator,
     MissingFakerColumnGenerator,
+)
+from did_you_miss_me.modifiers.missingness import (
+    MissingnessModifier,
     ColumnMissingnessType,
     ColumnMissingnessModifier,
     ProportionalColumnMissingnessParams,
-)
-from did_you_miss_me.plans.row_count_widget import (
-    RowCountWidget,
 )
 
 

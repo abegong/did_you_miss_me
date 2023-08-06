@@ -2,8 +2,6 @@ from pydantic import BaseModel
 from abc import ABC
 from typing import Any
 
-### ABCs ###
-
 
 class DataTool(BaseModel, ABC):
     """
@@ -17,6 +15,7 @@ class DataTool(BaseModel, ABC):
     ) -> Any:
         raise NotImplementedError
 
+### DataGenerators ###
 
 class DataGenerator(DataTool, ABC):
     """
@@ -29,27 +28,6 @@ class DataGenerator(DataTool, ABC):
         **kwargs,
     ) -> Any:
         raise NotImplementedError
-
-
-class DataModifier(DataTool, ABC):
-    """
-    Abstract base class for DataModifiers
-    """
-
-    def modify(
-        self,
-        *args,
-        **kwargs,
-    ) -> Any:
-        raise NotImplementedError
-
-
-class MissingnessModifier(DataModifier, ABC):
-    """
-    Abstract base class for DataModifiers that add missingness to data.
-    """
-
-    pass
 
 
 class EpochGenerator(DataGenerator, ABC):
@@ -66,3 +44,18 @@ class MultiBatchGenerator(DataGenerator, ABC):
     """
 
     pass
+
+
+### DataModifiers ###
+
+class DataModifier(DataTool, ABC):
+    """
+    Abstract base class for DataModifiers
+    """
+
+    def modify(
+        self,
+        *args,
+        **kwargs,
+    ) -> Any:
+        raise NotImplementedError

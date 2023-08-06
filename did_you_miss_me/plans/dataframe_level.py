@@ -23,7 +23,7 @@ from did_you_miss_me.plans.column_level import (
 
 class RowCountWidget(BaseModel):
     """Specifies how many rows should be generated
-    
+
     * If exact_rows is specified, then that number of rows will be generated.
     * Otherwise, if min_rows and max_rows are specified, then a random number of rows
     between min_rows and max_rows will be generated.
@@ -63,7 +63,9 @@ class RowCountWidget(BaseModel):
                 max_rows = random.randint(min_rows, min_rows + 100)
 
         elif exact_rows is not None and has_min_max:
-            raise ValueError("You cannot specify both exact_rows and min_rows/max_rows.")
+            raise ValueError(
+                "You cannot specify both exact_rows and min_rows/max_rows."
+            )
 
         return cls(
             exact_rows=exact_rows,
@@ -94,8 +96,14 @@ class DataframeGenerator(DataGenerator):
         min_rows: Optional[int] = None,
         max_rows: Optional[int] = None,
     ):
-        assert (column_generators is None) or (num_columns is None), "You cannot specify both column_generators and num_columns."
-        assert (row_count_widget is None) or (exact_rows is None ) or (min_rows is None and max_rows is None), "You cannot specify row_count_widget, exact_rows, and min_rows/max_rows."
+        assert (column_generators is None) or (
+            num_columns is None
+        ), "You cannot specify both column_generators and num_columns."
+        assert (
+            (row_count_widget is None)
+            or (exact_rows is None)
+            or (min_rows is None and max_rows is None)
+        ), "You cannot specify row_count_widget, exact_rows, and min_rows/max_rows."
 
         if column_generators is None:
             if num_columns is None:
@@ -252,7 +260,9 @@ class MissingFakerDataframeGenerator(DataGenerator):
                 row_count_widget = dataframe_generator.row_count_widget
 
             else:
-                assert dataframe_generator.num_columns == missingness_modifier.num_columns
+                assert (
+                    dataframe_generator.num_columns == missingness_modifier.num_columns
+                )
 
             column_generators = []
             for i in range(dataframe_generator.num_columns):
@@ -274,14 +284,14 @@ class MissingFakerDataframeGenerator(DataGenerator):
             column_generators=column_generators,
             row_count_widget=row_count_widget,
         )
-    
+
     def generate(
         self,
         add_missingness: bool = True,
     ) -> pd.DataFrame:
         """
         Generate a dataframe with the specified number of rows and columns, with missingness applied
-        
+
         Parameters:
             add_missingness: Whether to add missingness to the generated dataframe
         """

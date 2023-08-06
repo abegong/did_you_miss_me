@@ -7,7 +7,6 @@ from typing import Optional
 
 from did_you_miss_me.plans import (
     ColumnMissingnessModifier,
-    FakerColumnGenerator,
     MissingFakerColumnGenerator,
     MissingFakerMultiBatchGenerator,
     MissingFakerDataframeGenerator,

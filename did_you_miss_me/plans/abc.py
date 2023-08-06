@@ -15,7 +15,6 @@ class DataTool(BaseModel, ABC):
         *args,
         **kwargs,
     ) -> Any:
-
         raise NotImplementedError
 
 
@@ -29,7 +28,6 @@ class DataGenerator(DataTool, ABC):
         *args,
         **kwargs,
     ) -> Any:
-
         raise NotImplementedError
 
 
@@ -43,8 +41,8 @@ class DataModifier(DataTool, ABC):
         *args,
         **kwargs,
     ) -> Any:
-
         raise NotImplementedError
+
 
 class MissingnessModifier(DataModifier, ABC):
     """
@@ -53,12 +51,14 @@ class MissingnessModifier(DataModifier, ABC):
 
     pass
 
+
 class EpochGenerator(DataGenerator, ABC):
     """
     Abstract base class for EpochGenerators
     """
 
     pass
+
 
 class MultiBatchGenerator(DataGenerator, ABC):
     """

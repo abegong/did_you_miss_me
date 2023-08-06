@@ -33,8 +33,9 @@ def test__generate_series_from_plan__column_missingness_type__always():
     print(series[:5].tolist())
     assert ("AM" in series.tolist()) or ("PM" in series.tolist())
 
+
 def test__generate_multibatch_dataframe():
-    df = generate_multibatch_dataframe(
+    generate_multibatch_dataframe(
         num_columns=2,
         # num_rows=20,
         num_epochs=2,

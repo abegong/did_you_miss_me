@@ -13,6 +13,7 @@ from did_you_miss_me.plans.dataframe_level import (
     MissingFakerDataframeGenerator,
 )
 
+
 class MissingFakerEpochGenerator(EpochGenerator):
     missing_faker_dataframe_generator: MissingFakerDataframeGenerator = Field(
         default_factory=MissingFakerDataframeGenerator.create,
@@ -30,7 +31,7 @@ class MissingFakerEpochGenerator(EpochGenerator):
         num_batches: Optional[int] = None,
     ) -> "MissingFakerEpochGenerator":
         """Create a plan for generating an Epoch, with missingness and Faker data.
-        
+
         Args:
             dataframe_generator (DataframeGenerator): A basic (no missingness) generator for this epoch.
             num_batches (int): The number of batches to generate in this epoch.
@@ -96,7 +97,7 @@ class MissingFakerMultiBatchGenerator(MultiBatchGenerator):
         return cls(
             epochs=epochs,
         )
-    
+
     def generate(
         self,
         add_missingness: bool = True,
@@ -111,7 +112,10 @@ class MissingFakerMultiBatchGenerator(MultiBatchGenerator):
                 # print(f"Batch: {k} of {epoch_generator.num_batches}")
 
                 series_dict = {}
-                batch_id_series = pd.Series([batch_id] * epoch_generator.missing_faker_dataframe_generator.num_rows)
+                batch_id_series = pd.Series(
+                    [batch_id]
+                    * epoch_generator.missing_faker_dataframe_generator.num_rows
+                )
                 series_dict["batch_id"] = batch_id_series
 
                 for i, column_generator in enumerate(
@@ -136,6 +140,6 @@ class MissingFakerMultiBatchGenerator(MultiBatchGenerator):
                 df = pd.DataFrame(series_dict)
                 multibatch_df = pd.concat([multibatch_df, df], ignore_index=True)
 
-                batch_id += 1                
-                
+                batch_id += 1
+
         return multibatch_df

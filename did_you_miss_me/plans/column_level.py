@@ -1,7 +1,7 @@
 from enum import Enum
 from faker import Faker
 import random
-from typing import Any, Optional
+from typing import Optional
 from pydantic import BaseModel, Field
 
 import pandas as pd
@@ -12,17 +12,19 @@ from did_you_miss_me.plans.abc import (
 )
 from did_you_miss_me.faker_types import FAKER_TYPES
 
+
 class ColumnGenerator(DataGenerator):
     pass
+
 
 class FakerColumnGenerator(ColumnGenerator):
     name: str = Field(
         default_factory=lambda: f"column_{random.randint(0, 1000000)}",
-        description="The name of the column"
+        description="The name of the column",
     )
     faker_type: str = Field(
         default_factory=lambda: random.choice(FAKER_TYPES),
-        description="The name of the faker method to call to generate column values."
+        description="The name of the faker method to call to generate column values.",
     )
 
     _fake = Faker()
@@ -37,7 +39,6 @@ class FakerColumnGenerator(ColumnGenerator):
         value = method()
         return value
 
-
     def generate(self, num_rows: int) -> pd.Series:
         """Generate a series of random data
 
@@ -45,7 +46,9 @@ class FakerColumnGenerator(ColumnGenerator):
             num_rows: The number of rows to generate.
         """
 
-        series = pd.Series([self._generate_faker_value(self.faker_type) for i in range(num_rows)])
+        series = pd.Series(
+            [self._generate_faker_value(self.faker_type) for i in range(num_rows)]
+        )
 
         return series
 
@@ -68,24 +71,27 @@ WEIGHTED_MISSINGNESS_TYPES = [
     # "CONDITIONAL",
 ]
 
+
 class ColumnMissingnessParams(BaseModel):
     pass
 
+
 class ProportionalColumnMissingnessParams(ColumnMissingnessParams):
     proportion: float
+
 
 # class ConditionalColumnMissingnessParams(ColumnMissingnessParams):
 #     conditional_column_name : str
 #     proportions : Dict
 
+
 class ColumnMissingnessModifier(MissingnessModifier):
     missingness_type: ColumnMissingnessType = Field(
         default_factory=lambda: random.choice(WEIGHTED_MISSINGNESS_TYPES),
-        description="The type of missingness to include"
+        description="The type of missingness to include",
     )
     missingness_params: Optional[ColumnMissingnessParams] = Field(
-        None,
-        description="Parameters for the missingness type"
+        None, description="Parameters for the missingness type"
     )
 
     @classmethod
@@ -107,12 +113,11 @@ class ColumnMissingnessModifier(MissingnessModifier):
             missingness_type=missingness_type,
             missingness_params=missingness_params,
         )
-    
+
     def modify(
         self,
         series: pd.Series,
     ) -> pd.Series:
-
         if self.missingness_type == ColumnMissingnessType.ALWAYS:
             new_series = pd.Series([None for i in range(len(series))])
 
@@ -120,7 +125,12 @@ class ColumnMissingnessModifier(MissingnessModifier):
             new_series = series.copy()
 
         elif self.missingness_type == ColumnMissingnessType.PROPORTIONAL:
-            z = pd.Series([random.random() < self.missingness_params.proportion for i in range(len(series))])
+            z = pd.Series(
+                [
+                    random.random() < self.missingness_params.proportion
+                    for i in range(len(series))
+                ]
+            )
             new_series = series.copy()
             new_series[z] = None
             return new_series
@@ -132,7 +142,6 @@ class ColumnMissingnessModifier(MissingnessModifier):
 
 
 class MissingFakerColumnGenerator(FakerColumnGenerator, ColumnMissingnessModifier):
-
     @classmethod
     def create(
         cls,
@@ -143,7 +152,7 @@ class MissingFakerColumnGenerator(FakerColumnGenerator, ColumnMissingnessModifie
     ):
         if name is None:
             name = f"column_{random.randint(0, 1000000)}"
-        
+
         if faker_type is None:
             faker_type = random.choice(FAKER_TYPES)
 
@@ -171,7 +180,7 @@ class MissingFakerColumnGenerator(FakerColumnGenerator, ColumnMissingnessModifie
             missingness_type=missingness_type,
             missingness_params=missingness_params,
         )
-    
+
     def generate(
         self,
         num_rows: int,

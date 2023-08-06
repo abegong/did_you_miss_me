@@ -8,7 +8,7 @@ from did_you_miss_me.plans.abc import (
     EpochGenerator,
     MultiBatchGenerator,
 )
-from did_you_miss_me.plans.dataframe_level import (
+from did_you_miss_me.generators.dataframe import (
     DataframeGenerator,
     MissingFakerDataframeGenerator,
 )

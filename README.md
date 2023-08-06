@@ -2,15 +2,17 @@
 
 `did_you_miss_me` is a python package to create datasets with realistic patterns of missingness.
 
+I'm also using it as a test case to figure out general patterns for data synthesis tooling.
+
 Key features:
 
 * Generate synthetic datasets with a huge range of variable types and realistic patterns of missingness
 * (Use AI/LLMs to create datasets with sensible variable names, types, and values.)
 * You can also add missingness to existing datasets.
-* Basic use cases work in seconds, with a single line of code; no configuration needed.
-* For advanced users, the concept of `Plans` gives you very granular control over how data is created and missingness is added.
 * Includes logic for generating missingness with MCAR, (MAR), and MNAR statistical properties.
-* (Includes utility functions to save data in several formats, including SQLite.)
+* Basic use cases work in seconds, with a single line of code; no configuration needed.
+* For advanced users, the concept of `DataTools` such as `DataGenerators` and `DataModifiers` gives you very granular control over how data is created and missingness is added.
+* (Includes utility functions to save data in several formats, such as SQLite, or namespaced folders of .csv, .tsv, or parquet files.)
 
 Stuff in (parentheses) is aspirational---not yet built.
 
@@ -129,19 +131,18 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
     * api.missify_dataframe -> DataframeMissingnessModifier.modify
 
 * Reorg code to separate Generators and Modifiers
+    * Pull RowCountWidget into its own file
+    * Pull ColumnMissingnessParams and related code into its own file
 * Refactor tests to cover 1. integration tests at the API level, and 2. tests for specific Plans
 
-
-
-* Refactor and test generate_multibatch_dataframe
-* Refine API for generate_multibatch_dataframe
 * Add ability to create SQLlite DBs
 * Add ability to save to mutilple files
 
 * Create a CLI on top of the primary API methods
 
-* Activate include_ids param
-* Activate include_timestamps param
+* Create an TimestampsAndIDsWidget
+    * Activate include_ids param
+    * Activate include_timestamps param
 
 * Add conditional missingness
 * Add langchain stuffs

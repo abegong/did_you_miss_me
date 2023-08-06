@@ -121,8 +121,6 @@ Pull requests welcome!
 TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've been testing classes and methods as I've discovered bugs, refactored them, or described them in documentation.
 
 ## Todo
-* Remove all "*_plan" references.
-
 * Create `DataframeMissingnessModifier.modify` and think through syntax + APIs for `DataModifier` classes.
     * api.missify_dataframe -> DataframeMissingnessModifier.modify
 

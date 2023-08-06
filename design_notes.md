@@ -1,4 +1,6 @@
-# Abstractions Overview #
+# Design Notes #
+
+(This doc is WIP. The gist is right. Actual examples needed.)
 
 Most of the business logic in `did_you_miss_me` is based on two core concepts: `DataGenerators` and `DataModifiers`. Both are based on an abstract base class called `DataTool`.
 
@@ -20,14 +22,21 @@ These two classes work together to create a wide variety of data generation and 
 
 ## Indirect instantiation via .create and .create_* methods ##
 
-All generators and modifiers support a `.create()` method, which will instantiate a generator or modifier based on sensible defaults. Random values are often used, so running `.create` repeatedly will usually create a wide variety of different generators or modifiers.
+All generators and modifiers support a `.create()` method, which will instantiate a generator or modifier based on sensible defaults.
 
     my_generator = MyDataGenerator.create()
     my_modifier = MyDataModifier.create()
 
+Random values are often used, so running `.create` repeatedly will usually create a wide variety of different generators or modifiers.
+
+    {{Example}}
+
+Note: This behavior is recursive. For example, if you create a MultibatchPlan with no arguments, it will create a list of EpochGenerators with no arguments, which will create a list of DataFramePlans with no arguments, which will create a list of SeriesPlans with no arguments, which will create a list of ColumnPlans with no arguments.
+
+
 The `create` method might include some arguments, but those arguments are always optional. Therefore, you can always create a generator or modifier by calling `.create()` with no arguments.
 
-In most cases, `create` accepts a variety of optional convenience arguments, which are used to create the generator or modifier. These arguments are not usually the same as the arguments to the generator or modifier's constructor.
+For most classes, `create` accepts a variety of optional convenience arguments, which are used to create the generator or modifier. These arguments are not usually the same as the arguments to the generator or modifier's constructor.
 
     {{Examples}}
     my_generator = SomeDataGenerator.create(
@@ -49,13 +58,18 @@ Some generators and modifiers support additional `.create_from_*` or `.create_by
 
 ## Direct instantiation via constructor ##
     
-If you know exactly how a given generator or modifier works, you can always instantiate DataGenerators and DataModifiers directly.
+If you know exactly how a given `DataGenerator` or `DataModifier` works, you can always instantiate it directly using the normal python constructor.
 
     my_generator = MyDataGenerator(...params...)
     my_modifier = MyDataModifier(...params...)
 
+You can also instantiate these objects using dictionaries.
 
-usually instantiated with a dictionary of parameters. This is because they are often created from JSON files, and JSON files are usually dictionaries.
+    params = {
+        ...params...
+    }
+
+    my_generator = MyDataGenerator(**params)
 
 ## Execution ##
     new_data = my_generator.generate()
@@ -73,13 +87,4 @@ usually instantiated with a dictionary of parameters. This is because they are o
     DataManipulators are subclassed from pydantic's BaseModel, so you can use convenience methods like `.dict()` and `.json()` to inspect them.
 
     Plans are designed to be serializable. You can convert a Plan to a dictionary using the .to_dict() method, and you can convert a dictionary to a Plan using the .from_dict() method.
-
-
-    Abstract class for plans.
-
-    There are two types of plans: generator plans and missingness plans.
-    Generator plans are used to generate data, and missingness plans are used to
-    add missingness ("missify") data.
-
-    
 

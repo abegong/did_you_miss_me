@@ -123,10 +123,6 @@ Pull requests welcome!
 TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've been testing classes and methods as I've discovered bugs, refactored them, or described them in documentation.
 
 ## Todo
-* Rewrite abc.py docstring for "Plans"
-    * Suss out the difference between MyClass() and MyClass.create() and document guidance on when to use which one.
-* Deprecate Plans class (?)
-
 * Create `DataframeMissingnessModifier.modify` and think through syntax + APIs for `DataModifier` classes.
     * api.missify_dataframe -> DataframeMissingnessModifier.modify
 

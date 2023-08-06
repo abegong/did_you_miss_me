@@ -4,8 +4,7 @@ import pytest
 import random
 
 
-from did_you_miss_me.plans import (
-    # ColumnGenerationPlan,
+from did_you_miss_me.generators.column import (
     FakerColumnGenerator,
 )
 from did_you_miss_me.api import (

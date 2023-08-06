@@ -4,7 +4,7 @@ from typing import List, Optional
 
 import pandas as pd
 
-from did_you_miss_me.plans.abc import (
+from did_you_miss_me.abc import (
     EpochGenerator,
     MultiBatchGenerator,
 )

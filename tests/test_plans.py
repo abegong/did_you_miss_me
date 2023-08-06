@@ -9,9 +9,11 @@ from did_you_miss_me.plans import (
     # ColumnMissingnessPlan,
     # DataframeGenerator,
     # DataframeMissingnessPlan,
-    MissingFakerDataframeGenerator,
     MissingFakerEpochGenerator,
     MissingFakerMultiBatchGenerator,
+)
+from did_you_miss_me.generators.dataframe import (
+    MissingFakerDataframeGenerator,
 )
 
 

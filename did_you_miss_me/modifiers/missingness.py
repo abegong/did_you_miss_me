@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 
 import pandas as pd
 
-from did_you_miss_me.plans.abc import (
+from did_you_miss_me.abc import (
     DataModifier,
 )
 from did_you_miss_me.faker_types import FAKER_TYPES

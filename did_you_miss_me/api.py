@@ -5,11 +5,17 @@ Public-facing methods for generating synthetic missingness data.
 import pandas as pd
 from typing import Optional
 
-from did_you_miss_me.plans import (
-    ColumnMissingnessModifier,
+from did_you_miss_me.generators.column import (
     MissingFakerColumnGenerator,
-    MissingFakerMultiBatchGenerator,
+)
+from did_you_miss_me.generators.dataframe import (
     MissingFakerDataframeGenerator,
+)
+from did_you_miss_me.plans.multibatch_level import (
+    MissingFakerMultiBatchGenerator,
+)
+from did_you_miss_me.modifiers.missingness import (
+    ColumnMissingnessModifier,
 )
 
 

@@ -7,7 +7,7 @@ import pandas as pd
 from did_you_miss_me.faker_types import (
     FAKER_TYPES,
 )
-from did_you_miss_me.plans.abc import (
+from did_you_miss_me.abc import (
     DataGenerator,
     # MissingnessModifier,
 )
@@ -19,7 +19,7 @@ from did_you_miss_me.plans.abc import (
 #     ColumnMissingnessModifier,
 #     ProportionalColumnMissingnessParams,
 # )
-from did_you_miss_me.plans.row_count_widget import (
+from did_you_miss_me.generators.row_count_widget import (
     RowCountWidget,
 )
 from did_you_miss_me.generators.column import (

@@ -5,7 +5,7 @@ import random
 
 import pandas as pd
 
-from did_you_miss_me.plans import (
+from did_you_miss_me.modifiers.missingness import (
     ColumnMissingnessType,
     ColumnMissingnessModifier,
     ProportionalColumnMissingnessParams,

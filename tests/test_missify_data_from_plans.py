@@ -1,3 +1,5 @@
+"""Tests that verify that missifying methods work as expected."""
+
 import pytest
 import random
 

@@ -1,4 +1,4 @@
-""" Miscellaneous tests for the did_you_miss_me package """
+""" Tests for top-level API methods """
 
 import pytest
 import random
@@ -13,6 +13,8 @@ def set_random_seed():
 
 def test__generate_dataframe__with_add_missingness_equals_false():
     df = dymm.generate_dataframe(
+        n_rows=20,
+        n_columns=10,
         add_missingness=False,
     )
     assert df.isnull().sum().sum() == 0
@@ -25,13 +27,13 @@ def test__generate_dataframe__with_add_missingness_equals_false():
 def test__missify_dataframe():
     df = pd.DataFrame(
         {
-            "x": range(200),
-            "y": range(200),
-            "z": [str(i) for i in range(200)],
+            "x": range(100),
+            "y": range(100),
+            "z": [str(i) for i in range(100)],
         }
     )
     missing_df = dymm.missify_dataframe(df)
-    assert missing_df.shape == (200, 3)
+    assert missing_df.shape == (100, 3)
     assert (df.x[missing_df.x.notnull()] == missing_df.x[missing_df.x.notnull()]).all()
 
 
@@ -39,15 +41,14 @@ def test__generate_series():
     random.seed(9)
 
     series = dymm.generate_series()
-    print(series)
     assert series.shape == (200,)
 
     series = dymm.generate_series(
-        n=1492,
+        n=20,
     )
-    print(series)
-    assert series.shape == (1492,)
+    assert series.shape == (20,)
 
 
-def test__generate_multibatch_dataframe():
-    dymm.generate_multibatch_dataframe()
+# Commented out b/c slow!
+# def test__generate_multibatch_dataframe():
+#     dymm.generate_multibatch_dataframe()

@@ -57,7 +57,7 @@ class ColumnGenerationPlan(Plan):
     faker_type: str  # The type of data to generate
 
 
-class ColumnMissingnessType(Enum):
+class ColumnMissingnessType(str, Enum):
     ALWAYS = "ALWAYS"
     NEVER = "NEVER"
     PROPORTIONAL = "PROPORTIONAL"
@@ -131,6 +131,7 @@ class DataframeGenerationPlan(BaseModel):
         )
 
 class DataframeMissingnessPlan(BaseModel):
+    #!!! Change this to column_plans
     columns : List[ColumnMissingnessPlan]
 
     def __init__(
@@ -183,6 +184,9 @@ class DataframeMissingnessPlan(BaseModel):
             return ProportionalColumnMissingnessPlan(
                 missingness_type=missingness_type, proportion=proportion
             )
+
+class DataframePlan(DataframeGenerationPlan, DataframeMissingnessPlan):
+    pass
         
 ### Epoch and Multibatch Plan classes ###
 

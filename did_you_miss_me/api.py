@@ -6,7 +6,6 @@ import pandas as pd
 from typing import Optional
 
 from did_you_miss_me.series_generators import (
-    generate_series_from_plan,
     missify_series_from_plan,
 )
 from did_you_miss_me.plans import (
@@ -23,9 +22,8 @@ def generate_series(
     plan = FakerColumnGenerator(
         name="my_column",
     )
-    series = generate_series_from_plan(
+    series = plan.generate(
         n=n,
-        plan=plan,
     )
 
     return series
@@ -55,9 +53,8 @@ def generate_dataframe(
         column_generator = MissingFakerColumnGenerator(
             name=f"column_{i + 1}",
         )
-        new_series = generate_series_from_plan(
+        new_series = column_generator.generate(
             n=exact_rows,
-            plan=column_generator,
         )
 
         if add_missingness:
@@ -81,7 +78,7 @@ def missify_dataframe(
     """Add missingness to an existing dataframe."""
     series_dict = {}
     for i, column in enumerate(df.columns):
-        column_modifier = ColumnMissingnessModifier()
+        column_modifier = ColumnMissingnessModifier.create()
         missified_series = missify_series_from_plan(
             df[column],
             plan=column_modifier,
@@ -132,9 +129,8 @@ def generate_multibatch_dataframe(
             for i, column_generator in enumerate(
                 epoch_plan.dataframe_plan.column_generators
             ):
-                new_series = generate_series_from_plan(
+                new_series = column_generator.generate(
                     n=epoch_plan.dataframe_plan.num_rows,
-                    plan=column_generator,
                 )
 
                 if add_missingness:

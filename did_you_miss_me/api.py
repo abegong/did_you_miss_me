@@ -22,6 +22,12 @@ from did_you_miss_me.modifiers.missingness import (
 def generate_series(
     num_rows: int = 200,
 ) -> pd.Series:
+    """Generate a synthetic series with realistic patterns of missingness.
+    
+    Parameters:
+    - num_rows (int): The number of rows to generate in the series.
+    """
+
     generator = MissingFakerColumnGenerator.create(
         name="my_column",
         missingness_type="PROPORTIONAL",
@@ -45,7 +51,7 @@ def generate_dataframe(
     """Generate synthetic datasets with realistic patterns of missingness.
 
     Parameters:
-    - num_rows (int): The number of rows to generate in the dataset.
+    - exact_rows (int): The number of rows to generate in the dataset.
     - num_columns (int): The number of columns to generate in the dataset.
     - add_missingness (bool): Whether to add missingness to the dataset.
     - include_ids (bool): Whether to include a columns simulating primary and foreign keys in the dataset.
@@ -66,7 +72,11 @@ def generate_dataframe(
 def missify_dataframe(
     df: pd.DataFrame,
 ) -> pd.DataFrame:
-    """Add missingness to an existing dataframe."""
+    """Add missingness to an existing dataframe.
+    
+    Parameters:
+    - df (pd.DataFrame): The dataframe to add missingness to.
+    """
 
     series_dict = {}
     for i, column in enumerate(df.columns):
@@ -86,15 +96,21 @@ def generate_multibatch_dataframe(
     num_epochs: int = 5,
     batches_per_epoch: Optional[int] = None,
     add_missingness=True,
-    # include_ids = False,
-    # include_timestamps = False,
+    # include_ids = True,
+    # include_timestamps = True,
     # use_ai = False,
 ) -> pd.DataFrame:
     """Generate synthetic datasets with realistic patterns of missingness.
 
     Parameters:
+    - exact_rows (int): The number of rows to generate in the dataset.
+    - num_columns (int): The number of columns to generate in the dataset.
     - num_epochs (int): The number of epochs to generate in the dataset.
+    - batches_per_epoch (int): The number of batches to generate in each epoch.
     - add_missingness (bool): Whether to add missingness to the dataset.
+    - include_ids (bool): Whether to include a columns simulating primary and foreign keys in the dataset.
+    - include_timestamps (bool): Whether to include a timestamp column (or columns) in the dataset.
+    - use_ai (bool): Whether to use artificial intelligence to generate the missingness patterns.
     """
 
     multibatch_generator = MissingFakerMultiBatchGenerator.create(

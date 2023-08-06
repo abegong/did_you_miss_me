@@ -1,8 +1,9 @@
 # Abstractions Overview #
 
-Most of the business logic in `did_you_miss_me` is based on two core concepts: `DataGenerators` and `DataModifiers`
+Most of the business logic in `did_you_miss_me` is based on two core concepts: `DataGenerators` and `DataModifiers`. Both are based on an abstract base class called `DataTool`.
 
-`DataGenerators` are used to generate data from scratch. `DataModifiers` are used to modify existing data. Both based on an abstract base class called `DataTool`.
+* `DataGenerators` are used to generate data from scratch.
+* `DataModifiers` are used to modify existing data.
 
 These two classes work together to create a wide variety of data generation and modification patterns. One common pattern is for generators to wrap modifiers. The generator creates data, and then modifies that data before returning it. This allows quite complicated data generators to be created from relatively simple building blocks.
 
@@ -19,7 +20,7 @@ These two classes work together to create a wide variety of data generation and 
 
 ## Indirect instantiation via .create and .create_* methods ##
 
-All generators and modifiers support a .create() method, which will instantiate a generator or modifier based on sensible defaults. Random values are often used, so running .create repeatedly will usually create a wide variety of different generators or modifiers.
+All generators and modifiers support a `.create()` method, which will instantiate a generator or modifier based on sensible defaults. Random values are often used, so running `.create` repeatedly will usually create a wide variety of different generators or modifiers.
 
     my_generator = MyDataGenerator.create()
     my_modifier = MyDataModifier.create()

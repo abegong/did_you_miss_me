@@ -10,6 +10,7 @@ from did_you_miss_me.plans import (
     FakerColumnGenerator,
     MissingFakerColumnGenerator,
     MultiBatchGenerator,
+    MissingFakerDataframeGenerator,
 )
 
 
@@ -45,28 +46,13 @@ def generate_dataframe(
     - use_ai (bool): Whether to use artificial intelligence to generate the missingness patterns.
     """
 
-    series_dict = {}
-    for i in range(num_columns):
-        column_generator = MissingFakerColumnGenerator.create(
-            name=f"column_{i + 1}",
-        )
-        new_series = column_generator.generate(
-            n=exact_rows,
-        )
-
-        if add_missingness:
-            column_modifier = column_generator
-
-            missified_series = column_modifier.modify(
-                new_series,
-            )
-        else:
-            missified_series = new_series
-
-        series_dict[column_generator.name] = missified_series
-
-    df = pd.DataFrame(series_dict)
-
+    dataframe_generator = MissingFakerDataframeGenerator.create(
+        exact_rows=exact_rows,
+        num_columns=num_columns,
+    )
+    df = dataframe_generator.generate(
+        add_missingness=add_missingness,
+    )
     return df
 
 

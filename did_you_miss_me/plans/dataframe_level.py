@@ -2,6 +2,8 @@ import random
 from pydantic import BaseModel
 from typing import List, Optional
 
+import pandas as pd
+
 from did_you_miss_me.faker_types import (
     FAKER_TYPES,
 )
@@ -269,6 +271,38 @@ class MissingFakerDataframeGenerator(DataGenerator):
             column_generators=column_generators,
             row_plan=row_plan,
         )
+    
+    def generate(
+        self,
+        add_missingness: bool = True,
+    ) -> pd.DataFrame:
+        """
+        Generate a dataframe with the specified number of rows and columns, with missingness applied
+        
+        Parameters:
+            add_missingness: Whether to add missingness to the generated dataframe
+        """
+
+        series_dict = {}
+        for i, column_generator in enumerate(self.column_generators):
+            new_series = column_generator.generate(
+                n=self.num_rows,
+            )
+
+            if add_missingness:
+                column_modifier = column_generator
+
+                missified_series = column_modifier.modify(
+                    new_series,
+                )
+            else:
+                missified_series = new_series
+
+            series_dict[column_generator.name] = missified_series
+
+        df = pd.DataFrame(series_dict)
+
+        return df
 
     @staticmethod
     def _generate_column_generator(

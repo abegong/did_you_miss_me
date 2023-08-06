@@ -13,8 +13,8 @@ def set_random_seed():
 
 def test__generate_dataframe__with_add_missingness_equals_false():
     df = dymm.generate_dataframe(
-        n_rows=20,
-        n_columns=10,
+        num_rows=20,
+        num_columns=10,
         add_missingness=False,
     )
     assert df.isnull().sum().sum() == 0

@@ -11,8 +11,8 @@ def test__generate_dataframe():
 
     # Test that we can control the shape of the dataframe
     df = dymm.generate_dataframe(
-        n_rows=10,
-        n_columns=8,
+        num_rows=10,
+        num_columns=8,
     )
     print(df)
     print(df.to_markdown())

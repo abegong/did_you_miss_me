@@ -21,8 +21,8 @@ Use `generate_dataframe` to create synthetic datasets from scratch.
 import did_you_miss_me as dymm
 
 dymm.generate_dataframe(
-    n_rows=10,
-    n_columns=7,
+    num_rows=10,
+    num_columns=7,
 )
 ```
 
@@ -49,8 +49,8 @@ The `use_ai` and `prompt` parameters let you use LLMs to generate more coherent 
 
 ```
 dymm.generate_dataframe(
-    n_rows=10,
-    n_columns=7,
+    num_rows=10,
+    num_columns=7,
     use_ai="OpenAI",
     prompt="blood drives",
 )
@@ -122,7 +122,6 @@ Pull requests welcome!
 
 * Move methods from `plan_generators` into __init__ methods for the Plans themselves and add tests.
 * Replace `num_rows = random.randint(100, 500)` with a shared utility method.
-* Standardize on `num_*` instead of `n_*`
 * Deprecate methods in plan_generators, and use Plan constructors
 
 * Refactor and test generate_multibatch_dataframe

@@ -5,14 +5,15 @@ from typing import List, Optional
 import pandas as pd
 
 from did_you_miss_me.plans.abc import (
-    DataGenerator,
+    EpochGenerator,
+    MultiBatchGenerator,
 )
 from did_you_miss_me.plans.dataframe_level import (
     DataframeGenerator,
     MissingFakerDataframeGenerator,
 )
 
-class MissingFakerEpochGenerator(DataGenerator):
+class MissingFakerEpochGenerator(EpochGenerator):
     missing_faker_dataframe_generator: MissingFakerDataframeGenerator = Field(
         default_factory=MissingFakerDataframeGenerator.create,
         description="The plan for generating the dataframes in this epoch.",
@@ -58,7 +59,7 @@ class MissingFakerEpochGenerator(DataGenerator):
         )
 
 
-class MultiBatchGenerator(DataGenerator):
+class MissingFakerMultiBatchGenerator(MultiBatchGenerator):
     epochs: List[MissingFakerEpochGenerator]
 
     @property

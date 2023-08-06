@@ -52,3 +52,17 @@ class MissingnessModifier(DataModifier, ABC):
     """
 
     pass
+
+class EpochGenerator(DataGenerator, ABC):
+    """
+    Abstract base class for EpochGenerators
+    """
+
+    pass
+
+class MultiBatchGenerator(DataGenerator, ABC):
+    """
+    Abstract base class for MultiBatchGenerators
+    """
+
+    pass

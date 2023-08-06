@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from abc import ABC
-
+from typing import Any
 
 ### ABCs ###
 
@@ -37,25 +37,23 @@ class Plan(BaseModel, ABC):
     pass
 
 
-class GenerationPlan(Plan, ABC):
+class DataGenerator(Plan, ABC):
     """
     Abstract class for generator plans.
     """
 
-    pass
+    def generate(
+        self,
+        *args,
+        **kwargs,
+    ) -> Any:
+
+        raise NotImplementedError
 
 
 class MissingnessPlan(Plan, ABC):
     """
     Abstract class for missingness plans.
-    """
-
-    pass
-
-
-class GenerationAndMissingnessPlan(GenerationPlan, MissingnessPlan, ABC):
-    """
-    Abstract class for plans that include both generation and missingness.
     """
 
     pass

@@ -6,15 +6,10 @@ import random
 
 
 from did_you_miss_me.plans import (
-    # ColumnGenerationPlan,
     # ColumnMissingnessPlan,
-    # ProportionalColumnMissingnessPlan,
-    # ConditionalColumnMissingnessPlan,
-    # ColumnPlan,
-    # ProportionalColumnPlan,
-    # DataframeGenerationPlan,
+    # DataframeGenerator,
     # DataframeMissingnessPlan,
-    DataframePlan,
+    MissingFakerDataframeGenerator,
     EpochPlan,
     MultiBatchPlan,
 )
@@ -27,7 +22,7 @@ def set_random_seed():
 
 def test__dataframe_plan():
     # This is just a smoke test to make sure that the plan can be constructed.
-    plan = DataframePlan()
+    plan = MissingFakerDataframeGenerator()
     print(json.dumps(plan.model_dump(), indent=2))
 
 

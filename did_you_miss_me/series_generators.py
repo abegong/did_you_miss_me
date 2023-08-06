@@ -4,8 +4,8 @@ from faker import Faker
 
 from did_you_miss_me.plans import (
     ColumnMissingnessType,
-    # ColumnPlan,
-    ColumnGenerationPlan,
+    FakerColumnGenerator,
+    MissingFakerColumnGenerator,
     ColumnMissingnessPlan,
 )
 
@@ -23,7 +23,7 @@ def generate_faker_value(faker_type: str):
     return value
 
 
-def generate_series_from_plan(n: int, plan: ColumnGenerationPlan) -> pd.Series:
+def generate_series_from_plan(n: int, plan: FakerColumnGenerator) -> pd.Series:
     """Generate a series of random data according to a plan.
 
     Note: This function does not add missingness to the series. To do that, use `missify_series_from_plan`.

@@ -1,24 +1,25 @@
 import random
+from pydantic import BaseModel
 from typing import List, Optional
 
 from did_you_miss_me.faker_types import (
     FAKER_TYPES,
 )
 from did_you_miss_me.plans.abc import (
-    GenerationPlan,
+    DataGenerator,
     MissingnessPlan,
-    GenerationAndMissingnessPlan,
 )
 from did_you_miss_me.plans.column_level import (
-    ColumnGenerationPlan,
+    ColumnGenerator,
+    FakerColumnGenerator,
+    MissingFakerColumnGenerator,
     ColumnMissingnessType,
     ColumnMissingnessPlan,
-    ColumnPlan,
     ProportionalColumnMissingnessParams,
 )
 
 
-class DataframeRowGenerationPlan(GenerationPlan):
+class DataframeRowGenerationPlan(BaseModel):
     num_rows: Optional[int]
     min_rows: Optional[int]
     max_rows: Optional[int]
@@ -61,8 +62,8 @@ class DataframeRowGenerationPlan(GenerationPlan):
         )
 
 
-class DataframeGenerationPlan(GenerationPlan):
-    column_plans: List[ColumnGenerationPlan]
+class DataframeGenerator(DataGenerator):
+    column_plans: List[ColumnGenerator]
     row_plan: DataframeRowGenerationPlan
 
     @property
@@ -75,7 +76,7 @@ class DataframeGenerationPlan(GenerationPlan):
 
     def __init__(
         self,
-        column_plans: Optional[List[ColumnGenerationPlan]] = None,
+        column_plans: Optional[List[ColumnGenerator]] = None,
         row_plan: Optional[DataframeRowGenerationPlan] = None,
         num_rows: Optional[int] = None,
         min_rows: Optional[int] = None,
@@ -88,7 +89,7 @@ class DataframeGenerationPlan(GenerationPlan):
 
             column_plans = []
             for i in range(num_columns):
-                column_plan = ColumnGenerationPlan(
+                column_plan = FakerColumnGenerator(
                     name=f"column_{i + 1}",
                     faker_type=random.choice(FAKER_TYPES),
                 )
@@ -175,8 +176,8 @@ class DataframeMissingnessPlan(MissingnessPlan):
             )
 
 
-class DataframePlan(GenerationAndMissingnessPlan):
-    column_plans: List[ColumnPlan]
+class MissingFakerDataframeGenerator(DataGenerator):
+    column_plans: List[ColumnGenerator]
     row_plan: DataframeRowGenerationPlan
 
     @property
@@ -185,9 +186,9 @@ class DataframePlan(GenerationAndMissingnessPlan):
 
     def __init__(
         self,
-        column_plans: Optional[List[ColumnPlan]] = None,
+        column_plans: Optional[List[ColumnGenerator]] = None,
         row_plan: Optional[DataframeRowGenerationPlan] = None,
-        generation_plan: Optional[DataframeGenerationPlan] = None,
+        generation_plan: Optional[DataframeGenerator] = None,
         missingness_plan: Optional[DataframeMissingnessPlan] = None,
         num_columns: Optional[int] = None,
         num_rows: Optional[int] = None,
@@ -206,7 +207,7 @@ class DataframePlan(GenerationAndMissingnessPlan):
                         max_rows=max_rows,
                     )
 
-                generation_plan = DataframeGenerationPlan(
+                generation_plan = DataframeGenerator(
                     num_columns=num_columns,
                     num_rows=num_rows,
                 )
@@ -222,7 +223,7 @@ class DataframePlan(GenerationAndMissingnessPlan):
                         max_rows=max_rows,
                     )
 
-                generation_plan = DataframeGenerationPlan(
+                generation_plan = DataframeGenerator(
                     num_columns=missingness_plan.num_columns,
                     num_rows=num_rows,
                 )
@@ -260,27 +261,27 @@ class DataframePlan(GenerationAndMissingnessPlan):
 
     @staticmethod
     def _generate_column_plan(
-        column_generation_plan: ColumnGenerationPlan,
+        column_generation_plan: ColumnGenerator,
         column_missingness_plan: ColumnMissingnessPlan,
     ) -> ColumnMissingnessPlan:
         missingness_type = column_missingness_plan.missingness_type
 
         if missingness_type == "ALWAYS":
-            return ColumnPlan(
+            return MissingFakerColumnGenerator(
                 name=column_generation_plan.name,
                 missingness_type=missingness_type,
                 faker_type=column_generation_plan.faker_type,
             )
 
         elif missingness_type == "NEVER":
-            return ColumnPlan(
+            return MissingFakerColumnGenerator(
                 name=column_generation_plan.name,
                 missingness_type=missingness_type,
                 faker_type=column_generation_plan.faker_type,
             )
 
         elif missingness_type == "PROPORTIONAL":
-            return ColumnPlan(
+            return MissingFakerColumnGenerator(
                 name=column_generation_plan.name,
                 missingness_type=missingness_type,
                 faker_type=column_generation_plan.faker_type,

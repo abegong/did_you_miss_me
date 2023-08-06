@@ -5,7 +5,8 @@ import random
 
 
 from did_you_miss_me.plans import (
-    ColumnGenerationPlan,
+    # ColumnGenerationPlan,
+    FakerColumnGenerator,
 )
 from did_you_miss_me.series_generators import (
     generate_series_from_plan,
@@ -18,7 +19,7 @@ def set_random_seed():
 
 
 def test__generate_series_from_plan__column_missingness_type__always():
-    plan = ColumnGenerationPlan(
+    plan = FakerColumnGenerator(
         name="test_column",
         faker_type="am_pm",
     )

@@ -121,10 +121,10 @@ Pull requests welcome!
 TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've been testing classes and methods as I've discovered bugs, refactored them, or described them in documentation.
 
 ## Todo
-
 * Standardize on `Plan.generate` and `Plan.modify` syntax, pulling business logic from `series_generators` and API methods into the `Plans` themselves.
 * Refactor tests to cover 1. integration tests at the API level, and 2. tests for specific Plans
-* Possibly: Rename `GenerationPlans` and `GenerationAndMissingnessPlans` to `DataGenerators`; rename `MissingnessPlans` to `DataModifiers`.
+* Rename `MissingnessPlans` to a subclass of `DataModifiers`.
+* Rename `column_plan(s)` to `column_generator(s)`
 
 * Refactor and test generate_multibatch_dataframe
 * Refine API for generate_multibatch_dataframe

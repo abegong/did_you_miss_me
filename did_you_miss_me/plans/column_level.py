@@ -4,13 +4,15 @@ from typing import Optional
 from pydantic import BaseModel
 
 from did_you_miss_me.plans.abc import (
-    GenerationPlan,
+    DataGenerator,
     MissingnessPlan,
-    GenerationAndMissingnessPlan,
 )
 from did_you_miss_me.faker_types import FAKER_TYPES
 
-class ColumnGenerationPlan(GenerationPlan):
+class ColumnGenerator(DataGenerator):
+    pass
+
+class FakerColumnGenerator(ColumnGenerator):
     name: str  # The name of the column
     faker_type: str  # The type of data to generate
 
@@ -86,7 +88,7 @@ class ColumnMissingnessPlan(MissingnessPlan):
             missingness_params=missingness_params,
         )
 
-class ColumnPlan(GenerationAndMissingnessPlan):
+class MissingFakerColumnGenerator(ColumnGenerator):
     name: str  # The name of the column
     faker_type: str  # The type of data to generate
     missingness_type: ColumnMissingnessType  # The type of missingness to include
@@ -129,23 +131,3 @@ class ColumnPlan(GenerationAndMissingnessPlan):
             missingness_type=missingness_type,
             missingness_params=missingness_params,
         )
-
-# class ProportionalColumnMissingnessPlan(ColumnMissingnessPlan):
-#     proportion: float
-
-
-# class ProportionalColumnPlan(
-#     ColumnPlan,
-#     ColumnGenerationPlan,
-#     ProportionalColumnMissingnessPlan,
-#     GenerationAndMissingnessPlan,
-# ):
-#     pass
-
-# class ConditionalColumnMissingnessPlan(ColumnMissingnessPlan):
-#     conditional_column_name : str
-#     proportions : Dict
-
-
-# class ConditionalColumnPlan(ColumnGenerationPlan, ConditionalColumnMissingnessPlan):
-#     pass

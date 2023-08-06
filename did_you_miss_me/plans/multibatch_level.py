@@ -2,22 +2,22 @@ import random
 from typing import List, Optional
 
 from did_you_miss_me.plans.abc import (
-    GenerationAndMissingnessPlan,
+    DataGenerator,
 )
 from did_you_miss_me.plans.dataframe_level import (
-    DataframeGenerationPlan,
-    DataframePlan,
+    DataframeGenerator,
+    MissingFakerDataframeGenerator,
 )
 
 
-class EpochPlan(GenerationAndMissingnessPlan):
-    dataframe_plan: DataframePlan
+class EpochPlan(DataGenerator):
+    dataframe_plan: MissingFakerDataframeGenerator
     num_batches: int
 
     def __init__(
         self,
-        dataframe_plan: Optional[DataframePlan] = None,
-        generation_plan: Optional[DataframeGenerationPlan] = None,
+        dataframe_plan: Optional[MissingFakerDataframeGenerator] = None,
+        generation_plan: Optional[DataframeGenerator] = None,
         num_batches: Optional[int] = None,
     ):
         if num_batches is None:
@@ -25,9 +25,9 @@ class EpochPlan(GenerationAndMissingnessPlan):
 
         if dataframe_plan is None:
             if generation_plan is None:
-                generation_plan = DataframeGenerationPlan()
+                generation_plan = DataframeGenerator()
 
-            dataframe_plan = DataframePlan(
+            dataframe_plan = MissingFakerDataframeGenerator(
                 generation_plan=generation_plan,
             )
 
@@ -37,7 +37,7 @@ class EpochPlan(GenerationAndMissingnessPlan):
         )
 
 
-class MultiBatchPlan(GenerationAndMissingnessPlan):
+class MultiBatchPlan(DataGenerator):
     epochs: List[EpochPlan]
 
     @property
@@ -58,7 +58,7 @@ class MultiBatchPlan(GenerationAndMissingnessPlan):
 
             # By default, all epochs have the same generation plan; only the missingness plans vary.
             # As a result, we need a generation plan, which will be shared across all epochs.
-            generation_plan = DataframeGenerationPlan(
+            generation_plan = DataframeGenerator(
                 num_rows=num_rows,
                 num_columns=num_columns,
             )

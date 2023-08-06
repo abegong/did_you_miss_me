@@ -14,9 +14,9 @@ from did_you_miss_me.series_generators import (
     missify_series_from_plan,
 )
 from did_you_miss_me.plans import (
-    ColumnGenerationPlan,
     ColumnMissingnessPlan,
-    ColumnPlan,
+    FakerColumnGenerator,
+    MissingFakerColumnGenerator,
     MultiBatchPlan,
 )
 
@@ -24,7 +24,7 @@ from did_you_miss_me.plans import (
 def generate_series(
     n: int = 200,
 ) -> pd.Series:
-    plan = ColumnGenerationPlan(
+    plan = FakerColumnGenerator(
         name="my_column",
     )
     # plan = generate_column_plan(column_index=1)
@@ -58,7 +58,7 @@ def generate_dataframe(
     series_dict = {}
     for i in range(num_columns):
         # column_plan = generate_column_plan(column_index=i + 1)
-        column_plan = ColumnPlan(
+        column_plan = MissingFakerColumnGenerator(
             name=f"column_{i + 1}",
         )
         new_series = generate_series_from_plan(

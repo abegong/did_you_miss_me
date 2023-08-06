@@ -123,12 +123,14 @@ Pull requests welcome!
 TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've been testing classes and methods as I've discovered bugs, refactored them, or described them in documentation.
 
 ## Todo
+
+### Cleanup
 * Create `DataframeMissingnessModifier.modify` and think through syntax + APIs for `DataModifier` classes.
     * api.missify_dataframe -> DataframeMissingnessModifier.modify
 
 * Reorg code to separate Generators and Modifiers
-    * Pull RowCountWidget into its own file
     * Pull ColumnMissingnessParams and related code into its own file
+    * Remove paths/
 * Refactor tests to cover 1. integration tests at the API level, and 2. tests for specific Plans
 
 * Split up create methods with too many parameters and code paths
@@ -137,16 +139,20 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
     * MissingFakerDataframeGenerator
     * MissingFakerEpochGenerator
 
+* Figure out how to add random seeds that'll work for Faker and numpy
+
+### New features
+* Create an TimestampsAndIDsWidget
+    * Activate include_ids param
+    * Activate include_timestamps param
+
+* Add conditional missingness
+* Add langchain stuffs
+
 * Add ability to create SQLlite DBs
 * Add ability to save to mutilple files
 
 * Create a CLI on top of the primary API methods
 
-* Create an TimestampsAndIDsWidget
-    * Activate include_ids param
-    * Activate include_timestamps param
 
-* Figure out how to add random seeds that'll work for Faker and numpy
-* Add conditional missingness
-* Add langchain stuffs
 * Publish to pypi

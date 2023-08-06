@@ -25,9 +25,9 @@ class EpochGenerator(DataGenerator):
 
         if dataframe_plan is None:
             if generation_plan is None:
-                generation_plan = DataframeGenerator()
+                generation_plan = DataframeGenerator.create()
 
-            dataframe_plan = MissingFakerDataframeGenerator(
+            dataframe_plan = MissingFakerDataframeGenerator.create(
                 generation_plan=generation_plan,
             )
 
@@ -60,7 +60,7 @@ class MultiBatchGenerator(DataGenerator):
 
             # By default, all epochs have the same generation plan; only the missingness plans vary.
             # As a result, we need a generation plan, which will be shared across all epochs.
-            generation_plan = DataframeGenerator(
+            generation_plan = DataframeGenerator.create(
                 exact_rows=exact_rows,
                 min_rows=min_rows,
                 max_rows=max_rows,

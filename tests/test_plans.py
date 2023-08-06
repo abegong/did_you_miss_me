@@ -22,7 +22,7 @@ def set_random_seed():
 
 def test__dataframe_plan():
     # This is just a smoke test to make sure that the plan can be constructed.
-    plan = MissingFakerDataframeGenerator()
+    plan = MissingFakerDataframeGenerator.create()
     print(json.dumps(plan.model_dump(), indent=2))
 
 

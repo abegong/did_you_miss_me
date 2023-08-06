@@ -38,8 +38,9 @@ class RowCountWidget(BaseModel):
         else:
             return random.randint(self.min_rows, self.max_rows)
 
-    def __init__(
-        self,
+    @classmethod
+    def create(
+        cls,
         exact_rows: Optional[int] = None,
         min_rows: Optional[int] = None,
         max_rows: Optional[int] = None,
@@ -62,7 +63,7 @@ class RowCountWidget(BaseModel):
         elif exact_rows is not None and has_min_max:
             raise ValueError("You cannot specify both exact_rows and min_rows/max_rows.")
 
-        super().__init__(
+        return cls(
             exact_rows=exact_rows,
             min_rows=min_rows,
             max_rows=max_rows,
@@ -81,8 +82,9 @@ class DataframeGenerator(DataGenerator):
     def num_rows(self):
         return self.row_plan.num_rows
 
-    def __init__(
-        self,
+    @classmethod
+    def create(
+        cls,
         column_generators: Optional[List[ColumnGenerator]] = None,
         row_plan: Optional[RowCountWidget] = None,
         exact_rows: Optional[int] = None,
@@ -110,7 +112,7 @@ class DataframeGenerator(DataGenerator):
                 max_rows=max_rows,
             )
 
-        super().__init__(
+        return cls(
             column_generators=column_generators,
             row_plan=row_plan,
         )
@@ -123,8 +125,9 @@ class DataframeMissingnessModifier(MissingnessModifier):
     def num_columns(self):
         return len(self.column_modifiers)
 
-    def __init__(
-        self,
+    @classmethod
+    def create(
+        cls,
         column_generators: Optional[List[ColumnMissingnessModifier]] = None,
         num_columns: Optional[int] = None,
     ):
@@ -134,10 +137,10 @@ class DataframeMissingnessModifier(MissingnessModifier):
 
             column_modifiers = []
             for i in range(num_columns):
-                column_modifier = self._generate_column_generator()
+                column_modifier = cls._generate_column_generator()
                 column_modifiers.append(column_modifier)
 
-        super().__init__(
+        return cls(
             column_modifiers=column_modifiers,
         )
 
@@ -191,8 +194,9 @@ class MissingFakerDataframeGenerator(DataGenerator):
     def num_rows(self):
         return self.row_plan.num_rows
 
-    def __init__(
-        self,
+    @classmethod
+    def create(
+        cls,
         column_generators: Optional[List[ColumnGenerator]] = None,
         row_plan: Optional[RowCountWidget] = None,
         generation_plan: Optional[DataframeGenerator] = None,
@@ -214,11 +218,11 @@ class MissingFakerDataframeGenerator(DataGenerator):
                         max_rows=max_rows,
                     )
 
-                generation_plan = DataframeGenerator(
+                generation_plan = DataframeGenerator.create(
                     num_columns=num_columns,
                     exact_rows=exact_rows,
                 )
-                missingness_plan = DataframeMissingnessModifier(
+                missingness_plan = DataframeMissingnessModifier.create(
                     num_columns=num_columns,
                 )
 
@@ -230,13 +234,13 @@ class MissingFakerDataframeGenerator(DataGenerator):
                         max_rows=max_rows,
                     )
 
-                generation_plan = DataframeGenerator(
+                generation_plan = DataframeGenerator.create(
                     num_columns=missingness_plan.num_columns,
                     exact_rows=exact_rows,
                 )
 
             elif missingness_plan is None:
-                missingness_plan = DataframeMissingnessModifier(
+                missingness_plan = DataframeMissingnessModifier.create(
                     num_columns=generation_plan.num_columns,
                 )
 
@@ -247,7 +251,7 @@ class MissingFakerDataframeGenerator(DataGenerator):
 
             column_generators = []
             for i in range(generation_plan.num_columns):
-                column_generator = self._generate_column_generator(
+                column_generator = cls._generate_column_generator(
                     generation_plan.column_generators[i],
                     missingness_plan.column_modifiers[i],
                 )
@@ -261,7 +265,7 @@ class MissingFakerDataframeGenerator(DataGenerator):
                     max_rows=max_rows,
                 )
 
-        super().__init__(
+        return cls(
             column_generators=column_generators,
             row_plan=row_plan,
         )

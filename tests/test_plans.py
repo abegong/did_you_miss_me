@@ -13,8 +13,9 @@ from did_you_miss_me.plans import (
     # ConditionalColumnMissingnessPlan,
     ColumnPlan,
     ProportionalColumnPlan,
-    DataframeGenerationPlan,
-    DataframeMissingnessPlan,
+    # DataframeGenerationPlan,
+    # DataframeMissingnessPlan,
+    DataframePlan,
     EpochPlan,
     MultiBatchPlan,
 )
@@ -22,6 +23,10 @@ from did_you_miss_me.plans import (
 @pytest.fixture(autouse=True)
 def set_random_seed():
     random.seed(40)
+
+def test__dataframe_plan():
+    plan = DataframePlan()
+    print(json.dumps(plan.model_dump(), indent=2))
 
 
 def test__epoch_plan():

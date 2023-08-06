@@ -21,11 +21,18 @@ class Plan(ABC):
     add missingness ("missify") data.
 
     Plans can be applied to series, dataframes, epochs, and multibatches.
-
     * A Series is a 1-dimensional array of data.
     * A DataFrame is a 2-dimensional array of data. (A pandas DataFrame, essentially.)
     * An Epoch is a list of DataFrames with the same Plans for generation and missingness.
     * A Multibatch is a list of Epochs.
+
+    All Plan classes inherit from this abstract class.
+
+    __init__ methods for each Plan class follow a similar pattern:
+    * You can construct the object directly from a dictionary, or
+    * pass in keyword arguments which are used to create the Plan.
+        
+    If you use the keyword argument approach, the Plan will be created with random values using sensible defaults for ranges.
     """
 
     pass
@@ -86,7 +93,7 @@ class ColumnPlan(ColumnGenerationPlan, ColumnMissingnessPlan):
 
 
 @dataclass
-class ProportionalColumnPlan(ColumnGenerationPlan, ProportionalColumnMissingnessPlan):
+class ProportionalColumnPlan(ColumnPlan, ColumnGenerationPlan, ProportionalColumnMissingnessPlan):
     pass
 
 
@@ -100,17 +107,26 @@ class ProportionalColumnPlan(ColumnGenerationPlan, ProportionalColumnMissingness
 class DataframeGenerationPlan(BaseModel):
     column_plans : List[ColumnGenerationPlan]
     num_rows : int #!!! Extend this to allow for different numbers of rows per dataframe
+    
+    # min_rows : Optional[int] = None
+    # max_rows : Optional[int] = None
+
+    @property
+    def num_columns(self):
+        return len(self.column_plans)
 
     def __init__(
         self,
         column_plans: Optional[List[ColumnGenerationPlan]] = None,
         num_rows: Optional[int] = None,
+        num_columns: Optional[int] = None,
     ):
         if column_plans is None:
-            n_columns = 12
+            if num_columns is None:
+                num_columns = 12
 
             column_plans = []
-            for i in range(n_columns):
+            for i in range(num_columns):
 
                             
                 column_plan = ColumnGenerationPlan(
@@ -123,23 +139,30 @@ class DataframeGenerationPlan(BaseModel):
         if num_rows is None:
             num_rows = random.randint(100, 500)
         
-        print(column_plans)
-
         super().__init__(
             column_plans=column_plans,
             num_rows=num_rows,
         )
 
+
 class DataframeMissingnessPlan(BaseModel):
     column_plans : List[ColumnMissingnessPlan]
 
+    @property
+    def num_columns(self):
+        return len(self.column_plans)
+
     def __init__(
         self,
-        columns: Optional[List[ColumnMissingnessPlan]] = None,
+        column_plans: Optional[List[ColumnMissingnessPlan]] = None,
+        num_columns: Optional[int] = None,
     ):
-        if columns is None:
+        if column_plans is None:
+            if num_columns is None:
+                num_columns = 12
+
             column_plans = []
-            for i in range(12):
+            for i in range(num_columns):
                 column_plan = self._generate_column_plan()
                 column_plans.append(column_plan)
         
@@ -184,34 +207,127 @@ class DataframeMissingnessPlan(BaseModel):
                 missingness_type=missingness_type, proportion=proportion
             )
 
-class DataframePlan(DataframeGenerationPlan, DataframeMissingnessPlan):
-    pass
+class DataframePlan(BaseModel):
+    column_plans: List[ColumnPlan]
+    num_rows: int
+
+    def __init__(
+        self,
+        column_plans: Optional[List[ColumnPlan]] = None,
+        generation_plan: Optional[DataframeGenerationPlan] = None,
+        missingness_plan: Optional[DataframeMissingnessPlan] = None,
+        num_columns: Optional[int] = None,
+        num_rows: Optional[int] = None,
+    ):
+        if column_plans is None:
+            if generation_plan is None and missingness_plan is None:
+                if num_columns is None:
+                    num_columns = 12
+
+                if num_rows is None:
+                    num_rows = random.randint(100, 500)
+                
+                generation_plan = DataframeGenerationPlan(
+                    num_columns=num_columns,
+                    num_rows=num_rows,
+                )
+                missingness_plan = DataframeMissingnessPlan(
+                    num_columns=num_columns,
+                )
+
+            elif generation_plan is None:
+                if num_rows is None:
+                    num_rows = random.randint(100, 500)
+
+                generation_plan = DataframeGenerationPlan(
+                    num_columns=missingness_plan.num_columns,
+                    num_rows=num_rows,
+                )
+            
+            elif missingness_plan is None:
+                missingness_plan = DataframeMissingnessPlan(
+                    num_columns=generation_plan.num_columns,
+                )
+
+                num_rows = generation_plan.num_rows
         
+            else:
+                assert generation_plan.num_columns == missingness_plan.num_columns
+
+            column_plans = []
+            for i in range(generation_plan.num_columns):
+                column_plan = self._generate_column_plan(
+                    generation_plan.column_plans[i],
+                    missingness_plan.column_plans[i],
+                )
+                column_plans.append(column_plan)
+        
+        else:
+            if num_rows is None:
+                num_rows = random.randint(100, 500)
+            
+        super().__init__(
+            column_plans=column_plans,
+            num_rows=num_rows,
+        )
+
+    @staticmethod
+    def _generate_column_plan(
+        column_generation_plan: ColumnGenerationPlan,
+        column_missingness_plan: ColumnMissingnessPlan,
+    ) -> ColumnMissingnessPlan:
+        
+        missingness_type = column_missingness_plan.missingness_type
+
+        if missingness_type == "ALWAYS":
+            return ColumnPlan(
+                name=column_generation_plan.name,
+                missingness_type=missingness_type,
+                faker_type=column_generation_plan.faker_type,
+            )
+
+        elif missingness_type == "NEVER":
+            return ColumnPlan(
+                name=column_generation_plan.name,
+                missingness_type=missingness_type,
+                faker_type=column_generation_plan.faker_type,
+            )
+
+        elif missingness_type == "PROPORTIONAL":
+            return ProportionalColumnPlan(
+                name=column_generation_plan.name,
+                missingness_type=missingness_type,
+                faker_type=column_generation_plan.faker_type,
+                proportion=column_missingness_plan.proportion,
+            )
+
 ### Epoch and Multibatch Plan classes ###
 
 class EpochPlan(BaseModel):
-    generation_plan : DataframeGenerationPlan
-    missingness_plan : DataframeMissingnessPlan
+    dataframe_plan : DataframePlan
     num_batches : int
 
     def __init__(
         self,
+        dataframe_plan: Optional[DataframePlan] = None,
         generation_plan: Optional[DataframeGenerationPlan] = None,
-        missingness_plan: Optional[DataframeMissingnessPlan] = None,
         num_batches: Optional[int] = None,
-    ):
-        if generation_plan is None:
-            generation_plan = DataframeGenerationPlan()
-        
-        if missingness_plan is None:
-            missingness_plan = DataframeMissingnessPlan()
-        
+    ):                        
         if num_batches is None:
-            num_batches = random.randint(3, 6)
+            num_batches = int(random.uniform(0,10) ** 2)
+            # num_batches = random.randint(3, 6)
+
+        if dataframe_plan is None:
+
+            if generation_plan is None:
+                generation_plan = DataframeGenerationPlan()
+        
+            dataframe_plan = DataframePlan(
+                generation_plan=generation_plan,
+            )
 
         super().__init__(
-            generation_plan=generation_plan,
-            missingness_plan=missingness_plan,
+            dataframe_plan=dataframe_plan,
             num_batches=num_batches,
         )
 
@@ -219,7 +335,7 @@ class MultiBatchPlan(BaseModel):
     epochs : List[EpochPlan]
 
     @property
-    def n_epochs(self):
+    def num_epochs(self):
         return len(self.epochs)
 
     def __init__(
@@ -232,12 +348,11 @@ class MultiBatchPlan(BaseModel):
             # By default, all epochs have the same generation plan; only the missingness plans vary.
             # As a result, we need a generation plan, which will be shared across all epochs.
             generation_plan = DataframeGenerationPlan()
-            print("Here")
 
-            n_epochs = random.randint(3, 6)
+            num_epochs = random.randint(3, 6)
             epochs = [EpochPlan(
                 generation_plan=generation_plan,
-            ) for _ in range(n_epochs)]
+            ) for _ in range(num_epochs)]
 
         super().__init__(
             epochs=epochs,

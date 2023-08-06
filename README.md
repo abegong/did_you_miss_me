@@ -120,16 +120,17 @@ Pull requests welcome!
 
 ## Todo
 
-* Refactor and test generate_multibatch_dataframe
 * Move methods from `plan_generators` into __init__ methods for the Plans themselves and add tests.
-* Consolidate generator and missingness plans in Dataframe Plans
+* Replace `num_rows = random.randint(100, 500)` with a shared utility method.
+* Standardize on `num_*` instead of `n_*`
+* Deprecate methods in plan_generators, and use Plan constructors
 
+* Refactor and test generate_multibatch_dataframe
 
 * Activate include_ids param
 * Activate include_timestamps param
 * Refine API for generate_multibatch_dataframe
 
-* Standardize on `num_*` instead of `n_*`
 * Add conditional missingness
 * Add ability to create SQLlite DBs
 * Add ability to save to mutilple files

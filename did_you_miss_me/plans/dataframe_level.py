@@ -8,106 +8,19 @@ from abc import ABC
 from did_you_miss_me.faker_types import (
     FAKER_TYPES,
 )
-
-### ABCs ###
-
-class Plan(BaseModel, ABC):
-    """
-    Abstract class for plans.
-
-    There are two types of plans: generator plans and missingness plans.
-    Generator plans are used to generate data, and missingness plans are used to
-    add missingness ("missify") data.
-
-    Plans can be applied to series, dataframes, epochs, and multibatches.
-    * A Series is a 1-dimensional array of data.
-    * A DataFrame is a 2-dimensional array of data. (A pandas DataFrame, essentially.)
-    * An Epoch is a list of DataFrames with the same Plans for generation and missingness.
-    * A Multibatch is a list of Epochs.
-
-    All Plan classes inherit from this abstract class.
-
-    __init__ methods for each Plan class follow a similar pattern:
-    * You can construct the object directly from a dictionary, or
-    * pass in keyword arguments which are used to create the Plan.
-        
-    If you use the keyword argument approach, the Plan will be created with random values using sensible defaults for ranges.
-
-    This behavior is recursive. For example, if you create a MultibatchPlan with no arguments, it will create a list of EpochPlans with no arguments, which will create a list of DataFramePlans with no arguments, which will create a list of SeriesPlans with no arguments, which will create a list of ColumnPlans with no arguments.
-
-    Plans are designed to be immutable. Once you create a Plan, you cannot change it.
-
-    Plans are designed to be serializable. You can convert a Plan to a dictionary using the .to_dict() method, and you can convert a dictionary to a Plan using the .from_dict() method.
-    """
-
-    pass
-
-
-class GenerationPlan(Plan, ABC):
-    """
-    Abstract class for generator plans.
-    """
-
-    pass
-
-
-class MissingnessPlan(Plan, ABC):
-    """
-    Abstract class for missingness plans.
-    """
-
-    pass
-
-class GenerationAndMissingnessPlan(GenerationPlan, MissingnessPlan, ABC):
-    """
-    Abstract class for plans that include both generation and missingness.
-    """
-
-    pass
-
-
-### Column-level Plan classes ###
-
-class ColumnGenerationPlan(GenerationPlan):
-    name: str  # The name of the column
-    faker_type: str  # The type of data to generate
-
-
-class ColumnMissingnessType(str, Enum):
-    ALWAYS = "ALWAYS"
-    NEVER = "NEVER"
-    PROPORTIONAL = "PROPORTIONAL"
-    # CONDITIONAL = "CONDITIONAL"
-
-
-class ColumnMissingnessPlan(MissingnessPlan):
-    missingness_type: ColumnMissingnessType  # The type of missingness to include
-
-
-class ProportionalColumnMissingnessPlan(ColumnMissingnessPlan):
-    proportion: float
-
-
-# @dataclass
-# class ConditionalColumnMissingnessPlan(ColumnMissingnessPlan):
-#     conditional_column_name : str
-#     proportions : Dict
-
-
-class ColumnPlan(ColumnGenerationPlan, ColumnMissingnessPlan, GenerationAndMissingnessPlan):
-    pass
-
-
-class ProportionalColumnPlan(ColumnPlan, ColumnGenerationPlan, ProportionalColumnMissingnessPlan, GenerationAndMissingnessPlan):
-    pass
-
-
-# @dataclass
-# class ConditionalColumnPlan(ColumnGenerationPlan, ConditionalColumnMissingnessPlan):
-#     pass
-
-
-### Dataframe-level Plan classes ###
+from did_you_miss_me.plans.abc import (
+    GenerationPlan,
+    MissingnessPlan,
+    GenerationAndMissingnessPlan,
+)
+from did_you_miss_me.plans.column_level import (
+    ColumnGenerationPlan,
+    ColumnMissingnessType,
+    ColumnMissingnessPlan,
+    ProportionalColumnMissingnessPlan,
+    ColumnPlan,
+    ProportionalColumnPlan,
+)
 
 class DataframeRowGenerationPlan(GenerationPlan):
     num_rows: Optional[int]
@@ -374,68 +287,3 @@ class DataframePlan(GenerationAndMissingnessPlan):
                 faker_type=column_generation_plan.faker_type,
                 proportion=column_missingness_plan.proportion,
             )
-
-### Epoch and Multibatch Plan classes ###
-
-class EpochPlan(GenerationAndMissingnessPlan):
-    dataframe_plan : DataframePlan
-    num_batches : int
-
-    def __init__(
-        self,
-        dataframe_plan: Optional[DataframePlan] = None,
-        generation_plan: Optional[DataframeGenerationPlan] = None,
-        num_batches: Optional[int] = None,
-    ):                        
-        if num_batches is None:
-            num_batches = int(random.uniform(0,10) ** 2)
-
-        if dataframe_plan is None:
-
-            if generation_plan is None:
-                generation_plan = DataframeGenerationPlan()
-        
-            dataframe_plan = DataframePlan(
-                generation_plan=generation_plan,
-            )
-
-        super().__init__(
-            dataframe_plan=dataframe_plan,
-            num_batches=num_batches,
-        )
-
-class MultiBatchPlan(GenerationAndMissingnessPlan):
-    epochs : List[EpochPlan]
-
-    @property
-    def num_epochs(self):
-        return len(self.epochs)
-
-    def __init__(
-        self,
-        epochs: Optional[List[EpochPlan]] = None,
-        num_rows: Optional[int] = None,
-        num_columns: Optional[int] = None,
-        num_epochs: Optional[int] = None,
-        batches_per_epoch: Optional[int] = None,
-    ):
-        if epochs is None:
-
-            if num_epochs is None:
-                num_epochs = random.randint(3, 6)
-
-            # By default, all epochs have the same generation plan; only the missingness plans vary.
-            # As a result, we need a generation plan, which will be shared across all epochs.
-            generation_plan = DataframeGenerationPlan(
-                num_rows=num_rows,
-                num_columns=num_columns,
-            )
-
-            epochs = [EpochPlan(
-                generation_plan=generation_plan,
-                num_batches=batches_per_epoch,
-            ) for _ in range(num_epochs)]
-
-        super().__init__(
-            epochs=epochs,
-        )

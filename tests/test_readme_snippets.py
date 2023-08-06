@@ -12,7 +12,7 @@ def test__generate_dataframe():
 
     # Test that we can control the shape of the dataframe
     df = dymm.generate_dataframe(
-        num_rows=10,
+        exact_rows=10,
         num_columns=8,
     )
     print(df)

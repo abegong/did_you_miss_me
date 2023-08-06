@@ -15,7 +15,7 @@ def set_random_seed():
 
 def test__generate_dataframe__with_add_missingness_equals_false():
     df = dymm.generate_dataframe(
-        num_rows=20,
+        exact_rows=20,
         num_columns=10,
         add_missingness=False,
     )
@@ -56,7 +56,7 @@ def test__generate_series():
 def test__generate_multibatch_dataframe():
     df = dymm.generate_multibatch_dataframe(
         num_columns=2,
-        num_rows=20,
+        exact_rows=20,
         num_epochs=2,
         batches_per_epoch=2,
     )

@@ -27,7 +27,7 @@ class Plan(BaseModel, ABC):
 
     If you use the keyword argument approach, the Plan will be created with random values using sensible defaults for ranges.
 
-    This behavior is recursive. For example, if you create a MultibatchPlan with no arguments, it will create a list of EpochPlans with no arguments, which will create a list of DataFramePlans with no arguments, which will create a list of SeriesPlans with no arguments, which will create a list of ColumnPlans with no arguments.
+    This behavior is recursive. For example, if you create a MultibatchPlan with no arguments, it will create a list of EpochGenerators with no arguments, which will create a list of DataFramePlans with no arguments, which will create a list of SeriesPlans with no arguments, which will create a list of ColumnPlans with no arguments.
 
     Plans are designed to be immutable. Once you create a Plan, you cannot change it.
 

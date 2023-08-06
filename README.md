@@ -21,7 +21,7 @@ Use `generate_dataframe` to create synthetic datasets from scratch.
 import did_you_miss_me as dymm
 
 dymm.generate_dataframe(
-    num_rows=10,
+    exact_rows=10,
     num_columns=7,
 )
 ```
@@ -49,7 +49,7 @@ The `use_ai` and `prompt` parameters let you use LLMs to generate more coherent 
 
 ```
 dymm.generate_dataframe(
-    num_rows=10,
+    exact_rows=10,
     num_columns=7,
     use_ai="OpenAI",
     prompt="blood drives",
@@ -121,10 +121,24 @@ Pull requests welcome!
 TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've been testing classes and methods as I've discovered bugs, refactored them, or described them in documentation.
 
 ## Todo
+
+* Rename MultiBatchPlan to MultiBatchGenerator
+* Rename DataframeRowGenerationPlan to ...
+        DataframeGeneratorRowWidget?
+        DataframeRowCountGenerator?
+        DataframeGeneratorRowCountObject?
+        RowCount[...]?
 * Standardize on `DataGenerator.generate` and `DataModifier.modify` syntax, pulling business logic from `series_generators` and API methods into the `Plans` themselves.
-* Refactor tests to cover 1. integration tests at the API level, and 2. tests for specific Plans
-* Rewrite abc.py docstring for "Plans"
+    * generate_series_from_plan -> MissingFakerColumnGenerator.generate
+    * missify_series_from_plan -> ColumnMissingnessModifier.modify
+    * api.generate_dataframe -> MissingFakerDataframeGenerator.generate
+    * api.missify_dataframe -> DataframeMissingnessModifier.modify
+    * api.generate_multibatch_dataframe -> MultiBatchPlan
 * Remove all "*_plan" references.
+* Rewrite abc.py docstring for "Plans"
+* Deprecate Plans class (?)
+* Reorg code to separate Generators and Modifiers
+* Refactor tests to cover 1. integration tests at the API level, and 2. tests for specific Plans
 
 * Refactor and test generate_multibatch_dataframe
 * Refine API for generate_multibatch_dataframe

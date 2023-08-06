@@ -32,7 +32,7 @@ def generate_series(
 
 
 def generate_dataframe(
-    num_rows: int = 200,
+    exact_rows: int = 200,
     num_columns: int = 12,
     add_missingness=True,
     # include_ids = False,
@@ -56,7 +56,7 @@ def generate_dataframe(
             name=f"column_{i + 1}",
         )
         new_series = generate_series_from_plan(
-            n=num_rows,
+            n=exact_rows,
             plan=column_generator,
         )
 
@@ -93,7 +93,7 @@ def missify_dataframe(
 
 
 def generate_multibatch_dataframe(
-    num_rows: int = 200,
+    exact_rows: int = 200,
     num_columns: int = 12,
     num_epochs: int = 5,
     batches_per_epoch: Optional[int] = None,
@@ -110,7 +110,7 @@ def generate_multibatch_dataframe(
     """
 
     multibatch_plan = MultiBatchPlan(
-        num_rows=num_rows,
+        exact_rows=exact_rows,
         num_columns=num_columns,
         num_epochs=num_epochs,
         batches_per_epoch=batches_per_epoch,

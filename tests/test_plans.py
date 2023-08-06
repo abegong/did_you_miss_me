@@ -10,7 +10,7 @@ from did_you_miss_me.plans import (
     # DataframeGenerator,
     # DataframeMissingnessPlan,
     MissingFakerDataframeGenerator,
-    EpochPlan,
+    EpochGenerator,
     MultiBatchPlan,
 )
 
@@ -28,7 +28,7 @@ def test__dataframe_plan():
 
 def test__epoch_plan():
     # This is just a smoke test to make sure that the plan can be constructed.
-    plan = EpochPlan(
+    plan = EpochGenerator(
         num_batches=3,
         # min_rows=10,
         # max_rows=20,

@@ -13,6 +13,6 @@ from did_you_miss_me.plans.dataframe_level import (
     MissingFakerDataframeGenerator, #noqa: F401
 )
 from did_you_miss_me.plans.multibatch_level import (
-    EpochPlan,#noqa: F401
+    EpochGenerator,#noqa: F401
     MultiBatchPlan, #noqa: F401
 )

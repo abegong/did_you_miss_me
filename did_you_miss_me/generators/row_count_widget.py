@@ -2,6 +2,7 @@ import random
 from pydantic import BaseModel
 from typing import Optional
 
+
 class RowCountWidget(BaseModel):
     """Specifies how many rows should be generated
 

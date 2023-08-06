@@ -1,6 +1,5 @@
 from abc import ABC
 from enum import Enum
-from faker import Faker
 import random
 from typing import List, Optional
 from pydantic import BaseModel, Field
@@ -10,7 +9,7 @@ import pandas as pd
 from did_you_miss_me.abc import (
     DataModifier,
 )
-from did_you_miss_me.faker_types import FAKER_TYPES
+
 
 class ColumnMissingnessType(str, Enum):
     ALWAYS = "ALWAYS"

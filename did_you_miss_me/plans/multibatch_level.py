@@ -2,6 +2,8 @@ import random
 from pydantic import Field
 from typing import List, Optional
 
+import pandas as pd
+
 from did_you_miss_me.plans.abc import (
     DataGenerator,
 )
@@ -86,3 +88,46 @@ class MultiBatchGenerator(DataGenerator):
         return cls(
             epochs=epochs,
         )
+    
+    def generate(
+        self,
+        add_missingness: bool = True,
+    ) -> pd.DataFrame:
+        multibatch_df = pd.DataFrame()
+
+        batch_id = 0
+        for j, epoch_plan in enumerate(self.epochs):
+            # print(f"Epoch: {j} of {multibatch_plan.num_epochs}")
+
+            for k in range(epoch_plan.num_batches):
+                # print(f"Batch: {k} of {epoch_plan.num_batches}")
+
+                series_dict = {}
+                batch_id_series = pd.Series([batch_id] * epoch_plan.dataframe_plan.num_rows)
+                series_dict["batch_id"] = batch_id_series
+
+                for i, column_generator in enumerate(
+                    epoch_plan.dataframe_plan.column_generators
+                ):
+                    new_series = column_generator.generate(
+                        n=epoch_plan.dataframe_plan.num_rows,
+                    )
+
+                    if add_missingness:
+                        column_modifier = column_generator
+
+                        missified_series = column_modifier.modify(
+                            new_series,
+                        )
+
+                    else:
+                        missified_series = new_series
+
+                    series_dict[column_generator.name] = missified_series
+
+                df = pd.DataFrame(series_dict)
+                multibatch_df = pd.concat([multibatch_df, df], ignore_index=True)
+
+                batch_id += 1
+
+        return multibatch_df

@@ -121,15 +121,18 @@ Pull requests welcome!
 TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've been testing classes and methods as I've discovered bugs, refactored them, or described them in documentation.
 
 ## Todo
-* Standardize on `DataGenerator.generate` and `DataModifier.modify` syntax, pulling business logic from `series_generators` and API methods into the `Plans` themselves.
-    * api.generate_dataframe -> MissingFakerDataframeGenerator.generate
-    * api.missify_dataframe -> DataframeMissingnessModifier.modify
-    * api.generate_multibatch_dataframe -> MultiBatchPlan
 * Remove all "*_plan" references.
+
+* Create `DataframeMissingnessModifier.modify` and think through syntax + APIs for `DataModifier` classes.
+    * api.missify_dataframe -> DataframeMissingnessModifier.modify
+
 * Rewrite abc.py docstring for "Plans"
+    * Suss out the difference between MyClass() and MyClass.create() and document guidance on when to use which one.
 * Deprecate Plans class (?)
 * Reorg code to separate Generators and Modifiers
 * Refactor tests to cover 1. integration tests at the API level, and 2. tests for specific Plans
+
+
 
 * Refactor and test generate_multibatch_dataframe
 * Refine API for generate_multibatch_dataframe

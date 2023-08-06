@@ -13,9 +13,8 @@ from did_you_miss_me.plans.column_level import (
     ColumnGenerationPlan,
     ColumnMissingnessType,
     ColumnMissingnessPlan,
-    ProportionalColumnMissingnessPlan,
     ColumnPlan,
-    ProportionalColumnPlan,
+    ProportionalColumnMissingnessParams,
 )
 
 
@@ -168,8 +167,11 @@ class DataframeMissingnessPlan(MissingnessPlan):
             if random.random() < 0.25:
                 proportion = 1 - proportion
 
-            return ProportionalColumnMissingnessPlan(
-                missingness_type=missingness_type, proportion=proportion
+            return ColumnMissingnessPlan(
+                missingness_type=missingness_type,
+                missingness_params=ProportionalColumnMissingnessParams(
+                    proportion=proportion,
+                ),
             )
 
 
@@ -278,9 +280,11 @@ class DataframePlan(GenerationAndMissingnessPlan):
             )
 
         elif missingness_type == "PROPORTIONAL":
-            return ProportionalColumnPlan(
+            return ColumnPlan(
                 name=column_generation_plan.name,
                 missingness_type=missingness_type,
                 faker_type=column_generation_plan.faker_type,
-                proportion=column_missingness_plan.proportion,
+                missingness_params=ProportionalColumnMissingnessParams(
+                    proportion=column_missingness_plan.missingness_params.proportion,
+                ),
             )

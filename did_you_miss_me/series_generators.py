@@ -51,7 +51,7 @@ def missify_series_from_plan(
         new_series = series.copy()
 
     elif plan.missingness_type == ColumnMissingnessType.PROPORTIONAL:
-        z = pd.Series([random.random() < plan.proportion for i in range(len(series))])
+        z = pd.Series([random.random() < plan.missingness_params.proportion for i in range(len(series))])
         new_series = series.copy()
         new_series[z] = None
         return new_series

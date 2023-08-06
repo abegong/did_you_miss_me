@@ -8,7 +8,7 @@ import pandas as pd
 from did_you_miss_me.plans import (
     ColumnMissingnessType,
     ColumnMissingnessPlan,
-    ProportionalColumnMissingnessPlan,
+    ProportionalColumnMissingnessParams,
 )
 from did_you_miss_me.series_generators import (
     missify_series_from_plan,
@@ -46,9 +46,11 @@ def test__missify_series_from_plan():
     assert new_series.shape == series.shape
 
     # Test with missingness_type=PROPORTIONAL
-    plan = ProportionalColumnMissingnessPlan(
+    plan = ColumnMissingnessPlan(
         missingness_type=ColumnMissingnessType.PROPORTIONAL,
-        proportion=0.5,
+        missingness_params=ProportionalColumnMissingnessParams(
+            proportion=0.5,
+        ),
     )
     new_series = missify_series_from_plan(
         series=series,

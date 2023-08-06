@@ -5,15 +5,18 @@ Public-facing methods for generating synthetic missingness data.
 import pandas as pd
 from typing import Optional
 
-from did_you_miss_me.plan_generators import (
-    generate_column_plan,
-    generate_column_missingness_plan,
-)
+# from did_you_miss_me.plan_generators import (
+#     generate_column_plan,
+#     generate_column_missingness_plan,
+# )
 from did_you_miss_me.series_generators import (
     generate_series_from_plan,
     missify_series_from_plan,
 )
 from did_you_miss_me.plans import (
+    ColumnGenerationPlan,
+    ColumnMissingnessPlan,
+    ColumnPlan,
     MultiBatchPlan,
 )
 
@@ -21,7 +24,10 @@ from did_you_miss_me.plans import (
 def generate_series(
     n: int = 200,
 ) -> pd.Series:
-    plan = generate_column_plan(column_index=1)
+    plan = ColumnGenerationPlan(
+        name="my_column",
+    )
+    # plan = generate_column_plan(column_index=1)
     series = generate_series_from_plan(
         n=n,
         plan=plan,
@@ -51,7 +57,10 @@ def generate_dataframe(
 
     series_dict = {}
     for i in range(num_columns):
-        column_plan = generate_column_plan(column_index=i + 1)
+        # column_plan = generate_column_plan(column_index=i + 1)
+        column_plan = ColumnPlan(
+            name=f"column_{i + 1}",
+        )
         new_series = generate_series_from_plan(
             n=num_rows,
             plan=column_plan,
@@ -78,9 +87,10 @@ def missify_dataframe(
     """Add missingness to an existing dataframe."""
     series_dict = {}
     for i, column in enumerate(df.columns):
-        column_plan = generate_column_missingness_plan(
-            column_index=i + 1,
-        )
+        # column_plan = generate_column_missingness_plan(
+        #     column_index=i + 1,
+        # )
+        column_plan = ColumnMissingnessPlan()
         missified_series = missify_series_from_plan(
             df[column],
             plan=column_plan,

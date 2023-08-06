@@ -122,13 +122,16 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
 
 ## Todo
 
-* Move methods from `plan_generators` into __init__ methods for the Plans themselves and add tests.
-* Deprecate methods in plan_generators, and use Plan constructors
+* Standardize on `Plan.generate` and `Plan.modify` syntax, pulling business logic from `series_generators` and API methods into the `Plans` themselves.
+* Refactor tests to cover 1. integration tests at the API level, and 2. tests for specific Plans
+* Possibly: Rename `GenerationPlans` and `GenerationAndMissingnessPlans` to `DataGenerators`; rename `MissingnessPlans` to `DataModifiers`.
 
 * Refactor and test generate_multibatch_dataframe
 * Refine API for generate_multibatch_dataframe
 * Add ability to create SQLlite DBs
 * Add ability to save to mutilple files
+
+* Create a CLI on top of the primary API methods
 
 * Activate include_ids param
 * Activate include_timestamps param

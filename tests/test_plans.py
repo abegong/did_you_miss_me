@@ -6,12 +6,12 @@ import random
 
 
 from did_you_miss_me.plans import (
-    ColumnGenerationPlan, #noqa: F401
-    ColumnMissingnessPlan, #noqa: F401
-    ProportionalColumnMissingnessPlan, #noqa: F401
+    # ColumnGenerationPlan,
+    # ColumnMissingnessPlan,
+    # ProportionalColumnMissingnessPlan,
     # ConditionalColumnMissingnessPlan,
-    ColumnPlan, #noqa: F401
-    ProportionalColumnPlan, #noqa: F401
+    # ColumnPlan,
+    # ProportionalColumnPlan,
     # DataframeGenerationPlan,
     # DataframeMissingnessPlan,
     DataframePlan,
@@ -26,11 +26,13 @@ def set_random_seed():
 
 
 def test__dataframe_plan():
+    # This is just a smoke test to make sure that the plan can be constructed.
     plan = DataframePlan()
     print(json.dumps(plan.model_dump(), indent=2))
 
 
 def test__epoch_plan():
+    # This is just a smoke test to make sure that the plan can be constructed.
     plan = EpochPlan(
         num_batches=3,
         # min_rows=10,
@@ -44,6 +46,7 @@ def test__epoch_plan():
 
 
 def test__multi_batch_plan():
+    # This is just a smoke test to make sure that the plan can be constructed.
     plan = MultiBatchPlan()
     # print(plan.model_dump_json())
     print(json.dumps(plan.model_dump(), indent=2))

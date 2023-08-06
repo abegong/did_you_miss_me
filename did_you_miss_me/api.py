@@ -50,7 +50,7 @@ def generate_dataframe(
 
     series_dict = {}
     for i in range(num_columns):
-        column_generator = MissingFakerColumnGenerator(
+        column_generator = MissingFakerColumnGenerator.create(
             name=f"column_{i + 1}",
         )
         new_series = column_generator.generate(

@@ -10,7 +10,7 @@ from did_you_miss_me.series_generators import (
     missify_series_from_plan,
 )
 from did_you_miss_me.plans import (
-    ColumnMissingnessPlan,
+    ColumnMissingnessModifier,
     FakerColumnGenerator,
     MissingFakerColumnGenerator,
     MultiBatchPlan,
@@ -81,10 +81,10 @@ def missify_dataframe(
     """Add missingness to an existing dataframe."""
     series_dict = {}
     for i, column in enumerate(df.columns):
-        column_generator = ColumnMissingnessPlan()
+        column_modifier = ColumnMissingnessModifier()
         missified_series = missify_series_from_plan(
             df[column],
-            plan=column_generator,
+            plan=column_modifier,
         )
         series_dict[column] = missified_series
 
@@ -129,26 +129,26 @@ def generate_multibatch_dataframe(
             batch_id_series = pd.Series([batch_id] * epoch_plan.dataframe_plan.num_rows)
             series_dict["batch_id"] = batch_id_series
 
-            for i, column_generation_plan in enumerate(
+            for i, column_generator in enumerate(
                 epoch_plan.dataframe_plan.column_generators
             ):
                 new_series = generate_series_from_plan(
                     n=epoch_plan.dataframe_plan.num_rows,
-                    plan=column_generation_plan,
+                    plan=column_generator,
                 )
 
                 if add_missingness:
-                    column_generator = epoch_plan.dataframe_plan.column_generators[i]
+                    column_modifier = column_generator
 
                     missified_series = missify_series_from_plan(
                         new_series,
-                        plan=column_generator,
+                        plan=column_modifier,
                     )
 
                 else:
                     missified_series = new_series
 
-                series_dict[column_generation_plan.name] = missified_series
+                series_dict[column_generator.name] = missified_series
 
             df = pd.DataFrame(series_dict)
             multibatch_df = pd.concat([multibatch_df, df], ignore_index=True)

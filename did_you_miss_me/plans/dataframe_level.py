@@ -7,14 +7,14 @@ from did_you_miss_me.faker_types import (
 )
 from did_you_miss_me.plans.abc import (
     DataGenerator,
-    MissingnessPlan,
+    MissingnessModifier,
 )
 from did_you_miss_me.plans.column_level import (
     ColumnGenerator,
     FakerColumnGenerator,
     MissingFakerColumnGenerator,
     ColumnMissingnessType,
-    ColumnMissingnessPlan,
+    ColumnMissingnessModifier,
     ProportionalColumnMissingnessParams,
 )
 
@@ -109,35 +109,35 @@ class DataframeGenerator(DataGenerator):
         )
 
 
-class DataframeMissingnessPlan(MissingnessPlan):
-    column_generators: List[ColumnMissingnessPlan]
+class DataframeMissingnessModifier(MissingnessModifier):
+    column_modifiers: List[ColumnMissingnessModifier]
 
     @property
     def num_columns(self):
-        return len(self.column_generators)
+        return len(self.column_modifiers)
 
     def __init__(
         self,
-        column_generators: Optional[List[ColumnMissingnessPlan]] = None,
+        column_generators: Optional[List[ColumnMissingnessModifier]] = None,
         num_columns: Optional[int] = None,
     ):
         if column_generators is None:
             if num_columns is None:
                 num_columns = 12
 
-            column_generators = []
+            column_modifiers = []
             for i in range(num_columns):
-                column_generator = self._generate_column_generator()
-                column_generators.append(column_generator)
+                column_modifier = self._generate_column_generator()
+                column_modifiers.append(column_modifier)
 
         super().__init__(
-            column_generators=column_generators,
+            column_modifiers=column_modifiers,
         )
 
     @staticmethod
     def _generate_column_generator(
         missingness_type: Optional[ColumnMissingnessType] = None,
-    ) -> ColumnMissingnessPlan:
+    ) -> ColumnMissingnessModifier:
         if missingness_type is None:
             missingness_type = random.choice(
                 [
@@ -153,12 +153,12 @@ class DataframeMissingnessPlan(MissingnessPlan):
             )
 
         if missingness_type == ColumnMissingnessType.ALWAYS:
-            return ColumnMissingnessPlan(
+            return ColumnMissingnessModifier(
                 missingness_type=missingness_type,
             )
 
         elif missingness_type == ColumnMissingnessType.NEVER:
-            return ColumnMissingnessPlan(
+            return ColumnMissingnessModifier(
                 missingness_type=missingness_type,
             )
 
@@ -168,7 +168,7 @@ class DataframeMissingnessPlan(MissingnessPlan):
             if random.random() < 0.25:
                 proportion = 1 - proportion
 
-            return ColumnMissingnessPlan(
+            return ColumnMissingnessModifier(
                 missingness_type=missingness_type,
                 missingness_params=ProportionalColumnMissingnessParams(
                     proportion=proportion,
@@ -177,7 +177,7 @@ class DataframeMissingnessPlan(MissingnessPlan):
 
 
 class MissingFakerDataframeGenerator(DataGenerator):
-    column_generators: List[ColumnGenerator]
+    column_generators: List[MissingFakerColumnGenerator]
     row_plan: DataframeRowGenerationPlan
 
     @property
@@ -189,7 +189,7 @@ class MissingFakerDataframeGenerator(DataGenerator):
         column_generators: Optional[List[ColumnGenerator]] = None,
         row_plan: Optional[DataframeRowGenerationPlan] = None,
         generation_plan: Optional[DataframeGenerator] = None,
-        missingness_plan: Optional[DataframeMissingnessPlan] = None,
+        missingness_plan: Optional[DataframeMissingnessModifier] = None,
         num_columns: Optional[int] = None,
         num_rows: Optional[int] = None,
         min_rows: Optional[int] = None,
@@ -211,7 +211,7 @@ class MissingFakerDataframeGenerator(DataGenerator):
                     num_columns=num_columns,
                     num_rows=num_rows,
                 )
-                missingness_plan = DataframeMissingnessPlan(
+                missingness_plan = DataframeMissingnessModifier(
                     num_columns=num_columns,
                 )
 
@@ -229,7 +229,7 @@ class MissingFakerDataframeGenerator(DataGenerator):
                 )
 
             elif missingness_plan is None:
-                missingness_plan = DataframeMissingnessPlan(
+                missingness_plan = DataframeMissingnessModifier(
                     num_columns=generation_plan.num_columns,
                 )
 
@@ -242,7 +242,7 @@ class MissingFakerDataframeGenerator(DataGenerator):
             for i in range(generation_plan.num_columns):
                 column_generator = self._generate_column_generator(
                     generation_plan.column_generators[i],
-                    missingness_plan.column_generators[i],
+                    missingness_plan.column_modifiers[i],
                 )
                 column_generators.append(column_generator)
 
@@ -262,8 +262,8 @@ class MissingFakerDataframeGenerator(DataGenerator):
     @staticmethod
     def _generate_column_generator(
         column_generation_plan: ColumnGenerator,
-        column_missingness_plan: ColumnMissingnessPlan,
-    ) -> ColumnMissingnessPlan:
+        column_missingness_plan: ColumnMissingnessModifier,
+    ) -> ColumnMissingnessModifier:
         missingness_type = column_missingness_plan.missingness_type
 
         if missingness_type == "ALWAYS":

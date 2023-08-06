@@ -51,7 +51,20 @@ class DataGenerator(Plan, ABC):
         raise NotImplementedError
 
 
-class MissingnessPlan(Plan, ABC):
+class DataModifier(Plan, ABC):
+    """
+    Abstract class for missingness plans.
+    """
+
+    def modify(
+        self,
+        *args,
+        **kwargs,
+    ) -> Any:
+
+        raise NotImplementedError
+
+class MissingnessModifier(DataModifier, ABC):
     """
     Abstract class for missingness plans.
     """

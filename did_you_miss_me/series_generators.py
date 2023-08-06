@@ -6,7 +6,7 @@ from did_you_miss_me.plans import (
     ColumnMissingnessType,
     FakerColumnGenerator,
     MissingFakerColumnGenerator,
-    ColumnMissingnessPlan,
+    ColumnMissingnessModifier,
 )
 
 _fake = Faker()
@@ -40,7 +40,7 @@ def generate_series_from_plan(n: int, plan: FakerColumnGenerator) -> pd.Series:
 
 def missify_series_from_plan(
     series: pd.Series,
-    plan: ColumnMissingnessPlan,
+    plan: ColumnMissingnessModifier,
 ) -> pd.Series:
     """Add missingness to a series according to a plan."""
 

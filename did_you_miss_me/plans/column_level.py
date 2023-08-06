@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 from did_you_miss_me.plans.abc import (
     DataGenerator,
-    MissingnessPlan,
+    MissingnessModifier,
 )
 from did_you_miss_me.faker_types import FAKER_TYPES
 
@@ -60,7 +60,7 @@ class ProportionalColumnMissingnessParams(ColumnMissingnessParams):
 #     conditional_column_name : str
 #     proportions : Dict
 
-class ColumnMissingnessPlan(MissingnessPlan):
+class ColumnMissingnessModifier(MissingnessModifier):
     missingness_type: ColumnMissingnessType  # The type of missingness to include
     missingness_params: Optional[ColumnMissingnessParams] = None  # Parameters for the missingness type
 

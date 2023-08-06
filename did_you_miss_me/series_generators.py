@@ -12,32 +12,6 @@ from did_you_miss_me.plans import (
 _fake = Faker()
 
 
-def generate_faker_value(faker_type: str):
-    """Generate a value from the faker library.
-
-    Args:
-        faker_type: The name of the faker method to call.
-    """
-    method = getattr(_fake, faker_type)
-    value = method()
-    return value
-
-
-# def generate_series_from_plan(n: int, plan: FakerColumnGenerator) -> pd.Series:
-#     """Generate a series of random data according to a plan.
-
-#     Note: This function does not add missingness to the series. To do that, use `missify_series_from_plan`.
-
-#     Args:
-#         n: The number of rows to generate.
-#         plan: The plan to use to generate the series.
-#     """
-
-#     series = pd.Series([generate_faker_value(plan.faker_type) for i in range(n)])
-
-#     return series
-
-
 def missify_series_from_plan(
     series: pd.Series,
     plan: ColumnMissingnessModifier,

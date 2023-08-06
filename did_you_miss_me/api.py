@@ -33,7 +33,7 @@ def generate_series(
 def generate_dataframe(
     num_rows: int = 200,
     num_columns: int = 12,
-    add_missingness = True,
+    add_missingness=True,
     # include_ids = False,
     # include_timestamps = False,
     # use_ai = False,
@@ -56,7 +56,7 @@ def generate_dataframe(
             n=num_rows,
             plan=column_plan,
         )
-        
+
         if add_missingness:
             missified_series = missify_series_from_plan(
                 new_series,
@@ -96,7 +96,7 @@ def generate_multibatch_dataframe(
     num_columns: int = 12,
     num_epochs: int = 5,
     batches_per_epoch: Optional[int] = None,
-    add_missingness = True,
+    add_missingness=True,
     # include_ids = False,
     # include_timestamps = False,
     # use_ai = False,
@@ -110,7 +110,7 @@ def generate_multibatch_dataframe(
 
     multibatch_plan = MultiBatchPlan(
         num_rows=num_rows,
-        num_columns=num_columns,        
+        num_columns=num_columns,
         num_epochs=num_epochs,
         batches_per_epoch=batches_per_epoch,
     )
@@ -121,20 +121,21 @@ def generate_multibatch_dataframe(
     for j, epoch_plan in enumerate(multibatch_plan.epochs):
         # print(f"Epoch: {j} of {multibatch_plan.num_epochs}")
 
-        for k in range(epoch_plan.num_batches):    
+        for k in range(epoch_plan.num_batches):
             # print(f"Batch: {k} of {epoch_plan.num_batches}")
 
             series_dict = {}
             batch_id_series = pd.Series([batch_id] * epoch_plan.dataframe_plan.num_rows)
             series_dict["batch_id"] = batch_id_series
 
-            for i, column_generation_plan in enumerate(epoch_plan.dataframe_plan.column_plans):
-
+            for i, column_generation_plan in enumerate(
+                epoch_plan.dataframe_plan.column_plans
+            ):
                 new_series = generate_series_from_plan(
                     n=epoch_plan.dataframe_plan.num_rows,
                     plan=column_generation_plan,
                 )
-                
+
                 if add_missingness:
                     column_plan = epoch_plan.dataframe_plan.column_plans[i]
 

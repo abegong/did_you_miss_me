@@ -1,18 +1,11 @@
-import random
-from typing import List, Optional
 from enum import Enum
-from pydantic.dataclasses import dataclass
-from pydantic import BaseModel
-from abc import ABC
 
-from did_you_miss_me.faker_types import (
-    FAKER_TYPES,
-)
 from did_you_miss_me.plans.abc import (
     GenerationPlan,
     MissingnessPlan,
     GenerationAndMissingnessPlan,
 )
+
 
 class ColumnGenerationPlan(GenerationPlan):
     name: str  # The name of the column
@@ -40,11 +33,18 @@ class ProportionalColumnMissingnessPlan(ColumnMissingnessPlan):
 #     proportions : Dict
 
 
-class ColumnPlan(ColumnGenerationPlan, ColumnMissingnessPlan, GenerationAndMissingnessPlan):
+class ColumnPlan(
+    ColumnGenerationPlan, ColumnMissingnessPlan, GenerationAndMissingnessPlan
+):
     pass
 
 
-class ProportionalColumnPlan(ColumnPlan, ColumnGenerationPlan, ProportionalColumnMissingnessPlan, GenerationAndMissingnessPlan):
+class ProportionalColumnPlan(
+    ColumnPlan,
+    ColumnGenerationPlan,
+    ProportionalColumnMissingnessPlan,
+    GenerationAndMissingnessPlan,
+):
     pass
 
 

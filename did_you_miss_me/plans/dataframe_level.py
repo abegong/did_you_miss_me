@@ -1,9 +1,5 @@
 import random
 from typing import List, Optional
-from enum import Enum
-from pydantic.dataclasses import dataclass
-from pydantic import BaseModel
-from abc import ABC
 
 from did_you_miss_me.faker_types import (
     FAKER_TYPES,
@@ -21,6 +17,7 @@ from did_you_miss_me.plans.column_level import (
     ColumnPlan,
     ProportionalColumnPlan,
 )
+
 
 class DataframeRowGenerationPlan(GenerationPlan):
     num_rows: Optional[int]
@@ -41,10 +38,10 @@ class DataframeRowGenerationPlan(GenerationPlan):
         max_rows: Optional[int] = None,
     ):
         has_min_max = (min_rows is not None) and (max_rows is not None)
-        
+
         if min_rows is None and max_rows is not None:
             raise ValueError("If you specify max_rows, you must also specify min_rows.")
-        
+
         elif min_rows is not None and max_rows is None:
             raise ValueError("If you specify min_rows, you must also specify max_rows.")
 
@@ -54,7 +51,7 @@ class DataframeRowGenerationPlan(GenerationPlan):
             else:
                 min_rows = random.randint(50, 400)
                 max_rows = random.randint(min_rows, min_rows + 100)
-        
+
         elif num_rows is not None and has_min_max:
             raise ValueError("You cannot specify both num_rows and min_rows/max_rows.")
 
@@ -64,14 +61,15 @@ class DataframeRowGenerationPlan(GenerationPlan):
             max_rows=max_rows,
         )
 
+
 class DataframeGenerationPlan(GenerationPlan):
-    column_plans : List[ColumnGenerationPlan]
-    row_plan : DataframeRowGenerationPlan
+    column_plans: List[ColumnGenerationPlan]
+    row_plan: DataframeRowGenerationPlan
 
     @property
     def num_columns(self):
         return len(self.column_plans)
-    
+
     @property
     def num_rows(self):
         return self.row_plan.num_rows
@@ -91,22 +89,20 @@ class DataframeGenerationPlan(GenerationPlan):
 
             column_plans = []
             for i in range(num_columns):
-
-                            
                 column_plan = ColumnGenerationPlan(
                     name=f"column_{i + 1}",
-                    faker_type=random.choice(FAKER_TYPES),    
+                    faker_type=random.choice(FAKER_TYPES),
                 )
                 # generate_column_plan(column_index=i + 1)
                 column_plans.append(column_plan)
-        
+
         if row_plan is None:
             row_plan = DataframeRowGenerationPlan(
                 num_rows=num_rows,
                 min_rows=min_rows,
                 max_rows=max_rows,
             )
-        
+
         super().__init__(
             column_plans=column_plans,
             row_plan=row_plan,
@@ -114,7 +110,7 @@ class DataframeGenerationPlan(GenerationPlan):
 
 
 class DataframeMissingnessPlan(MissingnessPlan):
-    column_plans : List[ColumnMissingnessPlan]
+    column_plans: List[ColumnMissingnessPlan]
 
     @property
     def num_columns(self):
@@ -133,7 +129,7 @@ class DataframeMissingnessPlan(MissingnessPlan):
             for i in range(num_columns):
                 column_plan = self._generate_column_plan()
                 column_plans.append(column_plan)
-        
+
         super().__init__(
             column_plans=column_plans,
         )
@@ -142,18 +138,19 @@ class DataframeMissingnessPlan(MissingnessPlan):
     def _generate_column_plan(
         missingness_type: Optional[ColumnMissingnessType] = None,
     ) -> ColumnMissingnessPlan:
-        
         if missingness_type is None:
-            missingness_type = random.choice([
-                ColumnMissingnessType.NEVER,
-                ColumnMissingnessType.NEVER,
-                ColumnMissingnessType.NEVER,
-                ColumnMissingnessType.NEVER,
-                ColumnMissingnessType.PROPORTIONAL,
-                ColumnMissingnessType.PROPORTIONAL,
-                ColumnMissingnessType.ALWAYS,
-                # "CONDITIONAL",
-            ])
+            missingness_type = random.choice(
+                [
+                    ColumnMissingnessType.NEVER,
+                    ColumnMissingnessType.NEVER,
+                    ColumnMissingnessType.NEVER,
+                    ColumnMissingnessType.NEVER,
+                    ColumnMissingnessType.PROPORTIONAL,
+                    ColumnMissingnessType.PROPORTIONAL,
+                    ColumnMissingnessType.ALWAYS,
+                    # "CONDITIONAL",
+                ]
+            )
 
         if missingness_type == ColumnMissingnessType.ALWAYS:
             return ColumnMissingnessPlan(
@@ -175,9 +172,10 @@ class DataframeMissingnessPlan(MissingnessPlan):
                 missingness_type=missingness_type, proportion=proportion
             )
 
+
 class DataframePlan(GenerationAndMissingnessPlan):
     column_plans: List[ColumnPlan]
-    row_plan : DataframeRowGenerationPlan
+    row_plan: DataframeRowGenerationPlan
 
     @property
     def num_rows(self):
@@ -205,7 +203,7 @@ class DataframePlan(GenerationAndMissingnessPlan):
                         min_rows=min_rows,
                         max_rows=max_rows,
                     )
-                
+
                 generation_plan = DataframeGenerationPlan(
                     num_columns=num_columns,
                     num_rows=num_rows,
@@ -226,14 +224,14 @@ class DataframePlan(GenerationAndMissingnessPlan):
                     num_columns=missingness_plan.num_columns,
                     num_rows=num_rows,
                 )
-            
+
             elif missingness_plan is None:
                 missingness_plan = DataframeMissingnessPlan(
                     num_columns=generation_plan.num_columns,
                 )
 
                 row_plan = generation_plan.row_plan
-        
+
             else:
                 assert generation_plan.num_columns == missingness_plan.num_columns
 
@@ -244,7 +242,7 @@ class DataframePlan(GenerationAndMissingnessPlan):
                     missingness_plan.column_plans[i],
                 )
                 column_plans.append(column_plan)
-        
+
         else:
             if row_plan is None:
                 row_plan = DataframeRowGenerationPlan(
@@ -252,7 +250,7 @@ class DataframePlan(GenerationAndMissingnessPlan):
                     min_rows=min_rows,
                     max_rows=max_rows,
                 )
-            
+
         super().__init__(
             column_plans=column_plans,
             row_plan=row_plan,
@@ -263,7 +261,6 @@ class DataframePlan(GenerationAndMissingnessPlan):
         column_generation_plan: ColumnGenerationPlan,
         column_missingness_plan: ColumnMissingnessPlan,
     ) -> ColumnMissingnessPlan:
-        
         missingness_type = column_missingness_plan.missingness_type
 
         if missingness_type == "ALWAYS":

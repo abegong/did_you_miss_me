@@ -4,15 +4,14 @@ import json
 import pytest
 import random
 
-import pandas as pd
 
 from did_you_miss_me.plans import (
-    ColumnGenerationPlan,
-    ColumnMissingnessPlan,
-    ProportionalColumnMissingnessPlan,
+    ColumnGenerationPlan, #noqa: F401
+    ColumnMissingnessPlan, #noqa: F401
+    ProportionalColumnMissingnessPlan, #noqa: F401
     # ConditionalColumnMissingnessPlan,
-    ColumnPlan,
-    ProportionalColumnPlan,
+    ColumnPlan, #noqa: F401
+    ProportionalColumnPlan, #noqa: F401
     # DataframeGenerationPlan,
     # DataframeMissingnessPlan,
     DataframePlan,
@@ -20,9 +19,11 @@ from did_you_miss_me.plans import (
     MultiBatchPlan,
 )
 
+
 @pytest.fixture(autouse=True)
 def set_random_seed():
     random.seed(40)
+
 
 def test__dataframe_plan():
     plan = DataframePlan()
@@ -40,6 +41,7 @@ def test__epoch_plan():
 
     # assert plan.model_dump() == {}
     # assert plan.model_dump_json() == {}
+
 
 def test__multi_batch_plan():
     plan = MultiBatchPlan()

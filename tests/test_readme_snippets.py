@@ -6,6 +6,7 @@ import pandas as pd
 
 import did_you_miss_me as dymm
 
+
 def test__generate_dataframe():
     random.seed(14)
 
@@ -19,10 +20,13 @@ def test__generate_dataframe():
 
     assert df.shape == (10, 8)
 
+
 def test__missify_dataframe():
     random.seed(10)
 
-    df = pd.read_csv('https://projects.fivethirtyeight.com/polls/data/favorability_polls.csv')
+    df = pd.read_csv(
+        "https://projects.fivethirtyeight.com/polls/data/favorability_polls.csv"
+    )
     assert df.shape == (2361, 38)
 
     columns = df.columns

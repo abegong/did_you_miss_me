@@ -7,9 +7,11 @@ import pandas as pd
 
 import did_you_miss_me as dymm
 
+
 @pytest.fixture(autouse=True)
 def set_random_seed():
     random.seed(40)
+
 
 def test__generate_dataframe__with_add_missingness_equals_false():
     df = dymm.generate_dataframe(
@@ -19,10 +21,12 @@ def test__generate_dataframe__with_add_missingness_equals_false():
     )
     assert df.isnull().sum().sum() == 0
 
+
 # Other parameters to test:
 # - include_ids (bool): Whether to include a columns simulating primary and foreign keys in the dataset.
 # - include_timestamps (bool): Whether to include a timestamp column (or columns) in the dataset.
 # - use_ai (bool): Whether to use artificial intelligence to generate the missingness patterns.
+
 
 def test__missify_dataframe():
     df = pd.DataFrame(

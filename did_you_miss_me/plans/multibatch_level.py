@@ -1,13 +1,6 @@
 import random
 from typing import List, Optional
-from enum import Enum
-from pydantic.dataclasses import dataclass
-from pydantic import BaseModel
-from abc import ABC
 
-from did_you_miss_me.faker_types import (
-    FAKER_TYPES,
-)
 from did_you_miss_me.plans.abc import (
     GenerationAndMissingnessPlan,
 )
@@ -16,24 +9,24 @@ from did_you_miss_me.plans.dataframe_level import (
     DataframePlan,
 )
 
+
 class EpochPlan(GenerationAndMissingnessPlan):
-    dataframe_plan : DataframePlan
-    num_batches : int
+    dataframe_plan: DataframePlan
+    num_batches: int
 
     def __init__(
         self,
         dataframe_plan: Optional[DataframePlan] = None,
         generation_plan: Optional[DataframeGenerationPlan] = None,
         num_batches: Optional[int] = None,
-    ):                        
+    ):
         if num_batches is None:
-            num_batches = int(random.uniform(0,10) ** 2)
+            num_batches = int(random.uniform(0, 10) ** 2)
 
         if dataframe_plan is None:
-
             if generation_plan is None:
                 generation_plan = DataframeGenerationPlan()
-        
+
             dataframe_plan = DataframePlan(
                 generation_plan=generation_plan,
             )
@@ -43,8 +36,9 @@ class EpochPlan(GenerationAndMissingnessPlan):
             num_batches=num_batches,
         )
 
+
 class MultiBatchPlan(GenerationAndMissingnessPlan):
-    epochs : List[EpochPlan]
+    epochs: List[EpochPlan]
 
     @property
     def num_epochs(self):
@@ -59,7 +53,6 @@ class MultiBatchPlan(GenerationAndMissingnessPlan):
         batches_per_epoch: Optional[int] = None,
     ):
         if epochs is None:
-
             if num_epochs is None:
                 num_epochs = random.randint(3, 6)
 
@@ -70,10 +63,13 @@ class MultiBatchPlan(GenerationAndMissingnessPlan):
                 num_columns=num_columns,
             )
 
-            epochs = [EpochPlan(
-                generation_plan=generation_plan,
-                num_batches=batches_per_epoch,
-            ) for _ in range(num_epochs)]
+            epochs = [
+                EpochPlan(
+                    generation_plan=generation_plan,
+                    num_batches=batches_per_epoch,
+                )
+                for _ in range(num_epochs)
+            ]
 
         super().__init__(
             epochs=epochs,

@@ -63,12 +63,12 @@ class DataframeRowGenerationPlan(BaseModel):
 
 
 class DataframeGenerator(DataGenerator):
-    column_plans: List[ColumnGenerator]
+    column_generators: List[ColumnGenerator]
     row_plan: DataframeRowGenerationPlan
 
     @property
     def num_columns(self):
-        return len(self.column_plans)
+        return len(self.column_generators)
 
     @property
     def num_rows(self):
@@ -76,25 +76,25 @@ class DataframeGenerator(DataGenerator):
 
     def __init__(
         self,
-        column_plans: Optional[List[ColumnGenerator]] = None,
+        column_generators: Optional[List[ColumnGenerator]] = None,
         row_plan: Optional[DataframeRowGenerationPlan] = None,
         num_rows: Optional[int] = None,
         min_rows: Optional[int] = None,
         max_rows: Optional[int] = None,
         num_columns: Optional[int] = None,
     ):
-        if column_plans is None:
+        if column_generators is None:
             if num_columns is None:
                 num_columns = 12
 
-            column_plans = []
+            column_generators = []
             for i in range(num_columns):
-                column_plan = FakerColumnGenerator(
+                column_generator = FakerColumnGenerator(
                     name=f"column_{i + 1}",
                     faker_type=random.choice(FAKER_TYPES),
                 )
-                # generate_column_plan(column_index=i + 1)
-                column_plans.append(column_plan)
+                # generate_column_generator(column_index=i + 1)
+                column_generators.append(column_generator)
 
         if row_plan is None:
             row_plan = DataframeRowGenerationPlan(
@@ -104,38 +104,38 @@ class DataframeGenerator(DataGenerator):
             )
 
         super().__init__(
-            column_plans=column_plans,
+            column_generators=column_generators,
             row_plan=row_plan,
         )
 
 
 class DataframeMissingnessPlan(MissingnessPlan):
-    column_plans: List[ColumnMissingnessPlan]
+    column_generators: List[ColumnMissingnessPlan]
 
     @property
     def num_columns(self):
-        return len(self.column_plans)
+        return len(self.column_generators)
 
     def __init__(
         self,
-        column_plans: Optional[List[ColumnMissingnessPlan]] = None,
+        column_generators: Optional[List[ColumnMissingnessPlan]] = None,
         num_columns: Optional[int] = None,
     ):
-        if column_plans is None:
+        if column_generators is None:
             if num_columns is None:
                 num_columns = 12
 
-            column_plans = []
+            column_generators = []
             for i in range(num_columns):
-                column_plan = self._generate_column_plan()
-                column_plans.append(column_plan)
+                column_generator = self._generate_column_generator()
+                column_generators.append(column_generator)
 
         super().__init__(
-            column_plans=column_plans,
+            column_generators=column_generators,
         )
 
     @staticmethod
-    def _generate_column_plan(
+    def _generate_column_generator(
         missingness_type: Optional[ColumnMissingnessType] = None,
     ) -> ColumnMissingnessPlan:
         if missingness_type is None:
@@ -177,7 +177,7 @@ class DataframeMissingnessPlan(MissingnessPlan):
 
 
 class MissingFakerDataframeGenerator(DataGenerator):
-    column_plans: List[ColumnGenerator]
+    column_generators: List[ColumnGenerator]
     row_plan: DataframeRowGenerationPlan
 
     @property
@@ -186,7 +186,7 @@ class MissingFakerDataframeGenerator(DataGenerator):
 
     def __init__(
         self,
-        column_plans: Optional[List[ColumnGenerator]] = None,
+        column_generators: Optional[List[ColumnGenerator]] = None,
         row_plan: Optional[DataframeRowGenerationPlan] = None,
         generation_plan: Optional[DataframeGenerator] = None,
         missingness_plan: Optional[DataframeMissingnessPlan] = None,
@@ -195,7 +195,7 @@ class MissingFakerDataframeGenerator(DataGenerator):
         min_rows: Optional[int] = None,
         max_rows: Optional[int] = None,
     ):
-        if column_plans is None:
+        if column_generators is None:
             if generation_plan is None and missingness_plan is None:
                 if num_columns is None:
                     num_columns = 12
@@ -238,13 +238,13 @@ class MissingFakerDataframeGenerator(DataGenerator):
             else:
                 assert generation_plan.num_columns == missingness_plan.num_columns
 
-            column_plans = []
+            column_generators = []
             for i in range(generation_plan.num_columns):
-                column_plan = self._generate_column_plan(
-                    generation_plan.column_plans[i],
-                    missingness_plan.column_plans[i],
+                column_generator = self._generate_column_generator(
+                    generation_plan.column_generators[i],
+                    missingness_plan.column_generators[i],
                 )
-                column_plans.append(column_plan)
+                column_generators.append(column_generator)
 
         else:
             if row_plan is None:
@@ -255,12 +255,12 @@ class MissingFakerDataframeGenerator(DataGenerator):
                 )
 
         super().__init__(
-            column_plans=column_plans,
+            column_generators=column_generators,
             row_plan=row_plan,
         )
 
     @staticmethod
-    def _generate_column_plan(
+    def _generate_column_generator(
         column_generation_plan: ColumnGenerator,
         column_missingness_plan: ColumnMissingnessPlan,
     ) -> ColumnMissingnessPlan:

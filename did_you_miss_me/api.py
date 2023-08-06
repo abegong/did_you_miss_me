@@ -5,10 +5,6 @@ Public-facing methods for generating synthetic missingness data.
 import pandas as pd
 from typing import Optional
 
-# from did_you_miss_me.plan_generators import (
-#     generate_column_plan,
-#     generate_column_missingness_plan,
-# )
 from did_you_miss_me.series_generators import (
     generate_series_from_plan,
     missify_series_from_plan,
@@ -27,7 +23,6 @@ def generate_series(
     plan = FakerColumnGenerator(
         name="my_column",
     )
-    # plan = generate_column_plan(column_index=1)
     series = generate_series_from_plan(
         n=n,
         plan=plan,
@@ -57,24 +52,23 @@ def generate_dataframe(
 
     series_dict = {}
     for i in range(num_columns):
-        # column_plan = generate_column_plan(column_index=i + 1)
-        column_plan = MissingFakerColumnGenerator(
+        column_generator = MissingFakerColumnGenerator(
             name=f"column_{i + 1}",
         )
         new_series = generate_series_from_plan(
             n=num_rows,
-            plan=column_plan,
+            plan=column_generator,
         )
 
         if add_missingness:
             missified_series = missify_series_from_plan(
                 new_series,
-                plan=column_plan,
+                plan=column_generator,
             )
         else:
             missified_series = new_series
 
-        series_dict[column_plan.name] = missified_series
+        series_dict[column_generator.name] = missified_series
 
     df = pd.DataFrame(series_dict)
 
@@ -87,13 +81,10 @@ def missify_dataframe(
     """Add missingness to an existing dataframe."""
     series_dict = {}
     for i, column in enumerate(df.columns):
-        # column_plan = generate_column_missingness_plan(
-        #     column_index=i + 1,
-        # )
-        column_plan = ColumnMissingnessPlan()
+        column_generator = ColumnMissingnessPlan()
         missified_series = missify_series_from_plan(
             df[column],
-            plan=column_plan,
+            plan=column_generator,
         )
         series_dict[column] = missified_series
 
@@ -139,7 +130,7 @@ def generate_multibatch_dataframe(
             series_dict["batch_id"] = batch_id_series
 
             for i, column_generation_plan in enumerate(
-                epoch_plan.dataframe_plan.column_plans
+                epoch_plan.dataframe_plan.column_generators
             ):
                 new_series = generate_series_from_plan(
                     n=epoch_plan.dataframe_plan.num_rows,
@@ -147,11 +138,11 @@ def generate_multibatch_dataframe(
                 )
 
                 if add_missingness:
-                    column_plan = epoch_plan.dataframe_plan.column_plans[i]
+                    column_generator = epoch_plan.dataframe_plan.column_generators[i]
 
                     missified_series = missify_series_from_plan(
                         new_series,
-                        plan=column_plan,
+                        plan=column_generator,
                     )
 
                 else:

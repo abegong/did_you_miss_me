@@ -18,7 +18,7 @@ from did_you_miss_me.generators.primary_key_generators import (
 from did_you_miss_me.generators.timestamp import (
     TimestampColumnGenerator,
 )
-from did_you_miss_me.generators.foreign_key import (
+from did_you_miss_me.generators.foreign_keys import (
     ForeignKeyGenerator,
 )
 

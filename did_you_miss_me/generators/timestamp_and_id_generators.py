@@ -1,6 +1,9 @@
 from abc import ABC
+from enum import Enum
 import random
 from typing import Any, List, Optional
+from pydantic import BaseModel, Field
+from uuid import uuid4
 
 import pandas as pd
 
@@ -10,36 +13,71 @@ from did_you_miss_me.abc import (
 from did_you_miss_me.generators.column import (
     ColumnGenerator,
 )
+from did_you_miss_me.generators.primary_key_generators import (
+    PrimaryKeyType,
+    PrimaryKeyParams,
+    PrimaryKeyColumnGenerator,
+    IntegerPrimaryKeyParams,
+)
 
-class PrimaryKeyColumnGenerator(ColumnGenerator):
-    """Specifies how to create a column containing a primary key."""
-
-    # unique: bool = True
-    # strictly_ascending: bool = True
-    
-    def generate(self, num_rows:int ) -> pd.Series:
-        return pd.Series(range(num_rows))
+### Foreign Keys ###
 
 class ForeignKeyGenerator(ColumnGenerator):
 
-    # unique: bool = True
-    # strictly_ascending: bool = True
+    @classmethod
+    def create(
+        cls,
+        name: Optional[str] = None,
+    ) -> Any:
+        """Create a ForeignKeyGenerator."""
+
+        return cls(
+            name=name,
+        )
 
     def generate(self, num_rows:int ) -> pd.Series:
         return pd.Series(range(num_rows))
 
+### Timestamps ###
+
+class TimestampFormat(str, Enum):
+    """Types of timestamp formats"""
+
+    unix_epoch = "UNIX_EPOCH"
+    iso_8601 = "ISO_8601"
+    single_column_timestamp = "SINGLE_COLUMN_TIMESTAMP"
+    multi_column_timestamp = "MULTI_COLUMN_TIMESTAMP"
+    single_column_date = "SINGLE_COLUMN_DATE"
+    multi_column_date = "MULTI_COLUMN_DATE"
+
 class TimestampColumnGenerator(ColumnGenerator):
 
-    # unique: bool = True
-    # strictly_ascending: bool = True
+    timestamp_format: TimestampFormat
 
-    def generate(self, num_rows:int ) -> pd.Series:
+    @classmethod
+    def create(
+        cls,
+        name: Optional[str] = None,
+        timestamp_format: Optional[TimestampFormat] = None,
+    ) -> Any:
+        """Create a TimestampColumnGenerator."""
+
+        if timestamp_format is None:
+            timestamp_format = random.choice(list(TimestampFormat))
+
+        return cls(
+            name=name,
+            timestamp_format=timestamp_format,
+        )
+
+    def generate(self, num_rows:int) -> pd.Series:
         return pd.Series(range(num_rows))
 
 class MultiColumnGenerator(DataGenerator, ABC):
     """Abstract base class for generators that create multiple columns."""
     pass
 
+### Timestamps and IDs ###
 
 class TimeStampAndIdGenerator(MultiColumnGenerator):
     """Specifies how to create one or more columns containing timestamps and IDs."""
@@ -63,16 +101,15 @@ class TimeStampAndIdGenerator(MultiColumnGenerator):
         cls,
         include_ids: bool = False,
         include_timestamps: bool = False,
-    ) -> "TimeStampAndIdWidget":
-        """Create a new instance of this class."""
+    ) -> "TimeStampAndIdGenerator":
 
         if include_ids:
-            id_column_generators = [PrimaryKeyColumnGenerator(
+            id_column_generators = [PrimaryKeyColumnGenerator.create(
                 name="column_primary_key",
             )]
 
             if random.random() < 0.5:
-                id_column_generators.append(ForeignKeyGenerator(
+                id_column_generators.append(ForeignKeyGenerator.create(
                     name="column_foreign_key",
                 ))
 
@@ -80,7 +117,7 @@ class TimeStampAndIdGenerator(MultiColumnGenerator):
             id_column_generators = []
 
         if include_timestamps:
-            timestamp_column_generators = [TimestampColumnGenerator(
+            timestamp_column_generators = [TimestampColumnGenerator.create(
                 name="column_timestamp",
             )]
         

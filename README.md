@@ -136,8 +136,7 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
 
 ### New features
 * Create an TimestampsAndIDsWidget
-    * Activate include_ids param
-    * Activate include_timestamps param
+    * Add sensible contents
 
 * Add conditional missingness
 * Add langchain stuffs

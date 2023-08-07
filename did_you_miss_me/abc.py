@@ -8,8 +8,9 @@ class DataTool(BaseModel, ABC):
     Abstract base class for DataGenerators and DataModifiers.
     """
 
+    @classmethod
     def create(
-        self,
+        cls,
         *args,
         **kwargs,
     ) -> Any:

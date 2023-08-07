@@ -135,13 +135,12 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
 * Move add_missingness from the `generate` step for a generator back upstream into its "plan."
 
 ### New features
-* Rename timestamp_and_id_generators.py
-* Rename primary_key_generators.py
 * Add tests for timestamp generators
 * Fix bogus timestamp generators
 * Add strftime options for time and date-stamp generators
 * Make it so timestamp columns sometimes come at the end of the dataframe
 * Add better names for timestamp columns
+* Convert the output of a MultiColumnGenerator to be a pydantic object, rather than a Dict.
 * Make primary keys continuous across multiple batches
 * Make timestamps continuous across multiple batches
 * Add sensible contents for foreign keys

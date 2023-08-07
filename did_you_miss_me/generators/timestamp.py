@@ -24,7 +24,7 @@ class TimestampFormat(str, Enum):
     single_column_date = "SINGLE_COLUMN_DATE"
     multi_column_date = "MULTI_COLUMN_DATE"
 
-class TimestampColumnGenerator(MultiColumnGenerator):
+class TimestampMultiColumnGenerator(MultiColumnGenerator):
 
     timestamp_format: TimestampFormat
     start_time: Optional[int] = Field(

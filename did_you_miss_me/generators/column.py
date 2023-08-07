@@ -32,7 +32,6 @@ class ColumnGenerator(DataGenerator, ABC):
     def generate(self, *args, **kwargs) -> pd.Series:
         raise NotImplementedError
 
-
 class MultiColumnGenerator(DataGenerator, ABC):
     """Abstract base class for generators that create multiple columns."""
 

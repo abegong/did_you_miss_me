@@ -5,8 +5,9 @@ import pytest
 import random
 
 
-from did_you_miss_me.generators.timestamps_and_ids import (
-    TimeStampAndIdMultiColumnGenerator,
+from did_you_miss_me.generators.timestamp import (
+    TimestampMultiColumnGenerator,
+    TimestampFormat,
 )
 
 
@@ -15,8 +16,9 @@ def set_random_seed():
     random.seed(40)
 
 
-def test__timestamp_and_id_column_generator():
-    generator = TimeStampAndIdMultiColumnGenerator.create()
+def test__timestamp_multi_column_generator():
+    generator = TimestampMultiColumnGenerator.create()
     values = generator.generate(
         num_rows=5,
     )
+    print(values)

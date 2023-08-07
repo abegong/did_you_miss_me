@@ -1,7 +1,7 @@
 from abc import ABC
 from enum import Enum
 import random
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional
 
 import pandas as pd
 
@@ -16,13 +16,13 @@ from did_you_miss_me.generators.primary_keys import (
     PrimaryKeyColumnGenerator,
 )
 from did_you_miss_me.generators.timestamp import (
-    TimestampColumnGenerator,
+    TimestampMultiColumnGenerator,
 )
 from did_you_miss_me.generators.foreign_keys import (
     ForeignKeyGenerator,
 )
 
-class TimeStampAndIdGenerator(MultiColumnGenerator):
+class TimeStampAndIdMultiColumnGenerator(MultiColumnGenerator):
     """Specifies how to create one or more columns containing timestamps and IDs."""
 
     id_column_generators: List[ColumnGenerator]
@@ -65,7 +65,7 @@ class TimeStampAndIdGenerator(MultiColumnGenerator):
             id_column_generators = []
 
         if include_timestamps:
-            timestamp_column_generator = TimestampColumnGenerator.create()
+            timestamp_column_generator = TimestampMultiColumnGenerator.create()
             names += timestamp_column_generator.names
         
         else:
@@ -76,3 +76,28 @@ class TimeStampAndIdGenerator(MultiColumnGenerator):
             id_column_generators=id_column_generators,
             timestamp_column_generator=timestamp_column_generator,
         )
+    
+    def generate(
+        self,
+        num_rows: int
+    ) -> Dict[str, pd.Series]:
+        """Generate a  with the specified number of rows."""
+
+        series_dict = {}
+
+        for i, column_generator in enumerate(self.id_column_generators):
+            new_series = column_generator.generate(
+                num_rows=num_rows,
+                # add_missingness=add_missingness,
+            )
+
+            series_dict[column_generator.name] = new_series
+
+        if self.timestamp_column_generator is not None:
+            timestamp_series_dict = self.timestamp_column_generator.generate(
+                num_rows=num_rows,
+            )
+
+            series_dict = {**series_dict, **timestamp_series_dict}
+        
+        return series_dict

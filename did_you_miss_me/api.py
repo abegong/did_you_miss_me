@@ -44,8 +44,8 @@ def generate_dataframe(
     exact_rows: int = 200,
     num_columns: int = 12,
     add_missingness=True,
-    # include_ids = False,
-    # include_timestamps = False,
+    include_ids = False,
+    include_timestamps = False,
     # use_ai = False,
 ) -> pd.DataFrame:
     """Generate synthetic datasets with realistic patterns of missingness.
@@ -62,6 +62,8 @@ def generate_dataframe(
     dataframe_generator = MissingFakerDataframeGenerator.create(
         exact_rows=exact_rows,
         num_columns=num_columns,
+        include_ids=include_ids,
+        include_timestamps=include_timestamps,
     )
     df = dataframe_generator.generate(
         add_missingness=add_missingness,
@@ -96,8 +98,8 @@ def generate_multibatch_dataframe(
     num_epochs: int = 5,
     batches_per_epoch: Optional[int] = None,
     add_missingness=True,
-    # include_ids = True,
-    # include_timestamps = True,
+    include_ids = True,
+    include_timestamps = True,
     # use_ai = False,
 ) -> pd.DataFrame:
     """Generate synthetic datasets with realistic patterns of missingness.
@@ -118,6 +120,8 @@ def generate_multibatch_dataframe(
         num_columns=num_columns,
         num_epochs=num_epochs,
         batches_per_epoch=batches_per_epoch,
+        include_ids=include_ids,
+        include_timestamps=include_timestamps,
     )
 
     df = multibatch_generator.generate(

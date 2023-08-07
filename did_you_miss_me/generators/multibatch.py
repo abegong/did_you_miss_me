@@ -88,6 +88,8 @@ class MissingFakerMultiBatchGenerator(MultiBatchGenerator):
         num_columns: Optional[int] = None,
         num_epochs: Optional[int] = None,
         batches_per_epoch: Optional[int] = None,
+        include_ids: bool = False,
+        include_timestamps: bool = False,
     ):
         if epochs is None:
             if num_epochs is None:
@@ -100,6 +102,8 @@ class MissingFakerMultiBatchGenerator(MultiBatchGenerator):
                 min_rows=min_rows,
                 max_rows=max_rows,
                 num_columns=num_columns,
+                include_ids=include_ids,
+                include_timestamps=include_timestamps,
             )
 
             epochs = [
@@ -131,10 +135,10 @@ class MissingFakerMultiBatchGenerator(MultiBatchGenerator):
                     add_missingness=add_missingness,
                 )
 
-                # Add a batch_id column
-                num_rows = epoch_generator.missing_faker_dataframe_generator.num_rows
-                batch_id_series = pd.Series([batch_id] * num_rows)
-                df["batch_id"] = batch_id_series
+                # # Add a batch_id column
+                # num_rows = epoch_generator.missing_faker_dataframe_generator.num_rows
+                # batch_id_series = pd.Series([batch_id] * num_rows)
+                # df["batch_id"] = batch_id_series
 
                 multibatch_df = pd.concat([multibatch_df, df], ignore_index=True)
 

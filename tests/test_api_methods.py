@@ -12,22 +12,6 @@ import did_you_miss_me as dymm
 def set_random_seed():
     random.seed(40)
 
-
-def test__generate_dataframe__with_add_missingness_equals_false():
-    df = dymm.generate_dataframe(
-        exact_rows=20,
-        num_columns=10,
-        add_missingness=False,
-    )
-    assert df.isnull().sum().sum() == 0
-
-
-# Other parameters to test:
-# - include_ids (bool): Whether to include a columns simulating primary and foreign keys in the dataset.
-# - include_timestamps (bool): Whether to include a timestamp column (or columns) in the dataset.
-# - use_ai (bool): Whether to use artificial intelligence to generate the missingness patterns.
-
-
 def test__generate_series():
     random.seed(9)
 
@@ -39,6 +23,39 @@ def test__generate_series():
         num_rows=20,
     )
     assert series.shape == (20,)
+
+def test__generate_dataframe():
+    df = dymm.generate_dataframe(
+        exact_rows=20,
+        num_columns=10,
+    )
+    assert df.shape == (20, 10)
+    assert df.isnull().sum().sum() > 0
+
+    df = dymm.generate_dataframe(
+        exact_rows=20,
+        num_columns=10,
+        add_missingness=False,
+    )
+    assert df.isnull().sum().sum() == 0
+
+    df = dymm.generate_dataframe(
+        exact_rows=20,
+        num_columns=10,
+        include_ids=True,
+    )
+    assert df.shape[1] > 10
+
+    df = dymm.generate_dataframe(
+        exact_rows=20,
+        num_columns=10,
+        include_timestamps=True,
+    )
+    assert df.shape[1] > 10
+
+
+# Other parameters to test:
+# - use_ai (bool): Whether to use artificial intelligence to generate the missingness patterns.
 
 
 def test__missify_dataframe():
@@ -60,10 +77,13 @@ def test__generate_multibatch_dataframe():
         exact_rows=20,
         num_epochs=2,
         batches_per_epoch=2,
+        include_ids=False,
+        include_timestamps=False,
     )
 
-    assert df.shape == (80, 3)
+    assert df.shape == (80, 2)
     assert df.isnull().sum().sum() > 0
+    assert "batch_id" not in df.columns
 
 
     df = dymm.generate_multibatch_dataframe(
@@ -72,7 +92,36 @@ def test__generate_multibatch_dataframe():
         num_epochs=2,
         batches_per_epoch=2,
         add_missingness=False,
+        include_ids=False,
+        include_timestamps=False,
     )
-
-    assert df.shape == (80, 3)
+    assert df.shape == (80, 2)
     assert df.isnull().sum().sum() == 0
+
+    df = dymm.generate_multibatch_dataframe(
+        num_columns=2,
+        exact_rows=20,
+        num_epochs=2,
+        batches_per_epoch=2,
+        include_ids=True,
+        include_timestamps=False,
+    )
+    assert df.shape[1] > 2
+
+    df = dymm.generate_multibatch_dataframe(
+        num_columns=2,
+        exact_rows=20,
+        num_epochs=2,
+        batches_per_epoch=2,
+        include_ids=False,
+        include_timestamps=True,
+    )
+    assert df.shape[1] > 2
+
+    df = dymm.generate_multibatch_dataframe(
+        num_columns=2,
+        exact_rows=20,
+        num_epochs=2,
+        batches_per_epoch=2,
+    )
+    assert df.shape[1] > 2

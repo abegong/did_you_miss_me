@@ -24,14 +24,13 @@ class ColumnGenerator(DataGenerator, ABC):
     Abstract base class for ColumnGenerators
     """
 
-    pass
-
-
-class FakerColumnGenerator(ColumnGenerator):
     name: str = Field(
         default_factory=lambda: f"column_{random.randint(0, 1000000)}",
         description="The name of the column",
     )
+
+
+class FakerColumnGenerator(ColumnGenerator):
     faker_type: str = Field(
         default_factory=lambda: random.choice(FAKER_TYPES),
         description="The name of the faker method to call to generate column values.",

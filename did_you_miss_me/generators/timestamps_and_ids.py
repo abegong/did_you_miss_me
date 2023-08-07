@@ -12,7 +12,7 @@ from did_you_miss_me.generators.column import (
     ColumnGenerator,
     MultiColumnGenerator,
 )
-from did_you_miss_me.generators.primary_key_generators import (
+from did_you_miss_me.generators.primary_keys import (
     PrimaryKeyColumnGenerator,
 )
 from did_you_miss_me.generators.timestamp import (

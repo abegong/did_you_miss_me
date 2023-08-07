@@ -18,27 +18,9 @@ from did_you_miss_me.generators.primary_key_generators import (
 from did_you_miss_me.generators.timestamp import (
     TimestampColumnGenerator,
 )
-
-### Foreign Keys ###
-
-class ForeignKeyGenerator(ColumnGenerator):
-
-    @classmethod
-    def create(
-        cls,
-        name: Optional[str] = None,
-    ) -> Any:
-        """Create a ForeignKeyGenerator."""
-
-        return cls(
-            name=name,
-        )
-
-    def generate(self, num_rows:int ) -> pd.Series:
-        return pd.Series(range(num_rows))
-
-
-### Timestamps and IDs ###
+from did_you_miss_me.generators.foreign_key import (
+    ForeignKeyGenerator,
+)
 
 class TimeStampAndIdGenerator(MultiColumnGenerator):
     """Specifies how to create one or more columns containing timestamps and IDs."""

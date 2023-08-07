@@ -27,7 +27,7 @@ def test__missify_dataframe():
     df = pd.read_csv(
         "https://projects.fivethirtyeight.com/polls/data/favorability_polls.csv"
     )
-    assert df.shape == (2361, 38)
+    assert df.shape == (2363, 38)
 
     columns = df.columns
     print(df[columns[:8]].head(10).to_markdown())
@@ -37,4 +37,4 @@ def test__missify_dataframe():
     print(missing_df.head())
     print(missing_df[columns[:8]].head(10).to_markdown())
 
-    assert missing_df.shape == (2361, 38)
+    assert missing_df.shape == (2363, 38)

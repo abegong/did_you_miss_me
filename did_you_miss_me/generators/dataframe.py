@@ -227,13 +227,11 @@ class MissingFakerDataframeGenerator(DataGenerator):
 
                 series_dict[column_generator.name] = new_series
 
-            for i, column_generator in enumerate(self.timestamp_and_id_generator.timestamp_column_generators):
-                new_series = column_generator.generate(
+            if self.timestamp_and_id_generator.timestamp_column_generator is not None:
+                timestamp_series_dict = self.timestamp_and_id_generator.timestamp_column_generator.generate(
                     num_rows=self.num_rows,
-                    # add_missingness=add_missingness,
                 )
-
-                series_dict[column_generator.name] = new_series
+                series_dict = {**series_dict, **timestamp_series_dict}
 
         for i, column_generator in enumerate(self.column_generators):
             new_series = column_generator.generate(

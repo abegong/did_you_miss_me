@@ -1,7 +1,7 @@
 from abc import ABC
 from faker import Faker
 import random
-from typing import Optional
+from typing import Any, Dict, List, Optional
 from pydantic import Field
 
 import pandas as pd
@@ -28,6 +28,26 @@ class ColumnGenerator(DataGenerator, ABC):
         default_factory=lambda: f"column_{random.randint(0, 1000000)}",
         description="The name of the column",
     )
+
+    def generate(self, *args, **kwargs) -> pd.Series:
+        raise NotImplementedError
+
+
+class MultiColumnGenerator(DataGenerator, ABC):
+    """Abstract base class for generators that create multiple columns."""
+
+    names: List[str] = Field(
+        default_factory=lambda: [f"column_{random.randint(0, 1000000)}"],
+        description="The names of the columns",
+    )
+
+    @property
+    def num_columns(self) -> int:
+        return len(self.names)
+    
+    def generate(self, *args, **kwargs) -> Dict[str, pd.Series]:
+        raise NotImplementedError
+
 
 
 class FakerColumnGenerator(ColumnGenerator):

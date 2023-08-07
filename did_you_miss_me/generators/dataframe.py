@@ -17,7 +17,7 @@ from did_you_miss_me.generators.column import (
 from did_you_miss_me.generators.row_count_widget import (
     RowCountWidget,
 )
-from did_you_miss_me.generators.timestamp_and_id_generators import (
+from did_you_miss_me.generators.timestamps_and_ids import (
     TimeStampAndIdGenerator,
 )
 from did_you_miss_me.modifiers.missingness import (

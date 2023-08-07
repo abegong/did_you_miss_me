@@ -5,7 +5,7 @@ import pytest
 import random
 
 
-from did_you_miss_me.generators.timestamp_and_id_generators import (
+from did_you_miss_me.generators.timestamps_and_ids import (
     PrimaryKeyColumnGenerator,
     ForeignKeyGenerator,
     TimestampColumnGenerator,

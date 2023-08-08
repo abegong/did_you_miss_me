@@ -27,10 +27,6 @@ class KeyColumnGenerator(ColumnGenerator, ABC):
         random.choice(list(KeyType)),
         description="The type of key to generate (e.g. integer, uuid4).)",
     )
-    # key_params: Optional[KeyParams] = Field(
-    #     None,
-    #     description="Parameters for generating the key.",
-    # )
     percent_missing: float = Field(
         0.0,
         description="A number between 0 and 1 indicating how many values should be missing. 0 means no values are missing, 1 means all values are missing.",
@@ -40,17 +36,27 @@ class KeyColumnGenerator(ColumnGenerator, ABC):
         description="A number between 0 and 1 indicating how unique the key should be. 0 means every value is repeated, 1 means completely unique.",
     )
 
-    # def _apply_uniqueness(self, series: pd.Series) -> pd.Series:
-    #     if self.percent_unique < 1:
-    #         series = series.sample(frac=self.key_params.percent_unique)
-    #         series = series.append(pd.Series([random.choice(series) for _ in range(int(num_rows * (1 - self.key_params.percent_unique)))]))
-    #         series = series.sample(frac=1)
+    def _apply_uniqueness(self, series: pd.Series) -> pd.Series:
+        if self.percent_unique < 1:
+            mask = series.apply(lambda x: random.random() < self.percent_unique)
+            print(list(mask))
+            new_series = series.copy()
+            new_series[mask] = new_series[mask].apply(lambda x: random.choice(list(series[mask==False])))
+            print(list(new_series))
+            return new_series
+        
+        else:
+            return series
 
-    # def _apply_missingness(self, series: pd.Series) -> pd.Series:
-    #     if self.percent_missing > 0:
-    #         series = series.sample(frac=1-self.key_params.percent_missing)
-    #         series = series.append(pd.Series([None] * int(num_rows * self.key_params.percent_missing)))
-    #         series = series.sample(frac=1)
+    def _apply_missingness(self, series: pd.Series) -> pd.Series:
+        if self.percent_missing > 0:
+            mask = series.apply(lambda x: random.random() < self.percent_missing)
+            new_series = series.copy()
+            new_series[mask] = None
+            return new_series
+        
+        else:
+            return series
     
     @classmethod
     def create_primary_key(
@@ -67,11 +73,6 @@ class KeyColumnGenerator(ColumnGenerator, ABC):
             percent_missing=0.0,
             *args,
             **kwargs,
-            # incrementing=True,
-            # ascending=True,
-            # digits=random.randint(6, 20),
-            # data_type=random.choice(["int", "str"]),
-            # pad_with_zeros=random.random() < 0.5,
         )
 
     @classmethod
@@ -87,10 +88,6 @@ class KeyColumnGenerator(ColumnGenerator, ABC):
             name=name or f"column_foreign_key_{random.randint(0, 1000)}",
             *args,
             **kwargs,
-            # key_type=random.choice([KeyType.integer, KeyType.uuid4]),
-            # digits=random.randint(6, 20),
-            # data_type=random.choice(["int", "str"]),
-            # pad_with_zeros=random.random() < 0.5,
         )
         
     
@@ -128,13 +125,19 @@ class UuidKeyColumnGenerator(KeyColumnGenerator):
     ) -> pd.Series:
         """Generate a column containing key-like data."""
 
-        return pd.Series([str(uuid4()) for _ in range(num_rows)])
+        series = pd.Series([str(uuid4()) for _ in range(num_rows)])
+    
+        series = self._apply_missingness(series)
+        series = self._apply_uniqueness(series)
+
+        return series
+
 
 
 class IntegerKeyColumnGenerator(KeyColumnGenerator):
 
     digits: int = Field(
-        random.randint(4, 10),
+        random.randint(6, 20),
         description="The number of digits to use when generating integer-type keys.",
     )
     incrementing: bool = Field(
@@ -178,7 +181,7 @@ class IntegerKeyColumnGenerator(KeyColumnGenerator):
             percent_missing = random.random()**2
 
         if digits is None:
-            digits = random.randint(4, 10)
+            digits = random.randint(6, 20)
 
         if incrementing is None:
             incrementing = random.random() < 0.85
@@ -213,8 +216,8 @@ class IntegerKeyColumnGenerator(KeyColumnGenerator):
         else:
             series = pd.Series([random.randint(0, 10 ** self.digits) for _ in range(num_rows)])
 
-        # series = self._apply_missingness(series)
-        # series = self._apply_uniqueness(series)
+        series = self._apply_missingness(series)
+        series = self._apply_uniqueness(series)
 
         if self.ascending:
             series = series.sort_values(ascending=True)            

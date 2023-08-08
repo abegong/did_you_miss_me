@@ -3,6 +3,7 @@
 import json
 import pytest
 import random
+import numpy as np
 
 
 from did_you_miss_me.generators.keys import (
@@ -17,10 +18,12 @@ def set_random_seed():
     random.seed(40)
 
 
-def test__primary_key_column_generator():
+def test__key_column_generator():
     generator = IntegerKeyColumnGenerator.create(
         incrementing=True,
         data_type="int",
+        percent_missing=0.0,
+        percent_unique=1.0,
     )
     values = generator.generate(
         num_rows=5,
@@ -29,38 +32,45 @@ def test__primary_key_column_generator():
     assert values == [0, 1, 2, 3, 4]
 
 
-    # generator = IntegerKeyColumnGenerator.create(
-    #     ascending=False,
-    #     digits=10,
-    # )
-    # random.seed(40)
-    # values = generator.generate(
-    #     num_rows=5,
-    # ).tolist()
-    # print(values)
-    # assert values == [136779594, 9802945638, 2853227234, 5791287653, 8712908219]
-
-    # generator = IntegerKeyColumnGenerator.create(
-    #     incrementing=False,
-    #     ascending=False,
-    #     digits=4,
-    #     data_type="int",
-    # )
-    # random.seed(40)
-    # values = generator.generate(
-    #     num_rows=5,
-    # ).tolist()
-    # print(values)
-    # assert values == [7513, 9494, 8584, 521, 4018]
-    
-    # generator = UuidKeyColumnGenerator.create()
-    # values = generator.generate(
-    #     num_rows=5,
-    # ).tolist()
-    # print(values)
-    # #!!! Can't easily test this because it's random, and uuid uses a different random seed than random.seed()
-    # # assert values == ['f3db7405-2813-4856-8e6e-19a002451365', 'fd56f8a9-36bb-4f03-8059-7f1ce7335c19', '939b751d-fadf-45d3-a73a-65457135076e', '926a5be1-3801-41c1-944f-203772f9b52f', 'eff9baf3-291d-4f64-ad6c-250ecbc46e9a']
+def test__key_column_generator__with_percent_missing():
+    generator = IntegerKeyColumnGenerator.create(
+        incrementing=True,
+        data_type="int",
+        percent_missing=1.0,
+        percent_unique=1.0,
+    )
+    values = generator.generate(
+        num_rows=5,
+        starting_value=0,
+    ).tolist()
+    # assert values == [np.nan, np.nan, np.nan, np.nan, np.nan]
+    #!!! This is a pain to test, because np.nan != np.nan
 
 
-    # # Composite key
+    generator = IntegerKeyColumnGenerator.create(
+        incrementing=True,
+        data_type="int",
+        percent_missing=0.5,
+        percent_unique=1.0,
+    )
+    values = generator.generate(
+        num_rows=5,
+        starting_value=0,
+    ).tolist()
+    # assert values == [1.0, 4.0, np.nan, np.nan, np.nan]
+    #!!! This is a pain to test, because np.nan != np.nan
 
+
+def test__key_column_generator__with_percent_unique():
+    generator = IntegerKeyColumnGenerator.create(
+        incrementing=True,
+        data_type="int",
+        percent_missing=0.0,
+        percent_unique=0.5,
+    )
+    values = generator.generate(
+        num_rows=10,
+        starting_value=0,
+    ).tolist()
+    print(values)
+    assert values == [0, 0, 0, 3, 3, 3, 3, 4, 7, 7]

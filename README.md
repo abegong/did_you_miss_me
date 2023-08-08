@@ -127,6 +127,7 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
 ### On deck
 * Create `DataframeMissingnessModifier.modify` and think through syntax + APIs for `DataModifier` classes.
     * api.missify_dataframe -> DataframeMissingnessModifier.modify
+    * Create FatFingerDataframeModifier along the same lines.
     * Pull ColumnMissingnessParams and related code into its own file
 
 * Make primary keys not always start at 0

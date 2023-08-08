@@ -1,7 +1,7 @@
 from abc import ABC
 from faker import Faker
 import random
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 from pydantic import Field
 
 import pandas as pd
@@ -32,6 +32,7 @@ class ColumnGenerator(DataGenerator, ABC):
     def generate(self, *args, **kwargs) -> pd.Series:
         raise NotImplementedError
 
+
 class MultiColumnGenerator(DataGenerator, ABC):
     """Abstract base class for generators that create multiple columns."""
 
@@ -43,10 +44,9 @@ class MultiColumnGenerator(DataGenerator, ABC):
     @property
     def num_columns(self) -> int:
         return len(self.names)
-    
+
     def generate(self, *args, **kwargs) -> Dict[str, pd.Series]:
         raise NotImplementedError
-
 
 
 class FakerColumnGenerator(ColumnGenerator):

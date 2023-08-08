@@ -1,7 +1,7 @@
 from abc import ABC
 from enum import Enum
 import random
-from typing import List, Optional
+from typing import Optional
 from pydantic import BaseModel, Field
 
 import pandas as pd
@@ -40,7 +40,7 @@ class ProportionalColumnMissingnessParams(ColumnMissingnessParams):
 
 class FatFingersModifier(DataModifier, ABC):
     """Abstract base class for DataModifiers that add typos to data
-    
+
     Common typos include:
     - Missing characters
     - Extra characters
@@ -78,7 +78,6 @@ class ColumnFatFingersModifier(FatFingersModifier):
         description="Whether to include repeated characters as a possible error",
     )
 
-
     @classmethod
     def create(
         cls,
@@ -98,7 +97,7 @@ class ColumnFatFingersModifier(FatFingersModifier):
         """Modify a series of data with typos"""
 
         new_series = series.copy()
-        
+
         for i, value in series.items():
             if random.random() < self.error_rate:
                 new_series[i] = self._modify_value(
@@ -107,7 +106,7 @@ class ColumnFatFingersModifier(FatFingersModifier):
                 )
 
         return new_series
-    
+
     @property
     def possible_errors(self):
         possible_errors = []
@@ -122,12 +121,11 @@ class ColumnFatFingersModifier(FatFingersModifier):
 
         if self.include_mistaken_chars:
             possible_errors.append("mistaken_chars")
-            
+
         if self.include_repeated_chars:
             possible_errors.append("repeated_chars")
 
         return possible_errors
-
 
     def _get_random_error_type(self):
         return random.choice(self.possible_errors)
@@ -142,27 +140,31 @@ class ColumnFatFingersModifier(FatFingersModifier):
         if error_type == "missing_chars":
             # Drop a random character from the string
             k = random.randint(0, len(value) - 1)
-            modified_value = value[: k] + value[k+1:]
+            modified_value = value[:k] + value[k + 1 :]
 
         elif error_type == "extra_chars":
             # Add a random character to the string
             k = random.randint(0, len(value) - 1)
-            modified_value = value[: k] + random.choice(list(value)) + value[k:]
-        
+            modified_value = value[:k] + random.choice(list(value)) + value[k:]
+
         elif error_type == "transposed_chars":
             # Transpose two random characters in the string
             k = random.randint(0, len(value) - 2)
-            modified_value = value[: k] + value[k+1] + value[k] + value[k+2:]
-        
+            modified_value = value[:k] + value[k + 1] + value[k] + value[k + 2 :]
+
         elif error_type == "mistaken_chars":
             # Replace a random character in the string with a random character in the alphabet
             k = random.randint(0, len(value) - 1)
-            modified_value = value[: k] + random.choice(list("abcdefghijklmnopqrstuvwxyz1234567890")) + value[k+1:]
-        
+            modified_value = (
+                value[:k]
+                + random.choice(list("abcdefghijklmnopqrstuvwxyz1234567890"))
+                + value[k + 1 :]
+            )
+
         elif error_type == "repeated_chars":
             # Repeat a random character in the string
             k = random.randint(0, len(value) - 1)
-            modified_value = value[: k] + value[k] + value[k:]
+            modified_value = value[:k] + value[k] + value[k:]
 
         return modified_value
 
@@ -183,71 +185,71 @@ class ColumnFatFingersModifier(FatFingersModifier):
 #             new_df[column] = self._modify_column(df[column])
 
 #         return new_df
-    
+
 #     def _modify_column(
-        
-    # column_modifiers: List[ColumnFatFingersModifier]
 
-    # @property
-    # def num_columns(self):
-    #     return len(self.column_modifiers)
+# column_modifiers: List[ColumnFatFingersModifier]
 
-    # @classmethod
-    # def create(
-    #     cls,
-    #     column_generators: Optional[List[ColumnMissingnessModifier]] = None,
-    #     num_columns: Optional[int] = None,
-    # ):
-    #     if column_generators is None:
-    #         if num_columns is None:
-    #             num_columns = 12
+# @property
+# def num_columns(self):
+#     return len(self.column_modifiers)
 
-    #         column_modifiers = []
-    #         for i in range(num_columns):
-    #             column_modifier = cls._generate_column_generator()
-    #             column_modifiers.append(column_modifier)
+# @classmethod
+# def create(
+#     cls,
+#     column_generators: Optional[List[ColumnMissingnessModifier]] = None,
+#     num_columns: Optional[int] = None,
+# ):
+#     if column_generators is None:
+#         if num_columns is None:
+#             num_columns = 12
 
-    #     return cls(
-    #         column_modifiers=column_modifiers,
-    #     )
+#         column_modifiers = []
+#         for i in range(num_columns):
+#             column_modifier = cls._generate_column_generator()
+#             column_modifiers.append(column_modifier)
 
-    # @staticmethod
-    # def _generate_column_generator(
-    #     missingness_type: Optional[ColumnMissingnessType] = None,
-    # ) -> ColumnMissingnessModifier:
-    #     if missingness_type is None:
-    #         missingness_type = random.choice(
-    #             [
-    #                 ColumnMissingnessType.NEVER,
-    #                 ColumnMissingnessType.NEVER,
-    #                 ColumnMissingnessType.NEVER,
-    #                 ColumnMissingnessType.NEVER,
-    #                 ColumnMissingnessType.PROPORTIONAL,
-    #                 ColumnMissingnessType.PROPORTIONAL,
-    #                 ColumnMissingnessType.ALWAYS,
-    #                 # "CONDITIONAL",
-    #             ]
-    #         )
+#     return cls(
+#         column_modifiers=column_modifiers,
+#     )
 
-    #     if missingness_type == ColumnMissingnessType.ALWAYS:
-    #         return ColumnMissingnessModifier(
-    #             missingness_type=missingness_type,
-    #         )
+# @staticmethod
+# def _generate_column_generator(
+#     missingness_type: Optional[ColumnMissingnessType] = None,
+# ) -> ColumnMissingnessModifier:
+#     if missingness_type is None:
+#         missingness_type = random.choice(
+#             [
+#                 ColumnMissingnessType.NEVER,
+#                 ColumnMissingnessType.NEVER,
+#                 ColumnMissingnessType.NEVER,
+#                 ColumnMissingnessType.NEVER,
+#                 ColumnMissingnessType.PROPORTIONAL,
+#                 ColumnMissingnessType.PROPORTIONAL,
+#                 ColumnMissingnessType.ALWAYS,
+#                 # "CONDITIONAL",
+#             ]
+#         )
 
-    #     elif missingness_type == ColumnMissingnessType.NEVER:
-    #         return ColumnMissingnessModifier(
-    #             missingness_type=missingness_type,
-    #         )
+#     if missingness_type == ColumnMissingnessType.ALWAYS:
+#         return ColumnMissingnessModifier(
+#             missingness_type=missingness_type,
+#         )
 
-    #     elif missingness_type == ColumnMissingnessType.PROPORTIONAL:
-    #         # A little math to make most proportions close to 0 or 1, with "close to 0" being more likely
-    #         proportion = random.random() ** 3
-    #         if random.random() < 0.25:
-    #             proportion = 1 - proportion
+#     elif missingness_type == ColumnMissingnessType.NEVER:
+#         return ColumnMissingnessModifier(
+#             missingness_type=missingness_type,
+#         )
 
-    #         return ColumnMissingnessModifier(
-    #             missingness_type=missingness_type,
-    #             missingness_params=ProportionalColumnMissingnessParams(
-    #                 proportion=proportion,
-    #             ),
-    #         )
+#     elif missingness_type == ColumnMissingnessType.PROPORTIONAL:
+#         # A little math to make most proportions close to 0 or 1, with "close to 0" being more likely
+#         proportion = random.random() ** 3
+#         if random.random() < 0.25:
+#             proportion = 1 - proportion
+
+#         return ColumnMissingnessModifier(
+#             missingness_type=missingness_type,
+#             missingness_params=ProportionalColumnMissingnessParams(
+#                 proportion=proportion,
+#             ),
+#         )

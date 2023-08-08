@@ -1,24 +1,23 @@
 from abc import ABC
 from enum import Enum
 import random
-from typing import Any, List, Optional
-from pydantic import BaseModel, Field
+from typing import Optional
+from pydantic import Field
 from uuid import uuid4
 
 import pandas as pd
 
-from did_you_miss_me.abc import (
-    DataGenerator,
-)
 from did_you_miss_me.generators.column import (
     ColumnGenerator,
 )
+
 
 class KeyType(str, Enum):
     """Types of keys"""
 
     integer = "INTEGER"
     uuid4 = "UUID4"
+
 
 class KeyColumnGenerator(ColumnGenerator, ABC):
     """Specifies how to create a column containing a key."""
@@ -41,10 +40,12 @@ class KeyColumnGenerator(ColumnGenerator, ABC):
             mask = series.apply(lambda x: random.random() < self.percent_unique)
             print(list(mask))
             new_series = series.copy()
-            new_series[mask] = new_series[mask].apply(lambda x: random.choice(list(series[mask==False])))
+            new_series[mask] = new_series[mask].apply(
+                lambda x: random.choice(list(series[mask is False]))
+            )
             print(list(new_series))
             return new_series
-        
+
         else:
             return series
 
@@ -54,10 +55,10 @@ class KeyColumnGenerator(ColumnGenerator, ABC):
             new_series = series.copy()
             new_series[mask] = None
             return new_series
-        
+
         else:
             return series
-    
+
     @classmethod
     def create_primary_key(
         cls,
@@ -89,10 +90,9 @@ class KeyColumnGenerator(ColumnGenerator, ABC):
             *args,
             **kwargs,
         )
-        
-    
-class UuidKeyColumnGenerator(KeyColumnGenerator):
 
+
+class UuidKeyColumnGenerator(KeyColumnGenerator):
     @classmethod
     def create(
         cls,
@@ -106,35 +106,33 @@ class UuidKeyColumnGenerator(KeyColumnGenerator):
             name = f"column_key_{random.randint(0, 1000)}"
 
         if percent_unique is None:
-            percent_unique = 1 - random.random()**2
+            percent_unique = 1 - random.random() ** 2
 
         if percent_missing is None:
-            percent_missing = random.random()**2
-        
+            percent_missing = random.random() ** 2
+
         return cls(
             name=name,
             key_type=KeyType.uuid4,
             percent_missing=percent_missing,
             percent_unique=percent_unique,
         )
-    
+
     def generate(
         self,
-        num_rows:int,
+        num_rows: int,
     ) -> pd.Series:
         """Generate a column containing key-like data."""
 
         series = pd.Series([str(uuid4()) for _ in range(num_rows)])
-    
+
         series = self._apply_missingness(series)
         series = self._apply_uniqueness(series)
 
         return series
 
 
-
 class IntegerKeyColumnGenerator(KeyColumnGenerator):
-
     digits: int = Field(
         random.randint(6, 20),
         description="The number of digits to use when generating integer-type keys.",
@@ -174,10 +172,10 @@ class IntegerKeyColumnGenerator(KeyColumnGenerator):
             name = f"column_key_{random.randint(0, 1000)}"
 
         if percent_unique is None:
-            percent_unique = 1 - random.random()**2
+            percent_unique = 1 - random.random() ** 2
 
         if percent_missing is None:
-            percent_missing = random.random()**2
+            percent_missing = random.random() ** 2
 
         if digits is None:
             digits = random.randint(6, 20)
@@ -191,7 +189,7 @@ class IntegerKeyColumnGenerator(KeyColumnGenerator):
         if data_type == "str":
             if pad_with_zeros is None:
                 pad_with_zeros = random.random() < 0.5
-        
+
         return cls(
             name=name,
             key_type=KeyType.integer,
@@ -205,7 +203,7 @@ class IntegerKeyColumnGenerator(KeyColumnGenerator):
 
     def generate(
         self,
-        num_rows:int,
+        num_rows: int,
         starting_value: Optional[int] = 0,
     ) -> pd.Series:
         """Generate a column containing key-like data."""
@@ -213,14 +211,16 @@ class IntegerKeyColumnGenerator(KeyColumnGenerator):
         if self.incrementing:
             series = pd.Series(range(starting_value, starting_value + num_rows))
         else:
-            series = pd.Series([random.randint(0, 10 ** self.digits) for _ in range(num_rows)])
+            series = pd.Series(
+                [random.randint(0, 10**self.digits) for _ in range(num_rows)]
+            )
 
         series = self._apply_missingness(series)
         series = self._apply_uniqueness(series)
 
         if self.ascending:
-            series = series.sort_values(ascending=True)            
-        
+            series = series.sort_values(ascending=True)
+
         if self.data_type == "str":
             if self.pad_with_zeros:
                 series = series.astype(str).str.zfill(self.digits)

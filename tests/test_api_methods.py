@@ -12,6 +12,7 @@ import did_you_miss_me as dymm
 def set_random_seed():
     random.seed(40)
 
+
 def test__generate_series():
     random.seed(9)
 
@@ -23,6 +24,7 @@ def test__generate_series():
         num_rows=20,
     )
     assert series.shape == (20,)
+
 
 def test__generate_dataframe():
     df = dymm.generate_dataframe(
@@ -84,7 +86,6 @@ def test__generate_multibatch_dataframe():
     assert df.shape == (80, 2)
     assert df.isnull().sum().sum() > 0
     assert "batch_id" not in df.columns
-
 
     df = dymm.generate_multibatch_dataframe(
         num_columns=2,

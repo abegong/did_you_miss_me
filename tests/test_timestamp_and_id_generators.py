@@ -1,6 +1,5 @@
 """Tests that verify that Plan objects work as expected: constructors, serialization, etc."""
 
-import json
 import pytest
 import random
 
@@ -17,6 +16,6 @@ def set_random_seed():
 
 def test__timestamp_and_id_column_generator():
     generator = TimeStampAndIdMultiColumnGenerator.create()
-    values = generator.generate(
+    generator.generate(
         num_rows=5,
     )

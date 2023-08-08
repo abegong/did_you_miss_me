@@ -1,6 +1,5 @@
 """Tests that verify that missifying methods work as expected."""
 
-import pytest
 import random
 
 import pandas as pd
@@ -24,6 +23,7 @@ from did_you_miss_me.modifiers.fat_fingers import (
 #         num_rows=20,
 #     )
 
+
 def test___modify_values():
     """Tests that the __modify_values method works as expected."""
 
@@ -46,16 +46,23 @@ def test___modify_values():
     random.seed(1)
     assert ColumnFatFingersModifier._modify_value(test_string, "missing_chars") == "acd"
     assert ColumnFatFingersModifier._modify_value(test_string, "extra_chars") == "cabcd"
-    assert ColumnFatFingersModifier._modify_value(test_string, "transposed_chars") == "bacd"
-    assert ColumnFatFingersModifier._modify_value(test_string, "mistaken_chars") == "abc3"
-    assert ColumnFatFingersModifier._modify_value(test_string, "repeated_chars") == "abcdd"
+    assert (
+        ColumnFatFingersModifier._modify_value(test_string, "transposed_chars")
+        == "bacd"
+    )
+    assert (
+        ColumnFatFingersModifier._modify_value(test_string, "mistaken_chars") == "abc3"
+    )
+    assert (
+        ColumnFatFingersModifier._modify_value(test_string, "repeated_chars") == "abcdd"
+    )
 
 
 def test___modify_column():
     modifier = ColumnFatFingersModifier.create(
         error_rate=0.5,
     )
-    
+
     full_names = FakerColumnGenerator(
         faker_type="name",
     ).generate(

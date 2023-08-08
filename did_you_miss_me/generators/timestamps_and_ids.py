@@ -1,25 +1,19 @@
-from abc import ABC
-from enum import Enum
 import random
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 
 import pandas as pd
 
-from did_you_miss_me.abc import (
-    DataGenerator,
-)
 from did_you_miss_me.generators.column import (
     ColumnGenerator,
     MultiColumnGenerator,
 )
 from did_you_miss_me.generators.keys import (
-    KeyColumnGenerator,
     IntegerKeyColumnGenerator,
-    UuidKeyColumnGenerator,
 )
 from did_you_miss_me.generators.timestamp import (
     TimestampMultiColumnGenerator,
 )
+
 
 class TimeStampAndIdMultiColumnGenerator(MultiColumnGenerator):
     """Specifies how to create one or more columns containing timestamps and IDs."""
@@ -33,7 +27,6 @@ class TimeStampAndIdMultiColumnGenerator(MultiColumnGenerator):
         include_ids: bool = False,
         include_timestamps: bool = False,
     ) -> "TimeStampAndIdGenerator":
-        
         names = []
 
         if include_ids:
@@ -56,7 +49,7 @@ class TimeStampAndIdMultiColumnGenerator(MultiColumnGenerator):
         if include_timestamps:
             timestamp_column_generator = TimestampMultiColumnGenerator.create()
             names += timestamp_column_generator.names
-        
+
         else:
             timestamp_column_generator = None
 
@@ -65,11 +58,8 @@ class TimeStampAndIdMultiColumnGenerator(MultiColumnGenerator):
             id_column_generators=id_column_generators,
             timestamp_column_generator=timestamp_column_generator,
         )
-    
-    def generate(
-        self,
-        num_rows: int
-    ) -> Dict[str, pd.Series]:
+
+    def generate(self, num_rows: int) -> Dict[str, pd.Series]:
         """Generate series with the specified number of rows."""
 
         series_dict = {}
@@ -88,5 +78,5 @@ class TimeStampAndIdMultiColumnGenerator(MultiColumnGenerator):
             )
 
             series_dict = {**series_dict, **timestamp_series_dict}
-        
+
         return series_dict

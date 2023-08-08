@@ -23,7 +23,7 @@ def generate_series(
     num_rows: int = 200,
 ) -> pd.Series:
     """Generate a synthetic series with realistic patterns of missingness.
-    
+
     Parameters:
     - num_rows (int): The number of rows to generate in the series.
     """
@@ -44,8 +44,8 @@ def generate_dataframe(
     exact_rows: int = 200,
     num_columns: int = 12,
     add_missingness=True,
-    include_ids = False,
-    include_timestamps = False,
+    include_ids=False,
+    include_timestamps=False,
     # use_ai = False,
 ) -> pd.DataFrame:
     """Generate synthetic datasets with realistic patterns of missingness.
@@ -75,7 +75,7 @@ def missify_dataframe(
     df: pd.DataFrame,
 ) -> pd.DataFrame:
     """Add missingness to an existing dataframe.
-    
+
     Parameters:
     - df (pd.DataFrame): The dataframe to add missingness to.
     """
@@ -98,8 +98,8 @@ def generate_multibatch_dataframe(
     num_epochs: int = 5,
     batches_per_epoch: Optional[int] = None,
     add_missingness=True,
-    include_ids = True,
-    include_timestamps = True,
+    include_ids=True,
+    include_timestamps=True,
     # use_ai = False,
 ) -> pd.DataFrame:
     """Generate synthetic datasets with realistic patterns of missingness.

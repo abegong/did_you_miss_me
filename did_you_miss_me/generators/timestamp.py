@@ -1,18 +1,17 @@
-from abc import ABC
 import datetime
 from enum import Enum
 import random
 from typing import Any, List, Optional
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 import pandas as pd
 
 from did_you_miss_me.generators.column import (
-    ColumnGenerator,
     MultiColumnGenerator,
 )
 
 ### Timestamps ###
+
 
 class TimestampFormat(str, Enum):
     """Types of timestamp formats"""
@@ -24,8 +23,8 @@ class TimestampFormat(str, Enum):
     SINGLE_COLUMN_DATE = "SINGLE_COLUMN_DATE"
     MULTI_COLUMN_DATE = "MULTI_COLUMN_DATE"
 
-class TimestampMultiColumnGenerator(MultiColumnGenerator):
 
+class TimestampMultiColumnGenerator(MultiColumnGenerator):
     timestamp_format: TimestampFormat
     start_time: Optional[int] = Field(
         None,
@@ -59,12 +58,14 @@ class TimestampMultiColumnGenerator(MultiColumnGenerator):
             end_time = int(datetime.datetime.now().timestamp())
 
         if start_time is None:
-            start_time = end_time - 3600*24*random.randint(1, 365)
+            start_time = end_time - 3600 * 24 * random.randint(1, 365)
 
-        assert start_time <= end_time, "start_time must be less than or equal to end_time"
+        assert (
+            start_time <= end_time
+        ), "start_time must be less than or equal to end_time"
 
         if sortedness is None:
-            sortedness = 1 - (random.random()**2)
+            sortedness = 1 - (random.random() ** 2)
 
         if names is None:
             names = cls.get_column_names(timestamp_format)
@@ -79,12 +80,14 @@ class TimestampMultiColumnGenerator(MultiColumnGenerator):
 
     def generate(
         self,
-        num_rows:int,
+        num_rows: int,
     ) -> List[pd.Series]:
         """Generate a timestamp column."""
-    
+
         # Create a series of random timestamps
-        series = pd.Series([random.randint(self.start_time, self.end_time) for _ in range(num_rows)])
+        series = pd.Series(
+            [random.randint(self.start_time, self.end_time) for _ in range(num_rows)]
+        )
 
         # Sort the series, at least partially
         sortedish_series = self._partial_sort(series, self.sortedness)
@@ -93,27 +96,35 @@ class TimestampMultiColumnGenerator(MultiColumnGenerator):
         formatted_series = self._reformat_series(sortedish_series)
 
         return dict(zip(self.names, formatted_series))
-    
+
     def _reformat_series(self, series: pd.Series) -> pd.Series:
         """Reformat a series of timestamps."""
 
         if self.timestamp_format == TimestampFormat.UNIX_EPOCH:
             formatted_series = [series]
-        
+
         elif self.timestamp_format == TimestampFormat.ISO_8601:
             formatted_series = [series.apply(datetime.datetime.fromtimestamp)]
-        
+
         elif self.timestamp_format == TimestampFormat.SINGLE_COLUMN_TIMESTAMP:
-            formatted_series = [series.apply(datetime.datetime.fromtimestamp).apply(str)]
-        
+            formatted_series = [
+                series.apply(datetime.datetime.fromtimestamp).apply(str)
+            ]
+
         elif self.timestamp_format == TimestampFormat.MULTI_COLUMN_TIMESTAMP:
-            date_series = series.apply(datetime.datetime.fromtimestamp).apply(lambda x: x.date())
-            time_series = series.apply(datetime.datetime.fromtimestamp).apply(lambda x: x.time())
+            date_series = series.apply(datetime.datetime.fromtimestamp).apply(
+                lambda x: x.date()
+            )
+            time_series = series.apply(datetime.datetime.fromtimestamp).apply(
+                lambda x: x.time()
+            )
 
             formatted_series = [date_series, time_series]
-        
+
         elif self.timestamp_format == TimestampFormat.SINGLE_COLUMN_DATE:
-            formatted_series = [series.apply(datetime.datetime.fromtimestamp).apply(lambda x: x.date())]
+            formatted_series = [
+                series.apply(datetime.datetime.fromtimestamp).apply(lambda x: x.date())
+            ]
 
         elif self.timestamp_format == TimestampFormat.MULTI_COLUMN_DATE:
             datetime_series = series.apply(datetime.datetime.fromtimestamp)
@@ -122,10 +133,16 @@ class TimestampMultiColumnGenerator(MultiColumnGenerator):
             month_series = datetime_series.apply(lambda x: x.month)
             day_series = datetime_series.apply(lambda x: x.day)
 
-            formatted_series = [year_series, month_series, day_series,]
+            formatted_series = [
+                year_series,
+                month_series,
+                day_series,
+            ]
 
         else:
-            raise NotImplementedError(f"Timestamp format {self.timestamp_format} not implemented.")
+            raise NotImplementedError(
+                f"Timestamp format {self.timestamp_format} not implemented."
+            )
 
         return formatted_series
 
@@ -135,7 +152,7 @@ class TimestampMultiColumnGenerator(MultiColumnGenerator):
         p: float,
     ):
         """Partially sort a pandas Series.
-        
+
         Args:
             series: The list to partially sort.
             p: A number between 0 and 1 indicating how sorted the list should be. 0 means completely random, 1 means completely sorted.
@@ -160,7 +177,7 @@ class TimestampMultiColumnGenerator(MultiColumnGenerator):
             if source == 1:
                 partially_sorted_list.append(sorted_list.pop(0))
             else:
-                partially_sorted_list.append(random_list.pop(0))        
+                partially_sorted_list.append(random_list.pop(0))
 
         return pd.Series(partially_sorted_list)
 
@@ -170,16 +187,16 @@ class TimestampMultiColumnGenerator(MultiColumnGenerator):
 
         if timestamp_format == TimestampFormat.UNIX_EPOCH:
             return ["column_timestamp"]
-        
+
         elif timestamp_format == TimestampFormat.ISO_8601:
             return ["column_timestamp"]
-        
+
         elif timestamp_format == TimestampFormat.SINGLE_COLUMN_TIMESTAMP:
             return ["column_timestamp"]
-        
+
         elif timestamp_format == TimestampFormat.MULTI_COLUMN_TIMESTAMP:
             return ["column_date", "column_time"]
-        
+
         elif timestamp_format == TimestampFormat.SINGLE_COLUMN_DATE:
             return ["column_date"]
 
@@ -187,4 +204,6 @@ class TimestampMultiColumnGenerator(MultiColumnGenerator):
             return ["column_year", "column_month", "column_day"]
 
         else:
-            raise NotImplementedError(f"Timestamp format {timestamp_format} not implemented.")
+            raise NotImplementedError(
+                f"Timestamp format {timestamp_format} not implemented."
+            )

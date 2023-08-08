@@ -80,7 +80,7 @@ class DataframeGenerator(DataGenerator):
                 min_rows=min_rows,
                 max_rows=max_rows,
             )
-        
+
         if (include_ids is not None) or (include_timestamps is not None):
             timestamp_and_id_generator = TimeStampAndIdMultiColumnGenerator.create(
                 include_ids=include_ids,
@@ -131,11 +131,13 @@ class MissingFakerDataframeGenerator(DataGenerator):
                         min_rows=min_rows,
                         max_rows=max_rows,
                     )
-                
+
                 if timestamp_and_id_generator is None:
-                    timestamp_and_id_generator = TimeStampAndIdMultiColumnGenerator.create(
-                        include_ids=include_ids,
-                        include_timestamps=include_timestamps,
+                    timestamp_and_id_generator = (
+                        TimeStampAndIdMultiColumnGenerator.create(
+                            include_ids=include_ids,
+                            include_timestamps=include_timestamps,
+                        )
                     )
 
                 dataframe_generator = DataframeGenerator.create(
@@ -155,9 +157,11 @@ class MissingFakerDataframeGenerator(DataGenerator):
                     )
 
                 if timestamp_and_id_generator is None:
-                    timestamp_and_id_generator = TimeStampAndIdMultiColumnGenerator.create(
-                        include_ids=include_ids,
-                        include_timestamps=include_timestamps,
+                    timestamp_and_id_generator = (
+                        TimeStampAndIdMultiColumnGenerator.create(
+                            include_ids=include_ids,
+                            include_timestamps=include_timestamps,
+                        )
                     )
 
                 dataframe_generator = DataframeGenerator.create(
@@ -171,7 +175,9 @@ class MissingFakerDataframeGenerator(DataGenerator):
                 )
 
                 row_count_widget = dataframe_generator.row_count_widget
-                timestamp_and_id_generator = dataframe_generator.timestamp_and_id_generator
+                timestamp_and_id_generator = (
+                    dataframe_generator.timestamp_and_id_generator
+                )
 
             else:
                 assert (

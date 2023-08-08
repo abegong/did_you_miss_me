@@ -20,26 +20,12 @@ from did_you_miss_me.generators.keys import (
 from did_you_miss_me.generators.timestamp import (
     TimestampMultiColumnGenerator,
 )
-# from did_you_miss_me.generators.foreign_keys import (
-#     ForeignKeyGenerator,
-# )
 
 class TimeStampAndIdMultiColumnGenerator(MultiColumnGenerator):
     """Specifies how to create one or more columns containing timestamps and IDs."""
 
     id_column_generators: List[ColumnGenerator]
     timestamp_column_generator: Optional[MultiColumnGenerator]
-
-    # has_primary_key: bool
-    # foreign_key_column_names: List[str]
-
-    # timestamp_column_names: List[str]
-    # timestamp_column_formats: List[str]
-
-    # timestamp_column_name: Optional[str]
-    # exact_rows: Optional[int]
-    # min_rows: Optional[int]
-    # max_rows: Optional[int]
 
     @classmethod
     def create(
@@ -84,7 +70,7 @@ class TimeStampAndIdMultiColumnGenerator(MultiColumnGenerator):
         self,
         num_rows: int
     ) -> Dict[str, pd.Series]:
-        """Generate a  with the specified number of rows."""
+        """Generate series with the specified number of rows."""
 
         series_dict = {}
 

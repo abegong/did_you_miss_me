@@ -121,7 +121,6 @@ class UuidKeyColumnGenerator(KeyColumnGenerator):
     def generate(
         self,
         num_rows:int,
-        starting_value: Optional[int] = 0,
     ) -> pd.Series:
         """Generate a column containing key-like data."""
 

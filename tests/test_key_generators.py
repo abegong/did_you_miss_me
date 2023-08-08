@@ -31,6 +31,18 @@ def test__key_column_generator():
     ).tolist()
     assert values == [0, 1, 2, 3, 4]
 
+def test__key_column_generator__with_starting_value():
+    generator = IntegerKeyColumnGenerator.create(
+        incrementing=True,
+        data_type="int",
+        percent_missing=0.0,
+        percent_unique=1.0,
+    )
+    values = generator.generate(
+        num_rows=5,
+        starting_value=100,
+    ).tolist()
+    assert values == [100, 101, 102, 103, 104]
 
 def test__key_column_generator__with_percent_missing():
     generator = IntegerKeyColumnGenerator.create(

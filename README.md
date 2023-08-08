@@ -124,10 +124,17 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
 
 ## Todo
 
-### Cleanup
+### On deck
 * Create `DataframeMissingnessModifier.modify` and think through syntax + APIs for `DataModifier` classes.
     * api.missify_dataframe -> DataframeMissingnessModifier.modify
     * Pull ColumnMissingnessParams and related code into its own file
+
+* Make primary keys not always start at 0
+* Make primary keys continuous across multiple batches
+* Make timestamps continuous across multiple batches
+
+
+### Cleanup
 
 * Refactor tests to match new code organization (no more plans; generators and modifiers in their own directories)
 * Split up MissingFakerDataframeGenerator.create: it has too many parameters and code paths
@@ -137,13 +144,7 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
 * Change testing to use GX (or at least regex), rather than exact fixtures
 
 ### New features
-* Add FatFingerModifier
-
-* Make primary keys not always start at 0
-* Make primary keys continuous across multiple batches
-* Make timestamps continuous across multiple batches
-
-* Add strftime options for time and date-stamp generators
+* Add strftime options for time- and date-stamp generators
 * Make it so timestamp columns sometimes come at the end of the dataframe
 
 * Add conditional missingness

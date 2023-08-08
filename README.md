@@ -132,7 +132,7 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
 * Refactor tests to match new code organization (no more plans; generators and modifiers in their own directories)
 * Split up MissingFakerDataframeGenerator.create: it has too many parameters and code paths
 * Figure out how to add random seeds that'll work for Faker and numpy
-* Move add_missingness from the `generate` step for a generator back upstream into its "plan."
+* Move `add_missingness` from the `generate` step for a generator back upstream into its "plan."
 
 ### New features
 * Add tests for timestamp generators

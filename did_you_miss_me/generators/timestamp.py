@@ -17,12 +17,12 @@ from did_you_miss_me.generators.column import (
 class TimestampFormat(str, Enum):
     """Types of timestamp formats"""
 
-    unix_epoch = "UNIX_EPOCH"
-    iso_8601 = "ISO_8601"
-    single_column_timestamp = "SINGLE_COLUMN_TIMESTAMP"
-    multi_column_timestamp = "MULTI_COLUMN_TIMESTAMP"
-    single_column_date = "SINGLE_COLUMN_DATE"
-    multi_column_date = "MULTI_COLUMN_DATE"
+    UNIX_EPOCH = "UNIX_EPOCH"
+    ISO_8601 = "ISO_8601"
+    SINGLE_COLUMN_TIMESTAMP = "SINGLE_COLUMN_TIMESTAMP"
+    MULTI_COLUMN_TIMESTAMP = "MULTI_COLUMN_TIMESTAMP"
+    SINGLE_COLUMN_DATE = "SINGLE_COLUMN_DATE"
+    MULTI_COLUMN_DATE = "MULTI_COLUMN_DATE"
 
 class TimestampMultiColumnGenerator(MultiColumnGenerator):
 
@@ -77,8 +77,15 @@ class TimestampMultiColumnGenerator(MultiColumnGenerator):
             sortedness=sortedness,
         )
 
-    def generate(self, num_rows:int) -> List[pd.Series]:
+    def generate(
+        self,
+        num_rows:int,
+        seed: Optional[int] = None,
+    ) -> List[pd.Series]:
         """Generate a timestamp column."""
+    
+        if seed is not None:
+            random.seed(seed)
 
         # Create a series of random timestamps
         series = pd.Series([random.randint(self.start_time, self.end_time) for _ in range(num_rows)])
@@ -87,47 +94,66 @@ class TimestampMultiColumnGenerator(MultiColumnGenerator):
         sortedish_series = self.partial_sort(series, self.sortedness)
 
         # Format the series, depending on the timestamp format
-        if self.timestamp_format == TimestampFormat.unix_epoch:
-            formatted_series = [sortedish_series]
+        formatted_series = self._reformat_series(sortedish_series)
+
+        return dict(zip(self.names, formatted_series))
+    
+    def _reformat_series(self, series: pd.Series) -> pd.Series:
+        """Reformat a series of timestamps."""
+
+        if self.timestamp_format == TimestampFormat.UNIX_EPOCH:
+            formatted_series = [series]
         
-        elif self.timestamp_format == TimestampFormat.iso_8601:
-            formatted_series = [sortedish_series.apply(datetime.datetime.fromtimestamp)]
+        elif self.timestamp_format == TimestampFormat.ISO_8601:
+            formatted_series = [series.apply(datetime.datetime.fromtimestamp)]
         
-        elif self.timestamp_format == TimestampFormat.single_column_timestamp:
-            formatted_series = [sortedish_series.apply(datetime.datetime.fromtimestamp).apply(str)]
+        elif self.timestamp_format == TimestampFormat.SINGLE_COLUMN_TIMESTAMP:
+            formatted_series = [series.apply(datetime.datetime.fromtimestamp).apply(str)]
         
-        elif self.timestamp_format == TimestampFormat.multi_column_timestamp:
-            date_series = sortedish_series.apply(datetime.datetime.fromtimestamp)
-            time_series = sortedish_series.apply(lambda x: datetime.timedelta(seconds=x))
+        elif self.timestamp_format == TimestampFormat.MULTI_COLUMN_TIMESTAMP:
+            date_series = series.apply(datetime.datetime.fromtimestamp).apply(lambda x: x.date())
+            time_series = series.apply(datetime.datetime.fromtimestamp).apply(lambda x: x.time())
 
             formatted_series = [date_series, time_series]
         
-        elif self.timestamp_format == TimestampFormat.single_column_date:
-            formatted_series = [sortedish_series.apply(datetime.datetime.fromtimestamp).apply(lambda x: x.date())]
+        elif self.timestamp_format == TimestampFormat.SINGLE_COLUMN_DATE:
+            formatted_series = [series.apply(datetime.datetime.fromtimestamp).apply(lambda x: x.date())]
 
-        elif self.timestamp_format == TimestampFormat.multi_column_date:
-            day_series = sortedish_series.apply(datetime.datetime.fromtimestamp).apply(lambda x: x.date())
-            month_series = sortedish_series.apply(lambda x: x // (3600*24*30))
-            year_series = sortedish_series.apply(lambda x: x // (3600*24*365))
+        elif self.timestamp_format == TimestampFormat.MULTI_COLUMN_DATE:
+            datetime_series = series.apply(datetime.datetime.fromtimestamp)
 
-            formatted_series = [day_series, month_series, year_series]
+            year_series = datetime_series.apply(lambda x: x.year)
+            month_series = datetime_series.apply(lambda x: x.month)
+            day_series = datetime_series.apply(lambda x: x.day)
+
+            formatted_series = [year_series, month_series, day_series,]
 
         else:
             raise NotImplementedError(f"Timestamp format {self.timestamp_format} not implemented.")
 
-        return dict(zip(self.names, formatted_series))
+        return formatted_series
 
     @staticmethod
-    def partial_sort(lst, p):
-        sorted_lst = sorted(lst)
-        random_lst = sorted_lst.copy()
-        random.shuffle(random_lst)
+    def partial_sort(
+        list_: List[Any],
+        p: float,
+    ):
+        """Partially sort a list.
+        
+        Args:
+            list_: The list to partially sort.
+            p: A number between 0 and 1 indicating how sorted the list should be. 0 means completely random, 1 means completely sorted.
+        """
 
-        n = len(lst)
+        sorted_list = sorted(list_)
+        random_list = sorted_list.copy()
+        random.shuffle(random_list)
+
+        n = len(list_)
         n_sorted = int(n * p)
         n_random = n - n_sorted
 
-        partially_sorted_lst = sorted_lst[:n_sorted] + random_lst[n_sorted:]
+        partially_sorted_lst = sorted_list[:n_sorted] + random_list[n_sorted:]
         random.shuffle(partially_sorted_lst)
 
         return pd.Series(partially_sorted_lst)
@@ -136,23 +162,23 @@ class TimestampMultiColumnGenerator(MultiColumnGenerator):
     def get_column_names(timestamp_format: TimestampFormat) -> List[str]:
         """Get the column names for a timestamp format."""
 
-        if timestamp_format == TimestampFormat.unix_epoch:
+        if timestamp_format == TimestampFormat.UNIX_EPOCH:
             return ["timestamp"]
         
-        elif timestamp_format == TimestampFormat.iso_8601:
+        elif timestamp_format == TimestampFormat.ISO_8601:
             return ["timestamp"]
         
-        elif timestamp_format == TimestampFormat.single_column_timestamp:
+        elif timestamp_format == TimestampFormat.SINGLE_COLUMN_TIMESTAMP:
             return ["timestamp"]
         
-        elif timestamp_format == TimestampFormat.multi_column_timestamp:
+        elif timestamp_format == TimestampFormat.MULTI_COLUMN_TIMESTAMP:
             return ["date", "time"]
         
-        elif timestamp_format == TimestampFormat.single_column_date:
+        elif timestamp_format == TimestampFormat.SINGLE_COLUMN_DATE:
             return ["date"]
 
-        elif timestamp_format == TimestampFormat.multi_column_date:
-            return ["day", "month", "year"]
+        elif timestamp_format == TimestampFormat.MULTI_COLUMN_DATE:
+            return ["year", "month", "day"]
 
         else:
             raise NotImplementedError(f"Timestamp format {timestamp_format} not implemented.")

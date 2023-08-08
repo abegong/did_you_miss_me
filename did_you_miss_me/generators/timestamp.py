@@ -80,18 +80,14 @@ class TimestampMultiColumnGenerator(MultiColumnGenerator):
     def generate(
         self,
         num_rows:int,
-        seed: Optional[int] = None,
     ) -> List[pd.Series]:
         """Generate a timestamp column."""
     
-        if seed is not None:
-            random.seed(seed)
-
         # Create a series of random timestamps
         series = pd.Series([random.randint(self.start_time, self.end_time) for _ in range(num_rows)])
 
         # Sort the series, at least partially
-        sortedish_series = self.partial_sort(series, self.sortedness)
+        sortedish_series = self._partial_sort(series, self.sortedness)
 
         # Format the series, depending on the timestamp format
         formatted_series = self._reformat_series(sortedish_series)
@@ -134,29 +130,39 @@ class TimestampMultiColumnGenerator(MultiColumnGenerator):
         return formatted_series
 
     @staticmethod
-    def partial_sort(
-        list_: List[Any],
+    def _partial_sort(
+        series: pd.Series,
         p: float,
     ):
-        """Partially sort a list.
+        """Partially sort a pandas Series.
         
         Args:
-            list_: The list to partially sort.
+            series: The list to partially sort.
             p: A number between 0 and 1 indicating how sorted the list should be. 0 means completely random, 1 means completely sorted.
         """
+        list_ = list(series)
+        
+        length = len(list_)
+        cutoff = int(length * p)
 
-        sorted_list = sorted(list_)
-        random_list = sorted_list.copy()
+        copied_list = list_.copy()
+        random.shuffle(copied_list)
+
+        sorted_list = sorted(copied_list[:cutoff])
+        random_list = copied_list[cutoff:]
         random.shuffle(random_list)
 
-        n = len(list_)
-        n_sorted = int(n * p)
-        n_random = n - n_sorted
+        source_list = [1 for _ in range(cutoff)] + [0 for _ in range(length - cutoff)]
+        random.shuffle(source_list)
 
-        partially_sorted_lst = sorted_list[:n_sorted] + random_list[n_sorted:]
-        random.shuffle(partially_sorted_lst)
+        partially_sorted_list = []
+        for source in source_list:
+            if source == 1:
+                partially_sorted_list.append(sorted_list.pop(0))
+            else:
+                partially_sorted_list.append(random_list.pop(0))        
 
-        return pd.Series(partially_sorted_lst)
+        return pd.Series(partially_sorted_list)
 
     @staticmethod
     def get_column_names(timestamp_format: TimestampFormat) -> List[str]:

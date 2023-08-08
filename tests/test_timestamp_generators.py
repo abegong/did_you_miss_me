@@ -34,8 +34,8 @@ def test__timestamp_multi_column_generator__with_unix_epoch_format():
     values = generator.generate(
         num_rows=5,
     )
-    print(values["timestamp"])
-    assert list(values["timestamp"]) == [
+    print(values["column_timestamp"])
+    assert list(values["column_timestamp"]) == [
         1672689973,
         1673421827,
         1673740981,
@@ -53,8 +53,8 @@ def test__timestamp_multi_column_generator__with_iso_8601_format():
     values = generator.generate(
         num_rows=5,
     )
-    print(values["timestamp"])
-    assert [str(x) for x in list(values["timestamp"])] == [
+    print(values["column_timestamp"])
+    assert [str(x) for x in list(values["column_timestamp"])] == [
         "2023-01-02 13:06:13",
         "2023-01-11 00:23:47",
         "2023-01-14 17:03:01",
@@ -71,8 +71,8 @@ def test__timestamp_multi_column_generator__with_single_column_timestamp_format(
     values = generator.generate(
         num_rows=5,
     )
-    print(values["timestamp"])
-    assert list(values["timestamp"]) == [
+    print(values["column_timestamp"])
+    assert list(values["column_timestamp"]) == [
         "2023-01-02 13:06:13",
         "2023-01-11 00:23:47",
         "2023-01-14 17:03:01",
@@ -89,16 +89,16 @@ def test__timestamp_multi_column_generator__with_multi_column_timestamp_format()
     values = generator.generate(
         num_rows=5,
     )
-    print(values["date"])
-    assert [str(x) for x in list(values["date"])] == [
+    print(values["column_date"])
+    assert [str(x) for x in list(values["column_date"])] == [
         "2023-01-02",
         "2023-01-11",
         "2023-01-14",
         "2023-01-26",
         "2023-01-12",
     ]
-    print(values["time"])
-    assert [str(x) for x in list(values["time"])] == [
+    print(values["column_time"])
+    assert [str(x) for x in list(values["column_time"])] == [
         "13:06:13",
         "00:23:47",
         "17:03:01",
@@ -115,8 +115,8 @@ def test__timestamp_multi_column_generator__with_single_column_date_format():
     values = generator.generate(
         num_rows=5,
     )
-    print(values["date"])
-    assert [str(x) for x in list(values["date"])] == [
+    print(values["column_date"])
+    assert [str(x) for x in list(values["column_date"])] == [
         "2023-01-02",
         "2023-01-11",
         "2023-01-14",
@@ -133,24 +133,24 @@ def test__timestamp_multi_column_generator__with_multi_column_date_format():
     values = generator.generate(
         num_rows=5,
     )
-    print(values["year"])
-    assert list(values["year"]) == [
+    print(values["column_year"])
+    assert list(values["column_year"]) == [
         2023,
         2023,
         2023,
         2023,
         2023,
     ]
-    print(values["month"])
-    assert list(values["month"]) == [
+    print(values["column_month"])
+    assert list(values["column_month"]) == [
         1,
         1,
         1,
         1,
         1,
     ]
-    print(values["day"])
-    assert list(values["day"]) == [
+    print(values["column_day"])
+    assert list(values["column_day"]) == [
         2,
         11,
         14,

@@ -141,7 +141,7 @@ class TimestampMultiColumnGenerator(MultiColumnGenerator):
             p: A number between 0 and 1 indicating how sorted the list should be. 0 means completely random, 1 means completely sorted.
         """
         list_ = list(series)
-        
+
         length = len(list_)
         cutoff = int(length * p)
 
@@ -169,22 +169,22 @@ class TimestampMultiColumnGenerator(MultiColumnGenerator):
         """Get the column names for a timestamp format."""
 
         if timestamp_format == TimestampFormat.UNIX_EPOCH:
-            return ["timestamp"]
+            return ["column_timestamp"]
         
         elif timestamp_format == TimestampFormat.ISO_8601:
-            return ["timestamp"]
+            return ["column_timestamp"]
         
         elif timestamp_format == TimestampFormat.SINGLE_COLUMN_TIMESTAMP:
-            return ["timestamp"]
+            return ["column_timestamp"]
         
         elif timestamp_format == TimestampFormat.MULTI_COLUMN_TIMESTAMP:
-            return ["date", "time"]
+            return ["column_date", "column_time"]
         
         elif timestamp_format == TimestampFormat.SINGLE_COLUMN_DATE:
-            return ["date"]
+            return ["column_date"]
 
         elif timestamp_format == TimestampFormat.MULTI_COLUMN_DATE:
-            return ["year", "month", "day"]
+            return ["column_year", "column_month", "column_day"]
 
         else:
             raise NotImplementedError(f"Timestamp format {timestamp_format} not implemented.")

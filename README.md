@@ -134,13 +134,15 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
 * Figure out how to add random seeds that'll work for Faker and numpy
 * Move `add_missingness` from the `generate` step for a generator back upstream into its "plan."
 * Convert the output of a MultiColumnGenerator to be a pydantic object, rather than a Dict.
+* Change testing to use GX (or at least regex), rather than exact fixtures
 
 ### New features
-* Add strftime options for time and date-stamp generators
-* Make it so timestamp columns sometimes come at the end of the dataframe
 * Make primary keys continuous across multiple batches
 * Make timestamps continuous across multiple batches
 * Add sensible contents for foreign keys
+
+* Add strftime options for time and date-stamp generators
+* Make it so timestamp columns sometimes come at the end of the dataframe
 
 * Add conditional missingness
 * Add langchain stuffs

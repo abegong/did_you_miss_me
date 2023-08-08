@@ -14,123 +14,215 @@ from did_you_miss_me.generators.column import (
     ColumnGenerator,
 )
 
-### Primary Keys ###
-
-class PrimaryKeyType(str, Enum):
-    """Types of primary keys"""
+class KeyType(str, Enum):
+    """Types of keys"""
 
     integer = "INTEGER"
     uuid4 = "UUID4"
 
-class PrimaryKeyParams(BaseModel, ABC):
-    """Parameters for generating a primary key."""
-    pass
+class KeyColumnGenerator(ColumnGenerator, ABC):
+    """Specifies how to create a column containing a key."""
 
-class IntegerPrimaryKeyParams(PrimaryKeyParams):
-    """Parameters for generating an ascending integer primary key."""
-
-    digits: int = Field(
-        random.randint(4, 10),
-        description="The number of digits to use when generating integer-type keys.",
+    key_type: KeyType = Field(
+        random.choice(list(KeyType)),
+        description="The type of key to generate (e.g. integer, uuid4).)",
     )
-    ascending: bool = Field(
-        True,
-        description="Whether to generate an ascending or unsorted integer primary key.",
+    # key_params: Optional[KeyParams] = Field(
+    #     None,
+    #     description="Parameters for generating the key.",
+    # )
+    percent_missing: float = Field(
+        0.0,
+        description="A number between 0 and 1 indicating how many values should be missing. 0 means no values are missing, 1 means all values are missing.",
     )
-    data_type: str = Field(
-        "int",
-        description="The data type of the primary key.",
-    )
-    pad_with_zeros: Optional[bool] = Field(
-        False,
-        description="Whether to pad the primary key with zeros. (Only used when data_type is 'str'.)",
+    percent_unique: float = Field(
+        1.0,
+        description="A number between 0 and 1 indicating how unique the key should be. 0 means every value is repeated, 1 means completely unique.",
     )
 
-class PrimaryKeyColumnGenerator(ColumnGenerator):
-    """Specifies how to create a column containing a primary key."""
+    # def _apply_uniqueness(self, series: pd.Series) -> pd.Series:
+    #     if self.percent_unique < 1:
+    #         series = series.sample(frac=self.key_params.percent_unique)
+    #         series = series.append(pd.Series([random.choice(series) for _ in range(int(num_rows * (1 - self.key_params.percent_unique)))]))
+    #         series = series.sample(frac=1)
 
-    key_type: PrimaryKeyType = Field(
-        random.choice(list(PrimaryKeyType)),
-        description="The type of primary key to generate.",
-    )
-    key_params: Optional[PrimaryKeyParams] = Field(
-        None,
-        description="Parameters for generating the primary key.",
-    )
+    # def _apply_missingness(self, series: pd.Series) -> pd.Series:
+    #     if self.percent_missing > 0:
+    #         series = series.sample(frac=1-self.key_params.percent_missing)
+    #         series = series.append(pd.Series([None] * int(num_rows * self.key_params.percent_missing)))
+    #         series = series.sample(frac=1)
+    
+    @classmethod
+    def create_primary_key(
+        cls,
+        name: Optional[str] = None,
+        *args,
+        **kwargs,
+    ) -> "KeyColumnGenerator":
+        """Create a KeyColumnGenerator for a primary key."""
+
+        return cls.create(
+            name=name or "column_primary_key",
+            percent_unique=1.0,
+            percent_missing=0.0,
+            *args,
+            **kwargs,
+            # incrementing=True,
+            # ascending=True,
+            # digits=random.randint(6, 20),
+            # data_type=random.choice(["int", "str"]),
+            # pad_with_zeros=random.random() < 0.5,
+        )
+
+    @classmethod
+    def create_foreign_key(
+        cls,
+        name: Optional[str] = None,
+        *args,
+        **kwargs,
+    ) -> "KeyColumnGenerator":
+        """Create a KeyColumnGenerator for a foreign key."""
+
+        return cls.create(
+            name=name or f"column_foreign_key_{random.randint(0, 1000)}",
+            *args,
+            **kwargs,
+            # key_type=random.choice([KeyType.integer, KeyType.uuid4]),
+            # digits=random.randint(6, 20),
+            # data_type=random.choice(["int", "str"]),
+            # pad_with_zeros=random.random() < 0.5,
+        )
+        
+    
+class UuidKeyColumnGenerator(KeyColumnGenerator):
 
     @classmethod
     def create(
         cls,
         name: Optional[str] = None,
-        key_type: Optional[PrimaryKeyType] = None,
-        ascending: Optional[bool] = True,
-        digits: Optional[int] = None,
-        data_type: Optional[str] = None,
-        pad_with_zeros: Optional[bool] = None,
-    ) -> Any:
-        """Create a PrimaryKeyColumnGenerator."""
+        percent_unique: Optional[float] = None,
+        percent_missing: Optional[float] = None,
+    ) -> "UuidKeyColumnGenerator":
+        """Create a UuidKeyColumnGenerator."""
 
         if name is None:
-            name = "primary_key_column"
+            name = f"column_key_{random.randint(0, 1000)}"
 
-        if key_type is None:
-            key_type = random.choice(list(PrimaryKeyType))
+        if percent_unique is None:
+            percent_unique = 1 - random.random()**2
 
-        if key_type == PrimaryKeyType.integer:
-            if digits is None:
-                digits = random.randint(4, 10)
-
-            if data_type is None:
-                data_type = random.choice(["int", "str"])
-
-            if data_type == "str":
-                if pad_with_zeros is None:
-                    pad_with_zeros = random.random() < 0.5
-            
-            key_params = IntegerPrimaryKeyParams(
-                digits=digits,
-                ascending=ascending,
-                data_type=data_type,
-                pad_with_zeros=pad_with_zeros,
-            )
-
-        else:
-            key_params = None
-
+        if percent_missing is None:
+            percent_missing = random.random()**2
+        
         return cls(
             name=name,
-            key_type=key_type,
-            key_params=key_params,
+            key_type=KeyType.uuid4,
+            percent_missing=percent_missing,
+            percent_unique=percent_unique,
         )
     
     def generate(
         self,
         num_rows:int,
         starting_value: Optional[int] = 0,
-        seed: Optional[int] = None,
     ) -> pd.Series:
-        """Generate a column containing a primary key."""
+        """Generate a column containing key-like data."""
 
-        if seed is not None:
-            random.seed(seed)
-    
-        if self.key_type == PrimaryKeyType.integer:
-            print(self.key_params)
+        return pd.Series([str(uuid4()) for _ in range(num_rows)])
 
-            if self.key_params.ascending:
-                series = pd.Series(range(starting_value, starting_value + num_rows))
-            
+
+class IntegerKeyColumnGenerator(KeyColumnGenerator):
+
+    digits: int = Field(
+        random.randint(4, 10),
+        description="The number of digits to use when generating integer-type keys.",
+    )
+    incrementing: bool = Field(
+        True,
+        description="If incrementing is True, then the key will be generated by incrementing the previous value. If incrementing is False, then the key will be generated by randomly sampling from the range of possible values.",
+    )
+    ascending: bool = Field(
+        True,
+        description="Whether to generate an ascending or unsorted integer key.",
+    )
+    data_type: str = Field(
+        "int",
+        description="The data type of the key.",
+    )
+    pad_with_zeros: Optional[bool] = Field(
+        False,
+        description="Whether to pad the key with zeros. (Only used when data_type is 'str'.)",
+    )
+
+    @classmethod
+    def create(
+        cls,
+        name: Optional[str] = None,
+        percent_unique: Optional[float] = None,
+        percent_missing: Optional[float] = None,
+        ascending: Optional[bool] = True,
+        digits: Optional[int] = None,
+        incrementing: Optional[bool] = None,
+        data_type: Optional[str] = None,
+        pad_with_zeros: Optional[bool] = None,
+    ) -> "IntegerKeyColumnGenerator":
+        """Create a KeyColumnGenerator."""
+
+        if name is None:
+            name = f"column_key_{random.randint(0, 1000)}"
+
+        if percent_unique is None:
+            percent_unique = 1 - random.random()**2
+
+        if percent_missing is None:
+            percent_missing = random.random()**2
+
+        if digits is None:
+            digits = random.randint(4, 10)
+
+        if incrementing is None:
+            incrementing = random.random() < 0.85
+
+        if data_type is None:
+            data_type = random.choice(["int", "str"])
+
+        if data_type == "str":
+            if pad_with_zeros is None:
+                pad_with_zeros = random.random() < 0.5
+        
+        return cls(
+            name=name,
+            key_type=KeyType.integer,
+            percent_missing=percent_missing,
+            percent_unique=percent_unique,
+            digits=digits,
+            ascending=ascending,
+            data_type=data_type,
+            pad_with_zeros=pad_with_zeros,
+        )
+
+    def generate(
+        self,
+        num_rows:int,
+        starting_value: Optional[int] = 0,
+    ) -> pd.Series:
+        """Generate a column containing key-like data."""
+
+        if self.incrementing:
+            series = pd.Series(range(starting_value, starting_value + num_rows))
+        else:
+            series = pd.Series([random.randint(0, 10 ** self.digits) for _ in range(num_rows)])
+
+        # series = self._apply_missingness(series)
+        # series = self._apply_uniqueness(series)
+
+        if self.ascending:
+            series = series.sort_values(ascending=True)            
+        
+        if self.data_type == "str":
+            if self.pad_with_zeros:
+                series = series.astype(str).str.zfill(self.digits)
             else:
-                series = pd.Series([random.randint(0, 10 ** self.key_params.digits) for _ in range(num_rows)])
-            
-            if self.key_params.data_type == "str":
-                if self.key_params.pad_with_zeros:
-                    series = series.astype(str).str.zfill(self.key_params.digits)
-                else:
-                    series = series.astype(str)
+                series = series.astype(str)
 
-            return series
-    
-        elif self.key_type == PrimaryKeyType.uuid4:
-            return pd.Series([str(uuid4()) for _ in range(num_rows)])        
-    
+        return series

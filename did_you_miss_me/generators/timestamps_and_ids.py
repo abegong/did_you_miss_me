@@ -13,14 +13,16 @@ from did_you_miss_me.generators.column import (
     MultiColumnGenerator,
 )
 from did_you_miss_me.generators.primary_keys import (
-    PrimaryKeyColumnGenerator,
+    KeyColumnGenerator,
+    IntegerKeyColumnGenerator,
+    UuidKeyColumnGenerator,
 )
 from did_you_miss_me.generators.timestamp import (
     TimestampMultiColumnGenerator,
 )
-from did_you_miss_me.generators.foreign_keys import (
-    ForeignKeyGenerator,
-)
+# from did_you_miss_me.generators.foreign_keys import (
+#     ForeignKeyGenerator,
+# )
 
 class TimeStampAndIdMultiColumnGenerator(MultiColumnGenerator):
     """Specifies how to create one or more columns containing timestamps and IDs."""
@@ -49,17 +51,18 @@ class TimeStampAndIdMultiColumnGenerator(MultiColumnGenerator):
         names = []
 
         if include_ids:
-            id_column_generators = [PrimaryKeyColumnGenerator.create(
-                name="column_primary_key",
-            )]
-            names = ["column_primary_key"]
+            id_column_generators = [IntegerKeyColumnGenerator.create_primary_key()]
+            names = [id_column_generators[0].name]
 
             if random.random() < 0.5:
-                id_column_generators.append(ForeignKeyGenerator.create(
-                    name="column_foreign_key",
-                ))
+                while 1:
+                    new_key_generator = IntegerKeyColumnGenerator.create_foreign_key()
+                    id_column_generators.append(new_key_generator)
 
-                names += ["column_foreign_key"]
+                    names += [new_key_generator.name]
+
+                    if random.random() < 0.7:
+                        break
 
         else:
             id_column_generators = []

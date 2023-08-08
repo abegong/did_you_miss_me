@@ -137,9 +137,11 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
 * Change testing to use GX (or at least regex), rather than exact fixtures
 
 ### New features
+* Add FatFingerModifier
+
+* Make primary keys not always start at 0
 * Make primary keys continuous across multiple batches
 * Make timestamps continuous across multiple batches
-* Add sensible contents for foreign keys
 
 * Add strftime options for time and date-stamp generators
 * Make it so timestamp columns sometimes come at the end of the dataframe

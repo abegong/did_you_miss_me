@@ -95,7 +95,6 @@ class MissingFakerDataframeGenerator(DataGenerator):
     @classmethod
     def create(
         cls,
-        column_generators: Optional[List[ColumnGenerator]] = None,
         row_count_widget: Optional[RowCountWidget] = None,
         timestamp_and_id_generator: Optional[TimeStampAndIdMultiColumnGenerator] = None,
 
@@ -110,92 +109,10 @@ class MissingFakerDataframeGenerator(DataGenerator):
         include_timestamps: bool = False,
         add_missingness: bool = True,
     ):
-        if column_generators is None:
-            if dataframe_generator is None and missingness_modifier is None:
-                if num_columns is None:
-                    num_columns = 12
+        if dataframe_generator is None and missingness_modifier is None:
+            if num_columns is None:
+                num_columns = 12
 
-                if row_count_widget is None:
-                    row_count_widget = RowCountWidget.create(
-                        exact_rows=exact_rows,
-                        min_rows=min_rows,
-                        max_rows=max_rows,
-                    )
-
-                if timestamp_and_id_generator is None:
-                    timestamp_and_id_generator = (
-                        TimeStampAndIdMultiColumnGenerator.create(
-                            include_ids=include_ids,
-                            include_timestamps=include_timestamps,
-                        )
-                    )
-
-                dataframe_generator = DataframeGenerator.create(
-                    num_columns=num_columns,
-                    exact_rows=exact_rows,
-                )
-                if add_missingness:
-                    missingness_modifier = DataframeMissingnessModifier.create(
-                        num_columns=num_columns,
-                    )
-                else:
-                    missingness_modifier = DataframeMissingnessModifier.create(
-                        num_columns=num_columns,
-                        missingness_type=ColumnMissingnessType.NEVER,
-                    )
-
-            elif dataframe_generator is None:
-                if row_count_widget is None:
-                    row_count_widget = RowCountWidget.create(
-                        exact_rows=exact_rows,
-                        min_rows=min_rows,
-                        max_rows=max_rows,
-                    )
-
-                if timestamp_and_id_generator is None:
-                    timestamp_and_id_generator = (
-                        TimeStampAndIdMultiColumnGenerator.create(
-                            include_ids=include_ids,
-                            include_timestamps=include_timestamps,
-                        )
-                    )
-
-                dataframe_generator = DataframeGenerator.create(
-                    num_columns=missingness_modifier.num_columns,
-                    exact_rows=exact_rows,
-                )
-
-            elif missingness_modifier is None:
-
-                if add_missingness:
-                    missingness_modifier = DataframeMissingnessModifier.create(
-                        num_columns=dataframe_generator.num_columns,
-                    )
-                else:
-                    missingness_modifier = DataframeMissingnessModifier.create(
-                        num_columns=dataframe_generator.num_columns,
-                        missingness_type=ColumnMissingnessType.NEVER,
-                    )
-
-                row_count_widget = dataframe_generator.row_count_widget
-                timestamp_and_id_generator = (
-                    dataframe_generator.timestamp_and_id_generator
-                )
-
-            else:
-                assert (
-                    dataframe_generator.num_columns == missingness_modifier.num_columns
-                )
-
-            column_generators = []
-            for i in range(dataframe_generator.num_columns):
-                column_generator = cls._generate_column_generator(
-                    dataframe_generator.column_generators[i],
-                    missingness_modifier.column_modifiers[i],
-                )
-                column_generators.append(column_generator)
-
-        else:
             if row_count_widget is None:
                 row_count_widget = RowCountWidget.create(
                     exact_rows=exact_rows,
@@ -204,10 +121,77 @@ class MissingFakerDataframeGenerator(DataGenerator):
                 )
 
             if timestamp_and_id_generator is None:
-                timestamp_and_id_generator = TimeStampAndIdMultiColumnGenerator.create(
-                    include_ids=include_ids,
-                    include_timestamps=include_timestamps,
+                timestamp_and_id_generator = (
+                    TimeStampAndIdMultiColumnGenerator.create(
+                        include_ids=include_ids,
+                        include_timestamps=include_timestamps,
+                    )
                 )
+
+            dataframe_generator = DataframeGenerator.create(
+                num_columns=num_columns,
+                exact_rows=exact_rows,
+            )
+            if add_missingness:
+                missingness_modifier = DataframeMissingnessModifier.create(
+                    num_columns=num_columns,
+                )
+            else:
+                missingness_modifier = DataframeMissingnessModifier.create(
+                    num_columns=num_columns,
+                    missingness_type=ColumnMissingnessType.NEVER,
+                )
+
+        elif dataframe_generator is None:
+            if row_count_widget is None:
+                row_count_widget = RowCountWidget.create(
+                    exact_rows=exact_rows,
+                    min_rows=min_rows,
+                    max_rows=max_rows,
+                )
+
+            if timestamp_and_id_generator is None:
+                timestamp_and_id_generator = (
+                    TimeStampAndIdMultiColumnGenerator.create(
+                        include_ids=include_ids,
+                        include_timestamps=include_timestamps,
+                    )
+                )
+
+            dataframe_generator = DataframeGenerator.create(
+                num_columns=missingness_modifier.num_columns,
+                exact_rows=exact_rows,
+            )
+
+        elif missingness_modifier is None:
+
+            if add_missingness:
+                missingness_modifier = DataframeMissingnessModifier.create(
+                    num_columns=dataframe_generator.num_columns,
+                )
+            else:
+                missingness_modifier = DataframeMissingnessModifier.create(
+                    num_columns=dataframe_generator.num_columns,
+                    missingness_type=ColumnMissingnessType.NEVER,
+                )
+
+            row_count_widget = dataframe_generator.row_count_widget
+            timestamp_and_id_generator = (
+                dataframe_generator.timestamp_and_id_generator
+            )
+
+        else:
+            assert (
+                dataframe_generator.num_columns == missingness_modifier.num_columns
+            )
+
+        column_generators = []
+        for i in range(dataframe_generator.num_columns):
+            column_generator = cls._generate_column_generator(
+                dataframe_generator.column_generators[i],
+                missingness_modifier.column_modifiers[i],
+            )
+            column_generators.append(column_generator)
 
         return cls(
             column_generators=column_generators,

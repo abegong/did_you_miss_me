@@ -6,6 +6,7 @@ import random
 
 from did_you_miss_me.generators.timestamps_and_ids import (
     TimestampAndIdWidget,
+    Indexes,
 )
 
 
@@ -18,4 +19,5 @@ def test__timestamp_and_id_column_generator():
     generator = TimestampAndIdWidget.create()
     generator.generate(
         num_rows=5,
+        next_indexes=Indexes.create(),
     )

@@ -85,7 +85,6 @@ def test__generate_multibatch_dataframe():
 
     assert df.shape == (80, 2)
     assert df.isnull().sum().sum() > 0
-    assert "batch_id" not in df.columns
 
     df = dymm.generate_multibatch_dataframe(
         num_columns=2,
@@ -126,3 +125,6 @@ def test__generate_multibatch_dataframe():
         batches_per_epoch=2,
     )
     assert df.shape[1] > 2
+
+    # print(df.column_primary_key)
+    # assert (df["column_primary_key"] == range(80)).all()

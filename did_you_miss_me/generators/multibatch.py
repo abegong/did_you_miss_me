@@ -15,6 +15,9 @@ from did_you_miss_me.generators.dataframe import (
 from did_you_miss_me.generators.row_count_widget import (
     RowCountWidget,
 )
+from did_you_miss_me.generators.timestamps_and_ids import (
+    Indexes,
+)
 
 
 class EpochGenerator(DataGenerator, ABC):
@@ -41,6 +44,7 @@ class MissingFakerEpochGenerator(EpochGenerator):
         dataframe_generator: Optional[DataframeGenerator] = None,
         num_batches: Optional[int] = None,
         add_missingness: bool = True,
+        next_indexes: Optional[Indexes] = None,
     ) -> "MissingFakerEpochGenerator":
         """Create a plan for generating an Epoch, with missingness and Faker data.
 
@@ -129,10 +133,14 @@ class MissingFakerMultiBatchGenerator(MultiBatchGenerator):
         self,
         print_updates: bool = False,
         print_mod: int = 5,
+        next_indexes: Optional[Indexes] = None,
     ) -> pd.DataFrame:
         multibatch_df = pd.DataFrame()
 
-        batch_id = 0
+        if next_indexes is None:
+            next_indexes = Indexes.create()
+
+        # batch_id = 0
         for j, epoch_generator in enumerate(self.epochs):
             if print_updates:
                 print(f"===== Epoch: {j} of {self.num_epochs} =====")
@@ -141,10 +149,14 @@ class MissingFakerMultiBatchGenerator(MultiBatchGenerator):
                 if print_updates and k % print_mod == 0:
                     print(f"Batch: {k} of {epoch_generator.num_batches}")
 
-                df = epoch_generator.missing_faker_dataframe_generator.generate()
+                result_object = epoch_generator.missing_faker_dataframe_generator.generate(
+                    next_indexes=next_indexes,
+                )
 
-                multibatch_df = pd.concat([multibatch_df, df], ignore_index=True)
+                multibatch_df = pd.concat([multibatch_df, result_object.dataframe], ignore_index=True)
+                
+                next_indexes = result_object.next_indexes
 
-                batch_id += 1
+                # batch_id += 1
 
         return multibatch_df

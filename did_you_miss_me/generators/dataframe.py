@@ -1,5 +1,6 @@
 import random
-from typing import List, Optional
+from typing import Any, List, Optional
+from pydantic import BaseModel, Field
 
 import pandas as pd
 
@@ -19,6 +20,7 @@ from did_you_miss_me.generators.row_count_widget import (
 )
 from did_you_miss_me.generators.timestamps_and_ids import (
     TimestampAndIdWidget,
+    Indexes,
 )
 from did_you_miss_me.modifiers.missingness import (
     ColumnMissingnessType,
@@ -81,6 +83,15 @@ class DataframeGenerator(DataGenerator):
             row_count_widget=row_count_widget,
             timestamp_and_id_widget=timestamp_and_id_widget,
         )
+
+
+class MissingFakerDataframeResultObject(BaseModel):
+    """
+    A result object for a MissingFakerDataframeGenerator.
+    """
+
+    dataframe: Any #pd.DataFrame
+    next_indexes: Indexes
 
 
 class MissingFakerDataframeGenerator(DataGenerator):
@@ -197,18 +208,25 @@ class MissingFakerDataframeGenerator(DataGenerator):
         )
     
 
-    def generate(self) -> pd.DataFrame:
+    def generate(
+            self,
+            next_indexes: Optional[Indexes] = None,
+        ) -> MissingFakerDataframeResultObject:
         """
         Generate a dataframe with the specified number of rows and columns, with missingness applied
         """
 
+        if next_indexes is None:
+            next_indexes = Indexes.create()
+
         series_dict = {}
         if self.timestamp_and_id_widget is not None:
-            timestamp_and_id_series_dict = self.timestamp_and_id_widget.generate(
+            timestamp_and_id_result_object = self.timestamp_and_id_widget.generate(
                 num_rows=self.num_rows,
+                next_indexes=next_indexes,
             )
 
-            series_dict = {**series_dict, **timestamp_and_id_series_dict.columns}
+            series_dict = {**series_dict, **timestamp_and_id_result_object.columns}
 
         for i, column_generator in enumerate(self.column_generators):
             new_series = column_generator.generate(
@@ -219,7 +237,10 @@ class MissingFakerDataframeGenerator(DataGenerator):
 
         df = pd.DataFrame(series_dict)
 
-        return df
+        return MissingFakerDataframeResultObject(
+            dataframe=df,
+            next_indexes=timestamp_and_id_result_object.next_indexes,
+        )
 
     @staticmethod
     def _generate_column_generator(

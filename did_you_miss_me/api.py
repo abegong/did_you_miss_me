@@ -65,8 +65,8 @@ def generate_dataframe(
         include_timestamps=include_timestamps,
         add_missingness=add_missingness,
     )
-    df = dataframe_generator.generate()
-    return df
+    result_object = dataframe_generator.generate()
+    return result_object.dataframe
 
 
 def missify_dataframe(

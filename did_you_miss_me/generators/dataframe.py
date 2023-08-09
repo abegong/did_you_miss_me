@@ -95,11 +95,6 @@ class MissingFakerDataframeGenerator(DataGenerator):
     @classmethod
     def create(
         cls,
-        row_count_widget: Optional[RowCountWidget] = None,
-        timestamp_and_id_generator: Optional[TimeStampAndIdMultiColumnGenerator] = None,
-
-        dataframe_generator: Optional[DataframeGenerator] = None,
-
         num_columns: Optional[int] = None,
         exact_rows: Optional[int] = None,
         min_rows: Optional[int] = None,
@@ -108,37 +103,26 @@ class MissingFakerDataframeGenerator(DataGenerator):
         include_timestamps: bool = False,
         add_missingness: bool = True,
     ):
-        if dataframe_generator is None:
-            if num_columns is None:
-                num_columns = 12
+        if num_columns is None:
+            num_columns = 12
 
-            if row_count_widget is None:
-                row_count_widget = RowCountWidget.create(
-                    exact_rows=exact_rows,
-                    min_rows=min_rows,
-                    max_rows=max_rows,
-                )
+        row_count_widget = RowCountWidget.create(
+            exact_rows=exact_rows,
+            min_rows=min_rows,
+            max_rows=max_rows,
+        )
 
-            if timestamp_and_id_generator is None:
-                timestamp_and_id_generator = (
-                    TimeStampAndIdMultiColumnGenerator.create(
-                        include_ids=include_ids,
-                        include_timestamps=include_timestamps,
-                    )
-                )
-
-            dataframe_generator = DataframeGenerator.create(
-                num_columns=num_columns,
-                exact_rows=exact_rows,
+        timestamp_and_id_generator = (
+            TimeStampAndIdMultiColumnGenerator.create(
+                include_ids=include_ids,
+                include_timestamps=include_timestamps,
             )
+        )
 
-        else:
-            num_columns = dataframe_generator.num_columns
-
-            row_count_widget = dataframe_generator.row_count_widget
-            timestamp_and_id_generator = (
-                dataframe_generator.timestamp_and_id_generator
-            )
+        dataframe_generator = DataframeGenerator.create(
+            num_columns=num_columns,
+            exact_rows=exact_rows,
+        )
 
         if add_missingness:
             missingness_modifier = DataframeMissingnessModifier.create(
@@ -163,6 +147,55 @@ class MissingFakerDataframeGenerator(DataGenerator):
             row_count_widget=row_count_widget,
             timestamp_and_id_generator=timestamp_and_id_generator,
         )
+    
+    @classmethod
+    def create_using_dataframe_generator(
+        cls,
+        dataframe_generator: DataframeGenerator,
+        add_missingness: bool = True,
+    ) -> "MissingFakerDataframeGenerator":
+        """Create a MissingFakerDataframeGenerator using a DataframeGenerator.
+        
+        Args:
+            dataframe_generator (DataframeGenerator): The DataframeGenerator to use.
+            add_missingness (bool): Whether to add missingness. Defaults to True.
+
+        Note:
+            The idea is that dataframe_generator already defines all the parameters
+            for the dataframe, and we just want to add missingness to it.
+        """
+        
+        num_columns = dataframe_generator.num_columns
+
+        row_count_widget = dataframe_generator.row_count_widget
+        timestamp_and_id_generator = (
+            dataframe_generator.timestamp_and_id_generator
+        )
+
+        if add_missingness:
+            missingness_modifier = DataframeMissingnessModifier.create(
+                num_columns=num_columns,
+            )
+        else:
+            missingness_modifier = DataframeMissingnessModifier.create(
+                num_columns=num_columns,
+                missingness_type=ColumnMissingnessType.NEVER,
+            )
+
+        column_generators = []
+        for i in range(dataframe_generator.num_columns):
+            column_generator = cls._generate_column_generator(
+                dataframe_generator.column_generators[i],
+                missingness_modifier.column_modifiers[i],
+            )
+            column_generators.append(column_generator)
+
+        return cls(
+            column_generators=column_generators,
+            row_count_widget=row_count_widget,
+            timestamp_and_id_generator=timestamp_and_id_generator,
+        )
+    
 
     def generate(self) -> pd.DataFrame:
         """

@@ -57,11 +57,8 @@ class MissingFakerEpochGenerator(EpochGenerator):
         if dataframe_generator is None:
             dataframe_generator = DataframeGenerator.create()
 
-        row_count_widget = RowCountWidget.create()
-
-        missing_faker_dataframe_generator = MissingFakerDataframeGenerator.create(
+        missing_faker_dataframe_generator = MissingFakerDataframeGenerator.create_using_dataframe_generator(
             dataframe_generator=dataframe_generator,
-            row_count_widget=row_count_widget,
             add_missingness=add_missingness,
         )
 

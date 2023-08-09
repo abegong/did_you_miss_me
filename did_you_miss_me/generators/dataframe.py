@@ -43,43 +43,32 @@ class DataframeGenerator(DataGenerator):
     @classmethod
     def create(
         cls,
-        column_generators: Optional[List[ColumnGenerator]] = None,
+        # column_generators: Optional[List[ColumnGenerator]] = None,
         num_columns: Optional[int] = None,
-        row_count_widget: Optional[RowCountWidget] = None,
+        # row_count_widget: Optional[RowCountWidget] = None,
         exact_rows: Optional[int] = None,
         min_rows: Optional[int] = None,
         max_rows: Optional[int] = None,
         include_ids: bool = False,
         include_timestamps: bool = False,
     ):
-        assert (column_generators is None) or (
-            num_columns is None
-        ), "You cannot specify both column_generators and num_columns."
-        assert (
-            (row_count_widget is None)
-            or (exact_rows is None)
-            or (min_rows is None and max_rows is None)
-        ), "You cannot specify row_count_widget, exact_rows, and min_rows/max_rows."
+        if num_columns is None:
+            num_columns = 12
 
-        if column_generators is None:
-            if num_columns is None:
-                num_columns = 12
-
-            column_generators = []
-            for i in range(num_columns):
-                column_generator = FakerColumnGenerator(
-                    name=f"column_{i + 1}",
-                    faker_type=random.choice(FAKER_TYPES),
-                )
-                # generate_column_generator(column_index=i + 1)
-                column_generators.append(column_generator)
-
-        if row_count_widget is None:
-            row_count_widget = RowCountWidget(
-                exact_rows=exact_rows,
-                min_rows=min_rows,
-                max_rows=max_rows,
+        column_generators = []
+        for i in range(num_columns):
+            column_generator = FakerColumnGenerator(
+                name=f"column_{i + 1}",
+                faker_type=random.choice(FAKER_TYPES),
             )
+            # generate_column_generator(column_index=i + 1)
+            column_generators.append(column_generator)
+
+        row_count_widget = RowCountWidget(
+            exact_rows=exact_rows,
+            min_rows=min_rows,
+            max_rows=max_rows,
+        )
 
         if (include_ids is not None) or (include_timestamps is not None):
             timestamp_and_id_generator = TimeStampAndIdMultiColumnGenerator.create(

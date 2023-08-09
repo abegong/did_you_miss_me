@@ -18,7 +18,7 @@ from did_you_miss_me.generators.row_count_widget import (
     RowCountWidget,
 )
 from did_you_miss_me.generators.timestamps_and_ids import (
-    TimeStampAndIdMultiColumnGenerator,
+    TimestampAndIdWidget,
 )
 from did_you_miss_me.modifiers.missingness import (
     ColumnMissingnessType,
@@ -31,7 +31,7 @@ from did_you_miss_me.modifiers.missingness import (
 class DataframeGenerator(DataGenerator):
     column_generators: List[ColumnGenerator]
     row_count_widget: RowCountWidget
-    timestamp_and_id_generator: Optional[TimeStampAndIdMultiColumnGenerator]
+    timestamp_and_id_widget: Optional[TimestampAndIdWidget]
 
     @property
     def num_columns(self):
@@ -69,24 +69,24 @@ class DataframeGenerator(DataGenerator):
         )
 
         if (include_ids is not None) or (include_timestamps is not None):
-            timestamp_and_id_generator = TimeStampAndIdMultiColumnGenerator.create(
+            timestamp_and_id_widget = TimestampAndIdWidget.create(
                 include_ids=include_ids,
                 include_timestamps=include_timestamps,
             )
         else:
-            timestamp_and_id_generator = None
+            timestamp_and_id_widget = None
 
         return cls(
             column_generators=column_generators,
             row_count_widget=row_count_widget,
-            timestamp_and_id_generator=timestamp_and_id_generator,
+            timestamp_and_id_widget=timestamp_and_id_widget,
         )
 
 
 class MissingFakerDataframeGenerator(DataGenerator):
     column_generators: List[MissingFakerColumnGenerator]
     row_count_widget: RowCountWidget
-    timestamp_and_id_generator: Optional[TimeStampAndIdMultiColumnGenerator]
+    timestamp_and_id_widget: Optional[TimestampAndIdWidget]
 
     @property
     def num_rows(self):
@@ -112,8 +112,8 @@ class MissingFakerDataframeGenerator(DataGenerator):
             max_rows=max_rows,
         )
 
-        timestamp_and_id_generator = (
-            TimeStampAndIdMultiColumnGenerator.create(
+        timestamp_and_id_widget = (
+            TimestampAndIdWidget.create(
                 include_ids=include_ids,
                 include_timestamps=include_timestamps,
             )
@@ -145,7 +145,7 @@ class MissingFakerDataframeGenerator(DataGenerator):
         return cls(
             column_generators=column_generators,
             row_count_widget=row_count_widget,
-            timestamp_and_id_generator=timestamp_and_id_generator,
+            timestamp_and_id_widget=timestamp_and_id_widget,
         )
     
     @classmethod
@@ -168,8 +168,8 @@ class MissingFakerDataframeGenerator(DataGenerator):
         num_columns = dataframe_generator.num_columns
 
         row_count_widget = dataframe_generator.row_count_widget
-        timestamp_and_id_generator = (
-            dataframe_generator.timestamp_and_id_generator
+        timestamp_and_id_widget = (
+            dataframe_generator.timestamp_and_id_widget
         )
 
         if add_missingness:
@@ -193,7 +193,7 @@ class MissingFakerDataframeGenerator(DataGenerator):
         return cls(
             column_generators=column_generators,
             row_count_widget=row_count_widget,
-            timestamp_and_id_generator=timestamp_and_id_generator,
+            timestamp_and_id_widget=timestamp_and_id_widget,
         )
     
 
@@ -203,12 +203,12 @@ class MissingFakerDataframeGenerator(DataGenerator):
         """
 
         series_dict = {}
-        if self.timestamp_and_id_generator is not None:
-            timestamp_and_id_series_dict = self.timestamp_and_id_generator.generate(
+        if self.timestamp_and_id_widget is not None:
+            timestamp_and_id_series_dict = self.timestamp_and_id_widget.generate(
                 num_rows=self.num_rows,
             )
 
-            series_dict = {**series_dict, **timestamp_and_id_series_dict}
+            series_dict = {**series_dict, **timestamp_and_id_series_dict.columns}
 
         for i, column_generator in enumerate(self.column_generators):
             new_series = column_generator.generate(

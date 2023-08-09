@@ -128,16 +128,17 @@ class MissingFakerMultiBatchGenerator(MultiBatchGenerator):
     def generate(
         self,
         print_updates: bool = False,
+        print_mod: int = 5,
     ) -> pd.DataFrame:
         multibatch_df = pd.DataFrame()
 
         batch_id = 0
         for j, epoch_generator in enumerate(self.epochs):
             if print_updates:
-                print(f"Epoch: {j} of {self.num_epochs}")
+                print(f"===== Epoch: {j} of {self.num_epochs} =====")
 
             for k in range(epoch_generator.num_batches):
-                if print_updates:
+                if print_updates and k % print_mod == 0:
                     print(f"Batch: {k} of {epoch_generator.num_batches}")
 
                 df = epoch_generator.missing_faker_dataframe_generator.generate()

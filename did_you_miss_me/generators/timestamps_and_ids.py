@@ -1,5 +1,6 @@
 import random
-from typing import Dict, List, Optional
+from pydantic import BaseModel, Field
+from typing import Any, Dict, List, Optional
 
 import pandas as pd
 
@@ -15,9 +16,21 @@ from did_you_miss_me.generators.timestamp import (
 )
 
 
-class TimeStampAndIdMultiColumnGenerator(MultiColumnGenerator):
+class TimestampAndIdResultObject(BaseModel):
+
+    last_primary_key: int
+    last_timestamp: int
+
+    columns: Dict[str, Any]#pd.Series]
+
+
+class TimestampAndIdWidget(BaseModel):
     """Specifies how to create one or more columns containing timestamps and IDs."""
 
+    names: List[str] = Field(
+        default_factory=lambda: [f"column_{random.randint(0, 1000000)}"],
+        description="The names of the columns",
+    )
     id_column_generators: List[ColumnGenerator]
     timestamp_column_generator: Optional[MultiColumnGenerator]
 
@@ -26,7 +39,7 @@ class TimeStampAndIdMultiColumnGenerator(MultiColumnGenerator):
         cls,
         include_ids: bool = False,
         include_timestamps: bool = False,
-    ) -> "TimeStampAndIdGenerator":
+    ) -> "TimestampAndIdWidget":
         names = []
 
         if include_ids:
@@ -59,7 +72,12 @@ class TimeStampAndIdMultiColumnGenerator(MultiColumnGenerator):
             timestamp_column_generator=timestamp_column_generator,
         )
 
-    def generate(self, num_rows: int) -> Dict[str, pd.Series]:
+    def generate(
+        self,
+        num_rows: int,
+        starting_primary_key: int = 0,
+        starting_timestamp: pd.Timestamp = pd.Timestamp("2020-01-01"),
+    ) -> TimestampAndIdResultObject:
         """Generate series with the specified number of rows."""
 
         series_dict = {}
@@ -78,4 +96,8 @@ class TimeStampAndIdMultiColumnGenerator(MultiColumnGenerator):
 
             series_dict = {**series_dict, **timestamp_series_dict}
 
-        return series_dict
+        return TimestampAndIdResultObject(
+            columns=series_dict,
+            last_primary_key=starting_primary_key + num_rows - 1,
+            last_timestamp=0,#starting_timestamp + pd.Timedelta(days=num_rows - 1),
+        )

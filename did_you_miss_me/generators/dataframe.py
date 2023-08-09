@@ -21,6 +21,7 @@ from did_you_miss_me.generators.timestamps_and_ids import (
     TimeStampAndIdMultiColumnGenerator,
 )
 from did_you_miss_me.modifiers.missingness import (
+    ColumnMissingnessType,
     ColumnMissingnessModifier,
     ProportionalColumnMissingnessParams,
     DataframeMissingnessModifier,
@@ -43,9 +44,7 @@ class DataframeGenerator(DataGenerator):
     @classmethod
     def create(
         cls,
-        # column_generators: Optional[List[ColumnGenerator]] = None,
         num_columns: Optional[int] = None,
-        # row_count_widget: Optional[RowCountWidget] = None,
         exact_rows: Optional[int] = None,
         min_rows: Optional[int] = None,
         max_rows: Optional[int] = None,
@@ -61,7 +60,6 @@ class DataframeGenerator(DataGenerator):
                 name=f"column_{i + 1}",
                 faker_type=random.choice(FAKER_TYPES),
             )
-            # generate_column_generator(column_index=i + 1)
             column_generators.append(column_generator)
 
         row_count_widget = RowCountWidget(
@@ -100,14 +98,17 @@ class MissingFakerDataframeGenerator(DataGenerator):
         column_generators: Optional[List[ColumnGenerator]] = None,
         row_count_widget: Optional[RowCountWidget] = None,
         timestamp_and_id_generator: Optional[TimeStampAndIdMultiColumnGenerator] = None,
+
         dataframe_generator: Optional[DataframeGenerator] = None,
         missingness_modifier: Optional[DataframeMissingnessModifier] = None,
+
         num_columns: Optional[int] = None,
         exact_rows: Optional[int] = None,
         min_rows: Optional[int] = None,
         max_rows: Optional[int] = None,
         include_ids: bool = False,
         include_timestamps: bool = False,
+        add_missingness: bool = True,
     ):
         if column_generators is None:
             if dataframe_generator is None and missingness_modifier is None:
@@ -133,9 +134,15 @@ class MissingFakerDataframeGenerator(DataGenerator):
                     num_columns=num_columns,
                     exact_rows=exact_rows,
                 )
-                missingness_modifier = DataframeMissingnessModifier.create(
-                    num_columns=num_columns,
-                )
+                if add_missingness:
+                    missingness_modifier = DataframeMissingnessModifier.create(
+                        num_columns=num_columns,
+                    )
+                else:
+                    missingness_modifier = DataframeMissingnessModifier.create(
+                        num_columns=num_columns,
+                        missingness_type=ColumnMissingnessType.NEVER,
+                    )
 
             elif dataframe_generator is None:
                 if row_count_widget is None:
@@ -159,9 +166,16 @@ class MissingFakerDataframeGenerator(DataGenerator):
                 )
 
             elif missingness_modifier is None:
-                missingness_modifier = DataframeMissingnessModifier.create(
-                    num_columns=dataframe_generator.num_columns,
-                )
+
+                if add_missingness:
+                    missingness_modifier = DataframeMissingnessModifier.create(
+                        num_columns=dataframe_generator.num_columns,
+                    )
+                else:
+                    missingness_modifier = DataframeMissingnessModifier.create(
+                        num_columns=dataframe_generator.num_columns,
+                        missingness_type=ColumnMissingnessType.NEVER,
+                    )
 
                 row_count_widget = dataframe_generator.row_count_widget
                 timestamp_and_id_generator = (
@@ -201,22 +215,15 @@ class MissingFakerDataframeGenerator(DataGenerator):
             timestamp_and_id_generator=timestamp_and_id_generator,
         )
 
-    def generate(
-        self,
-        add_missingness: bool = True,
-    ) -> pd.DataFrame:
+    def generate(self) -> pd.DataFrame:
         """
         Generate a dataframe with the specified number of rows and columns, with missingness applied
-
-        Parameters:
-            add_missingness: Whether to add missingness to the generated dataframe
         """
 
         series_dict = {}
         if self.timestamp_and_id_generator is not None:
             timestamp_and_id_series_dict = self.timestamp_and_id_generator.generate(
                 num_rows=self.num_rows,
-                # add_missingness=add_missingness,
             )
 
             series_dict = {**series_dict, **timestamp_and_id_series_dict}
@@ -224,7 +231,6 @@ class MissingFakerDataframeGenerator(DataGenerator):
         for i, column_generator in enumerate(self.column_generators):
             new_series = column_generator.generate(
                 num_rows=self.num_rows,
-                add_missingness=add_missingness,
             )
 
             series_dict[column_generator.name] = new_series

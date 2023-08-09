@@ -67,7 +67,6 @@ class TimeStampAndIdMultiColumnGenerator(MultiColumnGenerator):
         for i, column_generator in enumerate(self.id_column_generators):
             new_series = column_generator.generate(
                 num_rows=num_rows,
-                # add_missingness=add_missingness,
             )
 
             series_dict[column_generator.name] = new_series

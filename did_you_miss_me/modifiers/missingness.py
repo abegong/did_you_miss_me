@@ -119,6 +119,7 @@ class DataframeMissingnessModifier(MissingnessModifier):
         cls,
         column_generators: Optional[List[ColumnMissingnessModifier]] = None,
         num_columns: Optional[int] = None,
+        missingness_type: Optional[ColumnMissingnessType] = None,
     ):
         if column_generators is None:
             if num_columns is None:
@@ -126,7 +127,9 @@ class DataframeMissingnessModifier(MissingnessModifier):
 
             column_modifiers = []
             for i in range(num_columns):
-                column_modifier = cls._generate_column_generator()
+                column_modifier = cls._generate_column_generator(
+                    missingness_type=missingness_type
+                )
                 column_modifiers.append(column_modifier)
 
         return cls(

@@ -124,13 +124,8 @@ class MissingFakerColumnGenerator(FakerColumnGenerator, ColumnMissingnessModifie
     def generate(
         self,
         num_rows: int,
-        add_missingness: bool = True,
     ) -> pd.Series:
         series = super().generate(num_rows=num_rows)
-
-        if add_missingness:
-            modified_series = self.modify(series)
-        else:
-            modified_series = series
+        modified_series = self.modify(series)
 
         return modified_series

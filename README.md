@@ -138,9 +138,7 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
 ### Cleanup
 
 * Refactor tests to match new code organization (no more plans; generators and modifiers in their own directories)
-* Split up MissingFakerDataframeGenerator.create: it has too many parameters and code paths
 * Figure out how to add random seeds that'll work for Faker and numpy
-* Move `add_missingness` from the `generate` step for a generator back upstream into its "plan."
 * Convert the output of a MultiColumnGenerator to be a pydantic object, rather than a Dict.
 * Change testing to use GX (or at least regex), rather than exact fixtures
 

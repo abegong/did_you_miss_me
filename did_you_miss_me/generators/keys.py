@@ -38,12 +38,10 @@ class KeyColumnGenerator(ColumnGenerator, ABC):
     def _apply_uniqueness(self, series: pd.Series) -> pd.Series:
         if self.percent_unique < 1:
             mask = series.apply(lambda x: random.random() < self.percent_unique)
-            print(list(mask))
             new_series = series.copy()
             new_series[mask] = new_series[mask].apply(
-                lambda x: random.choice(list(series[mask is False]))
+                lambda x: random.choice(list(series[mask==False]))
             )
-            print(list(new_series))
             return new_series
 
         else:

@@ -35,7 +35,6 @@ def generate_series(
     series = generator.generate(
         num_rows=num_rows,
     )
-    print(series)
 
     return series
 
@@ -64,10 +63,9 @@ def generate_dataframe(
         num_columns=num_columns,
         include_ids=include_ids,
         include_timestamps=include_timestamps,
-    )
-    df = dataframe_generator.generate(
         add_missingness=add_missingness,
     )
+    df = dataframe_generator.generate()
     return df
 
 
@@ -122,9 +120,8 @@ def generate_multibatch_dataframe(
         batches_per_epoch=batches_per_epoch,
         include_ids=include_ids,
         include_timestamps=include_timestamps,
-    )
-
-    df = multibatch_generator.generate(
         add_missingness=add_missingness,
     )
+
+    df = multibatch_generator.generate()
     return df

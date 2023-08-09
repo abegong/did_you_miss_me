@@ -91,7 +91,7 @@ def missify_dataframe(
 
 
 def generate_multibatch_dataframe(
-    exact_rows: int = 200,
+    exact_rows: Optional[int] = None,
     num_columns: int = 12,
     num_epochs: int = 5,
     batches_per_epoch: Optional[int] = None,
@@ -99,6 +99,7 @@ def generate_multibatch_dataframe(
     include_ids=True,
     include_timestamps=True,
     # use_ai = False,
+    print_updates=True,
 ) -> pd.DataFrame:
     """Generate synthetic datasets with realistic patterns of missingness.
 
@@ -123,5 +124,7 @@ def generate_multibatch_dataframe(
         add_missingness=add_missingness,
     )
 
-    df = multibatch_generator.generate()
+    df = multibatch_generator.generate(
+        print_updates=print_updates,
+    )
     return df

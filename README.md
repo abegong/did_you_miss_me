@@ -145,6 +145,7 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
 ### New features
 * Add strftime options for time- and date-stamp generators
 * Make it so timestamp columns sometimes come at the end of the dataframe
+* Make it so batches can have variable length
 
 * Add conditional missingness
 * Add langchain stuffs

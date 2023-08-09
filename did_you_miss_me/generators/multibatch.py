@@ -12,6 +12,9 @@ from did_you_miss_me.generators.dataframe import (
     DataframeGenerator,
     MissingFakerDataframeGenerator,
 )
+from did_you_miss_me.generators.row_count_widget import (
+    RowCountWidget,
+)
 
 
 class EpochGenerator(DataGenerator, ABC):
@@ -54,8 +57,11 @@ class MissingFakerEpochGenerator(EpochGenerator):
         if dataframe_generator is None:
             dataframe_generator = DataframeGenerator.create()
 
+        row_count_widget = RowCountWidget.create()
+
         missing_faker_dataframe_generator = MissingFakerDataframeGenerator.create(
             dataframe_generator=dataframe_generator,
+            row_count_widget=row_count_widget,
             add_missingness=add_missingness,
         )
 
@@ -122,15 +128,20 @@ class MissingFakerMultiBatchGenerator(MultiBatchGenerator):
             epochs=epochs,
         )
 
-    def generate(self) -> pd.DataFrame:
+    def generate(
+        self,
+        print_updates: bool = False,
+    ) -> pd.DataFrame:
         multibatch_df = pd.DataFrame()
 
         batch_id = 0
         for j, epoch_generator in enumerate(self.epochs):
-            # print(f"Epoch: {j} of {self.num_epochs}")
+            if print_updates:
+                print(f"Epoch: {j} of {self.num_epochs}")
 
             for k in range(epoch_generator.num_batches):
-                # print(f"Batch: {k} of {epoch_generator.num_batches}")
+                if print_updates:
+                    print(f"Batch: {k} of {epoch_generator.num_batches}")
 
                 df = epoch_generator.missing_faker_dataframe_generator.generate()
 

@@ -39,8 +39,15 @@ class KeyColumnGenerator(ColumnGenerator, ABC):
         if self.percent_unique < 1:
             mask = series.apply(lambda x: random.random() < self.percent_unique)
             new_series = series.copy()
+
+            choices = list(series[mask==False])
+            # Verify that there's at least one choice
+            if len(choices) == 0:
+                # If not, just return the original series
+                return series
+            
             new_series[mask] = new_series[mask].apply(
-                lambda x: random.choice(list(series[mask==False]))
+                lambda x: random.choice(choices)
             )
             return new_series
 

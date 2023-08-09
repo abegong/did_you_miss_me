@@ -62,7 +62,7 @@ class DataframeGenerator(DataGenerator):
             )
             column_generators.append(column_generator)
 
-        row_count_widget = RowCountWidget(
+        row_count_widget = RowCountWidget.create(
             exact_rows=exact_rows,
             min_rows=min_rows,
             max_rows=max_rows,
@@ -116,7 +116,7 @@ class MissingFakerDataframeGenerator(DataGenerator):
                     num_columns = 12
 
                 if row_count_widget is None:
-                    row_count_widget = RowCountWidget(
+                    row_count_widget = RowCountWidget.create(
                         exact_rows=exact_rows,
                         min_rows=min_rows,
                         max_rows=max_rows,
@@ -146,7 +146,7 @@ class MissingFakerDataframeGenerator(DataGenerator):
 
             elif dataframe_generator is None:
                 if row_count_widget is None:
-                    row_count_widget = RowCountWidget(
+                    row_count_widget = RowCountWidget.create(
                         exact_rows=exact_rows,
                         min_rows=min_rows,
                         max_rows=max_rows,
@@ -197,7 +197,7 @@ class MissingFakerDataframeGenerator(DataGenerator):
 
         else:
             if row_count_widget is None:
-                row_count_widget = RowCountWidget(
+                row_count_widget = RowCountWidget.create(
                     exact_rows=exact_rows,
                     min_rows=min_rows,
                     max_rows=max_rows,

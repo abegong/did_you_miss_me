@@ -76,6 +76,13 @@ def test__missify_dataframe():
 
 
 def test__generate_multibatch_dataframe():
+    dymm.generate_multibatch_dataframe(
+        num_columns=2,
+        # num_rows=20,
+        num_epochs=2,
+        batches_per_epoch=2,
+    )
+
     df = dymm.generate_multibatch_dataframe(
         num_columns=2,
         exact_rows=20,

@@ -126,9 +126,8 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
 
 ### On deck
 
-* Add ability to save to a SQLlite DB
 * Add an option to include a batch_id
-* Add generate_multiple_batches_and_upload_to_sql
+* Make _convert_df_to_sql_friendly more universal.
 
 ### Cleanup
 
@@ -145,7 +144,6 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
 * Change testing to use GX (or at least regex), rather than exact fixtures
 * Figure out how to add random seeds that'll work for Faker and numpy
 * Convert the output of a MultiColumnGenerator to be a pydantic object, rather than a Dict.
-* Make _convert_df_to_sql_friendly more universal.
 
 ### New features
 

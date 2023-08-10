@@ -44,7 +44,9 @@ def test__generate_dataframe():
     df = dymm.generate_dataframe(
         exact_rows=20,
         num_columns=10,
-        include_ids=True,
+        include_batch_id=True,
+        include_primary_key=True,
+        include_foreign_keys=True,
     )
     assert df.shape[1] > 10
 
@@ -79,7 +81,9 @@ def test__generate_multibatch_dataframe():
         exact_rows=20,
         num_epochs=2,
         batches_per_epoch=2,
-        include_ids=False,
+        include_batch_id=False,
+        include_primary_key=False,
+        include_foreign_keys=False,
         include_timestamps=False,
     )
 
@@ -92,7 +96,9 @@ def test__generate_multibatch_dataframe():
         num_epochs=2,
         batches_per_epoch=2,
         add_missingness=False,
-        include_ids=False,
+        include_batch_id=False,
+        include_primary_key=False,
+        include_foreign_keys=False,
         include_timestamps=False,
     )
     assert df.shape == (80, 2)
@@ -103,7 +109,9 @@ def test__generate_multibatch_dataframe():
         exact_rows=20,
         num_epochs=2,
         batches_per_epoch=2,
-        include_ids=True,
+        include_batch_id=True,
+        include_primary_key=True,
+        include_foreign_keys=True,
         include_timestamps=False,
     )
     assert df.shape[1] > 2
@@ -113,7 +121,9 @@ def test__generate_multibatch_dataframe():
         exact_rows=20,
         num_epochs=2,
         batches_per_epoch=2,
-        include_ids=False,
+        include_batch_id=False,
+        include_primary_key=False,
+        include_foreign_keys=False,
         include_timestamps=True,
     )
     assert df.shape[1] > 2
@@ -131,7 +141,7 @@ def test__generate_multibatch_dataframe():
 
 def test__generate_multiple_batches_and_upload_to_sql():
     random.seed(0)
-    
+
     import sqlite3
     conn = sqlite3.connect(":memory:")
 

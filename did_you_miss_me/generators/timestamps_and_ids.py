@@ -7,6 +7,7 @@ import pandas as pd
 from did_you_miss_me.generators.column import (
     ColumnGenerator,
     MultiColumnGenerator,
+    ConstantColumnGenerator,
 )
 from did_you_miss_me.generators.keys import (
     IntegerKeyColumnGenerator,
@@ -52,6 +53,10 @@ class TimestampAndIdResultObject(BaseModel):
 class TimestampAndIdWidget(BaseModel):
     """Specifies how to create one or more columns containing timestamps and IDs."""
 
+    batch_id_column_generator: Optional[ConstantColumnGenerator] = Field(
+        default_factory=IntegerKeyColumnGenerator.create_primary_key,
+        description="The batch_id column generator",
+    )
     primary_key_column_generator: Optional[IntegerKeyColumnGenerator] = Field(
         default_factory=IntegerKeyColumnGenerator.create_primary_key,
         description="The primary key column generator",
@@ -68,28 +73,42 @@ class TimestampAndIdWidget(BaseModel):
     @classmethod
     def create(
         cls,
-        include_ids: bool = False,
+        include_batch_id: bool = False,
+        include_primary_key: bool = False,
+        include_foreign_keys: bool = False,
         include_timestamps: bool = False,
     ) -> "TimestampAndIdWidget":
+
         names = []
 
-        if include_ids:
-            primary_key_column_generator = IntegerKeyColumnGenerator.create_primary_key()
-            names = [primary_key_column_generator.name]
-
-            foreign_key_column_generators = []
-            if random.random() < 0.5:
-                while 1:
-                    new_key_generator = IntegerKeyColumnGenerator.create_foreign_key()
-                    foreign_key_column_generators.append(new_key_generator)
-
-                    names += [new_key_generator.name]
-
-                    if random.random() < 0.7:
-                        break
+        if include_batch_id:
+            batch_id_column_generator = ConstantColumnGenerator(
+                name="column_batch_id",
+            )
+            names = [batch_id_column_generator.name]
 
         else:
+            batch_id_column_generator = None
+
+        if include_primary_key:
+            primary_key_column_generator = IntegerKeyColumnGenerator.create_primary_key()
+            names = [primary_key_column_generator.name]
+        
+        else:
             primary_key_column_generator = None
+
+        if include_foreign_keys:
+            foreign_key_column_generators = []
+            while 1:
+                new_key_generator = IntegerKeyColumnGenerator.create_foreign_key()
+                foreign_key_column_generators.append(new_key_generator)
+
+                names += [new_key_generator.name]
+
+                if random.random() < 0.7:
+                    break
+
+        else:
             foreign_key_column_generators = []
 
         if include_timestamps:
@@ -101,6 +120,7 @@ class TimestampAndIdWidget(BaseModel):
 
         return cls(
             names=names,
+            batch_id_column_generator=batch_id_column_generator,
             primary_key_column_generator=primary_key_column_generator,
             foreign_key_column_generators=foreign_key_column_generators,
             timestamp_column_generator=timestamp_column_generator,
@@ -114,6 +134,14 @@ class TimestampAndIdWidget(BaseModel):
         """Generate series with the specified number of rows."""
 
         series_dict = {}
+
+        if self.batch_id_column_generator is not None:
+            new_series = self.batch_id_column_generator.generate(
+                num_rows=num_rows,
+                value=next_indexes.batch_id,
+            )
+
+            series_dict[self.batch_id_column_generator.name] = new_series
 
         if self.primary_key_column_generator is not None:
             new_series = self.primary_key_column_generator.generate(
@@ -142,8 +170,8 @@ class TimestampAndIdWidget(BaseModel):
         return TimestampAndIdResultObject(
             columns=series_dict,
             next_indexes=Indexes(
+                batch_id=next_indexes.batch_id + 1,
                 primary_key=next_primary_key,
                 timestamp=next_indexes.timestamp + num_rows, #!!! Not right
-                batch_id=0,
             ),
         )

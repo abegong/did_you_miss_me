@@ -44,7 +44,7 @@ class MissingFakerEpochGenerator(EpochGenerator):
         dataframe_generator: Optional[DataframeGenerator] = None,
         num_batches: Optional[int] = None,
         add_missingness: bool = True,
-        next_indexes: Optional[Indexes] = None,
+        # next_indexes: Optional[Indexes] = None,
     ) -> "MissingFakerEpochGenerator":
         """Create a plan for generating an Epoch, with missingness and Faker data.
 
@@ -97,7 +97,9 @@ class MissingFakerMultiBatchGenerator(MultiBatchGenerator):
         num_columns: Optional[int] = None,
         num_epochs: Optional[int] = None,
         batches_per_epoch: Optional[int] = None,
-        include_ids: bool = False,
+        include_batch_id=False,
+        include_primary_key=False,
+        include_foreign_keys=False,
         include_timestamps: bool = False,
         add_missingness: bool = True,
     ):
@@ -112,7 +114,9 @@ class MissingFakerMultiBatchGenerator(MultiBatchGenerator):
                 min_rows=min_rows,
                 max_rows=max_rows,
                 num_columns=num_columns,
-                include_ids=include_ids,
+                include_batch_id=include_batch_id,
+                include_primary_key=include_primary_key,
+                include_foreign_keys=include_foreign_keys,
                 include_timestamps=include_timestamps,
             )
 
@@ -140,7 +144,6 @@ class MissingFakerMultiBatchGenerator(MultiBatchGenerator):
         if next_indexes is None:
             next_indexes = Indexes.create()
 
-        # batch_id = 0
         for j, epoch_generator in enumerate(self.epochs):
             if print_updates:
                 print(f"===== Epoch: {j} of {self.num_epochs} =====")
@@ -156,7 +159,5 @@ class MissingFakerMultiBatchGenerator(MultiBatchGenerator):
                 multibatch_df = pd.concat([multibatch_df, result_object.dataframe], ignore_index=True)
                 
                 next_indexes = result_object.next_indexes
-
-                # batch_id += 1
 
         return multibatch_df

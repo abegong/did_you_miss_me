@@ -1,7 +1,7 @@
 from abc import ABC
 from faker import Faker
 import random
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 from pydantic import Field
 
 import pandas as pd
@@ -77,6 +77,23 @@ class FakerColumnGenerator(ColumnGenerator):
         series = pd.Series(
             [self._generate_faker_value(self.faker_type) for i in range(num_rows)]
         )
+
+        return series
+
+
+class ConstantColumnGenerator(ColumnGenerator):
+    def generate(
+        self,
+        num_rows: int,
+        value: Any,
+    ) -> pd.Series:
+        """Generate a series of random data
+
+        Args:
+            num_rows: The number of rows to generate.
+        """
+
+        series = pd.Series([value for i in range(num_rows)])
 
         return series
 

@@ -32,11 +32,11 @@ def test__integer_primary_keys_are_continuous():
         num_columns= 3,
         num_epochs= 3,
         batches_per_epoch= 3,
-        include_ids=True,
+        include_primary_key=True,
     )
     df = generator.generate()
     print(df.columns)
     assert df.shape == (27, 4)
     print(list(df["column_primary_key"]))
     print([185128+x for x in range(27)])
-    assert (df["column_primary_key"] == [str(185128+x) for x in range(27)]).all()
+    assert (df["column_primary_key"] == [str(634120+x) for x in range(27)]).all()

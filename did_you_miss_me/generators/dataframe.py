@@ -50,7 +50,9 @@ class DataframeGenerator(DataGenerator):
         exact_rows: Optional[int] = None,
         min_rows: Optional[int] = None,
         max_rows: Optional[int] = None,
-        include_ids: bool = False,
+        include_batch_id=False,
+        include_primary_key=False,
+        include_foreign_keys=False,
         include_timestamps: bool = False,
     ):
         if num_columns is None:
@@ -70,13 +72,22 @@ class DataframeGenerator(DataGenerator):
             max_rows=max_rows,
         )
 
-        if (include_ids is not None) or (include_timestamps is not None):
-            timestamp_and_id_widget = TimestampAndIdWidget.create(
-                include_ids=include_ids,
-                include_timestamps=include_timestamps,
-            )
-        else:
-            timestamp_and_id_widget = None
+        timestamp_and_id_widget = TimestampAndIdWidget.create(
+            include_batch_id=include_batch_id,
+            include_primary_key=include_primary_key,
+            include_foreign_keys=include_foreign_keys,
+            include_timestamps=include_timestamps,
+        )
+
+        # if (include_ids is not None) or (include_timestamps is not None):
+        #     timestamp_and_id_widget = TimestampAndIdWidget.create(
+        #         include_batch_id=include_batch_id,
+        #         include_primary_key=include_primary_key,
+        #         include_foreign_keys=include_foreign_keys,
+        #         include_timestamps=include_timestamps,
+        #     )
+        # else:
+        #     timestamp_and_id_widget = None
 
         return cls(
             column_generators=column_generators,
@@ -110,7 +121,9 @@ class MissingFakerDataframeGenerator(DataGenerator):
         exact_rows: Optional[int] = None,
         min_rows: Optional[int] = None,
         max_rows: Optional[int] = None,
-        include_ids: bool = False,
+        include_batch_id=False,
+        include_primary_key=False,
+        include_foreign_keys=False,
         include_timestamps: bool = False,
         add_missingness: bool = True,
     ):
@@ -125,7 +138,9 @@ class MissingFakerDataframeGenerator(DataGenerator):
 
         timestamp_and_id_widget = (
             TimestampAndIdWidget.create(
-                include_ids=include_ids,
+                include_batch_id=include_batch_id,
+                include_primary_key=include_primary_key,
+                include_foreign_keys=include_foreign_keys,
                 include_timestamps=include_timestamps,
             )
         )
@@ -225,7 +240,6 @@ class MissingFakerDataframeGenerator(DataGenerator):
                 num_rows=self.num_rows,
                 next_indexes=next_indexes,
             )
-
             series_dict = {**series_dict, **timestamp_and_id_result_object.columns}
 
         for i, column_generator in enumerate(self.column_generators):

@@ -128,3 +128,17 @@ def test__generate_multibatch_dataframe():
 
     # print(df.column_primary_key)
     # assert (df["column_primary_key"] == range(80)).all()
+
+def test__generate_multiple_batches_and_upload_to_sql():
+    random.seed(0)
+    
+    import sqlite3
+    conn = sqlite3.connect(":memory:")
+
+    dymm.generate_multiple_batches_and_upload_to_sql(
+        conn=conn,
+        table_name="test_table",
+        num_epochs=2,
+        exact_rows=5,
+        batches_per_epoch=10,
+    )

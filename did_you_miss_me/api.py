@@ -128,3 +128,45 @@ def generate_multibatch_dataframe(
         print_updates=print_updates,
     )
     return df
+
+def _convert_df_to_sql_friendly(
+    df : pd.DataFrame
+) -> pd.DataFrame:
+    type_conversion = {
+        "object": object,
+        "float64": float,
+        "int64": int,
+        'datetime64[ns]': int,
+    }
+
+    df_copy = df.copy()
+    
+    convert_dict = []
+    for i, column in enumerate(df_copy.columns):
+        converted_type = type_conversion[str(df_copy.dtypes[i])]
+        convert_dict.append((column, converted_type))
+    
+    convert_dict = dict(convert_dict)
+
+    df_copy = df_copy.astype(convert_dict)
+
+    return df_copy
+ 
+def generate_multiple_batches_and_upload_to_sql(
+    conn,
+    table_name,
+    if_exists="replace",
+    *args,
+    **kwargs,
+) -> None:
+    df = generate_multibatch_dataframe(
+        *args,
+        **kwargs,
+    )
+    df = _convert_df_to_sql_friendly(df)
+    df.to_sql(
+        table_name,
+        conn,
+        if_exists=if_exists,
+        index=None,
+    )

@@ -3,4 +3,5 @@ from did_you_miss_me.api import (
     generate_dataframe,  # noqa: F401
     missify_dataframe,  # noqa: F401
     generate_multibatch_dataframe,  # noqa: F401
+    generate_multiple_batches_and_upload_to_sql,  # noqa: F401
 )

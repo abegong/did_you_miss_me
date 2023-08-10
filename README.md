@@ -125,26 +125,31 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
 ## Todo
 
 ### On deck
+
+* Add ability to save to a SQLlite DB
+* Add an option to include a batch_id
+* Add generate_multiple_batches_and_upload_to_sql
+
+### Cleanup
+
 * Create `DataframeMissingnessModifier.modify` and think through syntax + APIs for `DataModifier` classes.
     * api.missify_dataframe -> DataframeMissingnessModifier.modify
     * Create FatFingerDataframeModifier along the same lines.
     * Pull ColumnMissingnessParams and related code into its own file
 
-* Make primary keys not always start at 0
-* Make primary keys continuous across multiple batches
-* Make timestamps continuous across multiple batches
-
-
-### Cleanup
+* In TimestampMultiColumnGenerator, add the ability to override start_time and end_time in the generator method.
+* Make sure that key lengths line up with ID lengths.
 
 * Refactor tests to match new code organization (no more plans; generators and modifiers in their own directories)
+* Add descriptions to tests
+* Change testing to use GX (or at least regex), rather than exact fixtures
 * Figure out how to add random seeds that'll work for Faker and numpy
 * Convert the output of a MultiColumnGenerator to be a pydantic object, rather than a Dict.
-* Change testing to use GX (or at least regex), rather than exact fixtures
-* In TimestampAndIdWidget, regroup the names and columns into a more sensible and useful format. (Standalone primary key, Dictionary of FKs)
+* Make _convert_df_to_sql_friendly more universal.
 
 ### New features
-* In TimestampMultiCOlumnGenerator, add the ability to override start_time and end_time in generator.
+
+* Add more variety to keys (UUIDs should be generateable from .create)
 * Add strftime options for time- and date-stamp generators
 * Make it so timestamp columns sometimes come at the end of the dataframe
 * Make it so batches can have variable length
@@ -152,7 +157,6 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
 * Add conditional missingness
 * Add langchain stuffs
 
-* Add ability to create SQLlite DBs
 * Add ability to save to mutilple files
 
 * Create a CLI on top of the primary API methods

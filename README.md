@@ -126,7 +126,6 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
 
 ### On deck
 
-* Add an option to include a batch_id
 * Make _convert_df_to_sql_friendly more universal.
 
 ### Cleanup
@@ -136,17 +135,19 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
     * Create FatFingerDataframeModifier along the same lines.
     * Pull ColumnMissingnessParams and related code into its own file
 
-* In TimestampMultiColumnGenerator, add the ability to override start_time and end_time in the generator method.
-* Make sure that key lengths line up with ID lengths.
-
 * Refactor tests to match new code organization (no more plans; generators and modifiers in their own directories)
 * Add descriptions to tests
+* Split up tests into atomic units
+* Think through structure for test fixtures
+
 * Change testing to use GX (or at least regex), rather than exact fixtures
 * Figure out how to add random seeds that'll work for Faker and numpy
 * Convert the output of a MultiColumnGenerator to be a pydantic object, rather than a Dict.
 
 ### New features
 
+* In TimestampMultiColumnGenerator, add the ability to override start_time and end_time in the generator method.
+* Make sure that key lengths line up with ID lengths.
 * Add more variety to keys (UUIDs should be generateable from .create)
 * Add strftime options for time- and date-stamp generators
 * Make it so timestamp columns sometimes come at the end of the dataframe
@@ -158,6 +159,5 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
 * Add ability to save to mutilple files
 
 * Create a CLI on top of the primary API methods
-
 
 * Publish to pypi

@@ -135,9 +135,9 @@ TDD-lite: not (yet) fully testing all of the API surface area. Instead, I've bee
     * Create FatFingerDataframeModifier along the same lines.
     * Pull ColumnMissingnessParams and related code into its own file
 
-* Refactor tests to match new code organization (no more plans; generators and modifiers in their own directories)
-* Add descriptions to tests
 * Split up tests into atomic units
+* Add descriptions to tests
+* Rename tests
 * Think through structure for test fixtures
 
 * Change testing to use GX (or at least regex), rather than exact fixtures
